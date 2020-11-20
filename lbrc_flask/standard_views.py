@@ -18,14 +18,14 @@ def init_standard_views(app):
         """Catch internal 404 errors, display
             a nice error page and log the error.
         """
-        return render_template("404.html"), 404
+        return render_template("lbrc_flask/404.html"), 404
 
     @app.errorhandler(403)
     def forbidden_page(exception):
         """Catch internal 404 errors, display
             a nice error page and log the error.
         """
-        return render_template("404.html"), 403
+        return render_template("lbrc_flask/404.html"), 403
 
     @app.errorhandler(500)
     @app.errorhandler(Exception)
@@ -40,4 +40,4 @@ def init_standard_views(app):
             message=traceback.format_exc(),
             recipients=current_app.config["ADMIN_EMAIL_ADDRESSES"].split(";"),
         )
-        return render_template("500.html"), 500
+        return render_template("lbrc_flask/500.html"), 500
