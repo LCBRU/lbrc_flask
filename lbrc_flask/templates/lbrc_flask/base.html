@@ -16,14 +16,14 @@
     
     <!-- styles -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link href="{{ url_for('lbrc_flask.static', filename='lbrc_flask/css/main.css', ver=1) }}" rel="stylesheet">
+    <link href="{{ url_for('lbrc_flask.static', filename='css/main.css', ver=1) }}" rel="stylesheet">
 
     {% block css %}{% endblock %}
 
-    <link rel="icon" href="/static/lbrc_flask/img/cropped-favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" href="/static/lbrc_flask/img//cropped-favicon-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon-precomposed" href="/static/lbrc_flask/img//cropped-favicon-180x180.png" />
-    <meta name="msapplication-TileImage" content="/static/lbrc_flask/img//cropped-favicon-270x270.png" />
+    <link rel="icon" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-32x32.png', ver=1) }}" sizes="32x32" />
+    <link rel="icon" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-192x192.png', ver=1) }}" sizes="192x192" />
+    <link rel="apple-touch-icon-precomposed" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-180x180.png', ver=1) }}" />
+    <meta name="msapplication-TileImage" content="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-270x270.png', ver=1) }}" />
     
     <!--[if lt IE 9]>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
