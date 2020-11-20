@@ -2,11 +2,11 @@
 
 from distutils.core import setup
 
-setup(name='lbrc_flask_ui',
+setup(name='lbrc_flask',
       version='1.0',
-      description='NIHR Leicester BRC Flask UI Components and Theme',
+      description='NIHR Leicester BRC Flask Components and Theme',
       author='Richard Bramley',
       author_email='rabramley@gmail.com',
-      url='https://github.com/LCBRU/lbrc_flask_ui/',
-      packages=['lbrc_flask_ui'],
+      url='https://github.com/LCBRU/lbrc_flask/',
+      packages=['lbrc_flask'],
      )
