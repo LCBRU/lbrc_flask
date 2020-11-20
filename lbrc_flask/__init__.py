@@ -6,7 +6,7 @@ from .template_filters import init_template_filters
 
 def init_lbrc_flask(app):
 
-    blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='lbrc_flask')
+    blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='/lbrc_flask')
     app.register_blueprint(blueprint)
 
     init_mail(app)
