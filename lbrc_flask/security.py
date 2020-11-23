@@ -16,7 +16,7 @@ from flask_login import current_user
 from flask_security import UserMixin, RoleMixin
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
-from . import db
+from .database import db
 
 
 class Role(db.Model, RoleMixin):

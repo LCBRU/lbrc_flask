@@ -1,13 +1,10 @@
 from flask import Blueprint, g
-from flask_sqlalchemy import SQLAlchemy
+from .database import db
 from .emailing import init_mail
 from .standard_views import init_standard_views
 from .template_filters import init_template_filters
 from .admin import init_admin
 from .security import init_security
-
-
-db = SQLAlchemy()
 
 
 def init_lbrc_flask(app, title):
