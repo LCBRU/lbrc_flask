@@ -6,8 +6,6 @@ from .template_filters import init_template_filters
 
 def init_lbrc_flask(app, title):
 
-    g.lbrc_flask_title = title
-    
     blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='/lbrc_flask')
     app.register_blueprint(blueprint)
 
@@ -15,3 +13,6 @@ def init_lbrc_flask(app, title):
     init_standard_views(app)
     init_template_filters(app)
 
+    @app.before_request
+    def get_current_user():
+        g.lbrc_flask_title = title
