@@ -62,5 +62,5 @@ def init_template_filters(app):
     def inject_now():
         return {
             'current_year': datetime.utcnow().strftime("%Y"),
-            'application_title': g.get('lbrc_flask_title')
+            'application_title': g.lbrc_flask_title
         }
