@@ -1,5 +1,5 @@
 from datetime import datetime, date
-from flask import current_app
+from flask import g
 
 
 def init_template_filters(app):
@@ -62,5 +62,5 @@ def init_template_filters(app):
     def inject_now():
         return {
             'current_year': datetime.utcnow().strftime("%Y"),
-            'application_title': current_app.g.get('lbrc_flask_title')
+            'application_title': g.get('lbrc_flask_title')
         }
