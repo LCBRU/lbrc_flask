@@ -1,6 +1,6 @@
 import os
 import traceback
-from flask import render_template, send_from_directory, current_app
+from flask import render_template, send_from_directory, current_app, g
 from .emailing import email
 
 
@@ -36,7 +36,7 @@ def init_standard_views(app):
         print(traceback.format_exc())
         app.logger.error(traceback.format_exc())
         email(
-            subject=current_app.config["ERROR_EMAIL_SUBJECT"],
+            subject=f"NIHR Leicester BRC {g.lbrc_flask_title} Error",
             message=traceback.format_exc(),
             recipients=current_app.config["ADMIN_EMAIL_ADDRESSES"].split(";"),
         )

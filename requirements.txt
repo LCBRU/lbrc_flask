@@ -2,3 +2,4 @@ Flask
 flask_mail
 flask_admin
 flask_sqlalchemy
+dotenv
