@@ -43,7 +43,7 @@
   </div>
 
   <div class="container">
-    {{ errors.render_errors() }}
+    {{ errors.render_errors(get_flashed_messages(with_categories=true)) }}
   </div>
         
   <div id="content" class="container">
