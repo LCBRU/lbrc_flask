@@ -1,1 +1,1 @@
-from tests.conftest_d.app_and_client import *
+from lbrc_flask.pytest.fixtures import *

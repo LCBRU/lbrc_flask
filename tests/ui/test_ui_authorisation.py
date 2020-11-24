@@ -1,7 +1,5 @@
 from flask.helpers import url_for
 import pytest
-from tests import login
-from lbrc_flask.database import db
 
 
 def test__missing_route(client):

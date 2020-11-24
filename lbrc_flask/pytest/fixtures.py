@@ -5,11 +5,11 @@ from flask.testing import FlaskClient
 from flask_login import login_required
 from faker import Faker
 from bs4 import BeautifulSoup
-from lbrc_flask.database import db
-from lbrc_flask.config import TestConfig
-from lbrc_flask.json import DateTimeEncoder
-from lbrc_flask import init_lbrc_flask
-from tests.faker import LbrcFlaskFakerProvider
+from ..database import db
+from ..config import TestConfig
+from ..json import DateTimeEncoder
+from .. import init_lbrc_flask
+from .faker import LbrcFlaskFakerProvider
 
 
 class CustomResponse(Response):
