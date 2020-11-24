@@ -2,4 +2,6 @@ Flask
 flask_mail
 flask_admin
 flask_sqlalchemy
-dotenv
+python-dotenv
+email_validator
+flask_security

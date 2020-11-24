@@ -32,7 +32,7 @@ class BaseConfig:
     SECURITY_RECOVERABLE = True
 
     # Users
-    ADMIN_EMAIL_ADDRESSES = os.environ["ADMIN_EMAIL_ADDRESSES"]
+    ADMIN_EMAIL_ADDRESSES = os.getenv("ADMIN_EMAIL_ADDRESSES", '')
 
     # Forms
     WTF_CSRF_ENABLED = True
@@ -51,7 +51,5 @@ class TestConfig(BaseConfig):
     # Security
     SECURITY_SEND_PASSWORD_CHANGE_EMAIL = False
 
-
-class TestConfigCRSF(TestConfig):
     # Forms
-    WTF_CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = False

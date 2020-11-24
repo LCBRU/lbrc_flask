@@ -15,7 +15,7 @@
       {% if current_user.is_active %}
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="navbar-brand fas fa-home" href="{{ url_for('ui.index') }}"></a>
+            <a class="navbar-brand fas fa-home" href="{{ url_for('index') }}"></a>
           </li>  
         </ul>
     
@@ -43,7 +43,10 @@
   </div>
 
   <div class="container">
-    {{ errors.render_errors(get_flashed_messages(with_categories=true)) }}
+    <div class="errors">
+      {{ errors.render_errors(get_flashed_messages(with_categories=true)) }}
+      {% block errors %}{% endblock %}
+    </div>
   </div>
         
   <div id="content" class="container">
