@@ -7,14 +7,14 @@ from .admin import init_admin
 from .security import init_security
 
 
-def init_lbrc_flask(app, title):
+def init_lbrc_flask(app, title, user_class, role_class):
 
     blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='/lbrc_flask')
     app.register_blueprint(blueprint)
 
     db.init_app(app)
     init_mail(app)
-    init_security(app)
+    init_security(app, user_class=user_class, role_class=role_class)
     init_standard_views(app)
     init_template_filters(app)
     init_admin(app, title)

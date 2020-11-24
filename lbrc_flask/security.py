@@ -155,8 +155,8 @@ class ChangePasswordForm(Form, PasswordFormMixin):
         return True
 
 
-def init_security(app):
-    user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+def init_security(app, user_class=User, role_class=Role):
+    user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
     Security(
         app,
         user_datastore,
