@@ -7,7 +7,7 @@ from .admin import init_admin
 from .security import init_security
 
 
-def init_lbrc_flask(app, title, user_class, role_class):
+def init_lbrc_flask(app, title, user_class=None, role_class=None):
 
     blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='/lbrc_flask')
     app.register_blueprint(blueprint)
