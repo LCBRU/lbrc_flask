@@ -38,7 +38,7 @@ class BaseConfig:
     WTF_CSRF_ENABLED = True
 
 
-class TestConfig(BaseConfig):
+class BaseTestConfig(BaseConfig):
     # Environment
     TESTING = True
 

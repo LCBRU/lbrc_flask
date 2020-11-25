@@ -6,7 +6,7 @@ from flask_login import login_required
 from faker import Faker
 from bs4 import BeautifulSoup
 from ..database import db
-from ..config import TestConfig
+from ..config import BaseTestConfig
 from ..json import DateTimeEncoder
 from .. import init_lbrc_flask
 from ..security import init_security, User, Role
@@ -53,7 +53,7 @@ class CustomClient(FlaskClient):
 @pytest.fixture(scope="function")
 def app():
     app = Flask(__name__)
-    app.config.from_object(TestConfig)
+    app.config.from_object(BaseTestConfig)
 
     with app.app_context():
         init_lbrc_flask(app, title='Requests')
