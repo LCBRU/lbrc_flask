@@ -9,6 +9,7 @@ from ..database import db
 from ..config import TestConfig
 from ..json import DateTimeEncoder
 from .. import init_lbrc_flask
+from ..security import init_security, User, Role
 from .faker import LbrcFlaskFakerProvider
 
 
@@ -56,6 +57,7 @@ def app():
 
     with app.app_context():
         init_lbrc_flask(app, title='Requests')
+        init_security(app, user_class=User, role_class=Role)
 
     @app.route('/')
     @login_required

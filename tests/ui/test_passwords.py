@@ -2,6 +2,7 @@
 
 import pytest
 from flask import url_for
+from flask_security import url_for_security
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.database import db
 
@@ -26,7 +27,7 @@ def test__passwords__change(client, faker, new_password, valid):
     db.session.commit()
 
     resp = client.post(
-        url_for("security.change_password"),
+        url_for_security("change_password"),
         data={
             "password": password,
             "new_password": new_password,
@@ -55,7 +56,7 @@ def test__passwords__change_wrong_old_password(client, faker):
     db.session.commit()
 
     resp = client.post(
-        url_for("security.change_password"),
+        url_for_security("change_password"),
         data={
             "password": wrong_password,
             "new_password": new_password,
@@ -79,7 +80,7 @@ def test__passwords__change_passwords_do_not_match(client, faker):
     db.session.commit()
 
     resp = client.post(
-        url_for("security.change_password"),
+        url_for_security("change_password"),
         data={
             "password": password,
             "new_password": new_password,
