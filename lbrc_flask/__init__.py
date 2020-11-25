@@ -3,8 +3,6 @@ from .database import db
 from .emailing import init_mail
 from .standard_views import init_standard_views
 from .template_filters import init_template_filters
-from .admin import init_admin
-from .security import init_security
 
 
 def init_lbrc_flask(app, title):
@@ -16,7 +14,6 @@ def init_lbrc_flask(app, title):
     init_mail(app)
     init_standard_views(app)
     init_template_filters(app)
-    init_admin(app, title)
 
     @app.before_request
     def get_current_user():
