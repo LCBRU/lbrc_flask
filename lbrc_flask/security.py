@@ -65,7 +65,16 @@ class User(db.Model, UserMixin):
     login_count = db.Column(db.Integer())
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     roles = db.relationship(
-        "Role", secondary=roles_users, backref=db.backref("users", lazy="dynamic")
+        "Role",
+        enable_typechecks=False, # Required to allow specific applications
+                                 # to override the Role class
+        secondary=roles_users,
+        backref=db.backref(
+            "users",
+            lazy="dynamic",
+            enable_typechecks=False, # Required to allow specific applications
+                                     # to override the User class
+        ),
     )
 
     @property
