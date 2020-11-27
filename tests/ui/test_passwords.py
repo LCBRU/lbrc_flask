@@ -36,7 +36,6 @@ def test__passwords__change(client, faker, new_password, valid):
     )
 
     if valid:
-        print(resp.soup)
         assert resp.status_code == 302
         assert resp.soup.find("div", "errors") is None
     else:
