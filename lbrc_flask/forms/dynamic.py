@@ -1,6 +1,112 @@
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
+from lbrc_flask.database import db
 from . import FlashingForm
+
+
+class FieldType(db.Model):
+
+    BOOLEAN = 'BooleanField'
+    INTEGER = 'IntegerField'
+    RADIO = 'RadioField'
+    STRING = 'StringField'
+    TEXTAREA = 'TextAreaField'
+    FILE = 'FileField'
+    MULTIPLE_FILE = 'MultipleFileField'
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String)
+    is_file = db.Column(db.Boolean)
+
+    @classmethod
+    def _get_field_type(cls, name):
+        return FieldType.query.filter_by(name=name).one()
+
+    @classmethod
+    def get_boolean(cls):
+        return cls._get_field_type(FieldType.BOOLEAN)
+
+    @classmethod
+    def get_integer(cls):
+        return cls._get_field_type(FieldType.INTEGER)
+
+    @classmethod
+    def get_radio(cls):
+        return cls._get_field_type(FieldType.RADIO)
+
+    @classmethod
+    def get_string(cls):
+        return cls._get_field_type(FieldType.STRING)
+
+    @classmethod
+    def get_textarea(cls):
+        return cls._get_field_type(FieldType.TEXTAREA)
+
+    @classmethod
+    def get_file(cls):
+        return cls._get_field_type(FieldType.FILE)
+
+    @classmethod
+    def get_multifile(cls):
+        return cls._get_field_type(FieldType.MULTIPLE_FILE)
+
+    def __str__(self):
+        return self.name
+
+
+class FieldTypeSetup():
+    def setup(self):
+        self._add_field_type(FieldType(name=FieldType.BOOLEAN))
+        self._add_field_type(FieldType(name=FieldType.INTEGER))
+        self._add_field_type(FieldType(name=FieldType.RADIO))
+        self._add_field_type(FieldType(name=FieldType.STRING))
+        self._add_field_type(FieldType(name=FieldType.TEXTAREA))
+        self._add_field_type(FieldType(name=FieldType.FILE, is_file=True))
+        self._add_field_type(FieldType(name=FieldType.MULTIPLE_FILE, is_file=True))
+
+    def _add_field_type(self, field_type):
+        if FieldType.query.filter_by(name=field_type.name).count() == 0:
+            db.session.add(field_type)
+
+class Field(db.Model):
+
+    id = db.Column(db.Integer(), primary_key=True)
+    order = db.Column(db.Integer())
+    field_type_id = db.Column(db.Integer(), db.ForeignKey(FieldType.id))
+    field_name = db.Column(db.String)
+    label = db.Column(db.String)
+    required = db.Column(db.Boolean, default=0)
+    max_length = db.Column(db.Integer(), default=0)
+    default = db.Column(db.String, default="")
+    choices = db.Column(db.String, default="")
+    allowed_file_extensions = db.Column(db.String, default="")
+    field_type = db.relationship(FieldType)
+    download_filename_format = db.Column(db.String, default="")
+    validation_regex = db.Column(db.String, default="")
+
+    def get_default(self):
+        if self.default == '':
+            return None
+        else:
+            return self.default
+
+    def get_choices(self):
+        return [(c, c) for c in self.choices.split("|")]
+
+    def get_allowed_file_extensions(self):
+        return self.allowed_file_extensions.split("|")
+    
+    def get_label(self):
+        if self.label:
+            return self.label
+        else:
+            return self.field_name
+
+    def __repr__(self):
+        return 'Field(field_name="{}", order="{}", field_type="{}")'.format(
+            self.order, self.field_name, self.field_type.name
+        )
+
 
 class FormBuilder:
 
