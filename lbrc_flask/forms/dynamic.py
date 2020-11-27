@@ -68,6 +68,7 @@ class FieldTypeSetup():
         if FieldType.query.filter_by(name=field_type.name).count() == 0:
             db.session.add(field_type)
 
+
 class Field(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
