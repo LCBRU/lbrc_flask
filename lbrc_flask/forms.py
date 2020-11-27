@@ -5,7 +5,7 @@ from wtforms import (
     StringField,
     HiddenField,
 )
-from wtforms.validators import Length, DataRequired, Optional
+from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 
 
@@ -74,8 +74,16 @@ class FormBuilder:
                 )
             )
 
+        if field.validation_regex:
+            kwargs["validators"].append(
+                Regexp(
+                    field.validation_regex,
+                    message="Field is not of the correct format",
+                )
+            )
+
         module = __import__("wtforms")
         class_ = getattr(module, field.field_type.name)
-        form_field = class_(field.field_name, **kwargs)
+        form_field = class_(field.get_label(), **kwargs)
 
         self._fields[field.field_name] = form_field
