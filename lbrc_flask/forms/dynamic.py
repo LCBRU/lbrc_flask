@@ -69,11 +69,22 @@ class FieldTypeSetup():
             db.session.add(field_type)
 
 
+class FieldGroup(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String)
+
+    def __str__(self):
+        return self.name
+
+
 class Field(db.Model):
 
     id = db.Column(db.Integer(), primary_key=True)
+    field_group_id = db.Column(db.Integer(), db.ForeignKey(FieldGroup.id))
+    field_group = db.relationship(FieldGroup, backref='fields')
     order = db.Column(db.Integer())
     field_type_id = db.Column(db.Integer(), db.ForeignKey(FieldType.id))
+    field_type = db.relationship(FieldType)
     field_name = db.Column(db.String)
     label = db.Column(db.String)
     required = db.Column(db.Boolean, default=0)
@@ -81,7 +92,6 @@ class Field(db.Model):
     default = db.Column(db.String, default="")
     choices = db.Column(db.String, default="")
     allowed_file_extensions = db.Column(db.String, default="")
-    field_type = db.relationship(FieldType)
     download_filename_format = db.Column(db.String, default="")
     validation_regex = db.Column(db.String, default="")
 
@@ -107,7 +117,6 @@ class Field(db.Model):
         return 'Field(field_name="{}", order="{}", field_type="{}")'.format(
             self.order, self.field_name, self.field_type.name
         )
-
 
 class FormBuilder:
 
