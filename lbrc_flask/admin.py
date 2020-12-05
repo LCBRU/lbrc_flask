@@ -9,7 +9,7 @@ class AdminCustomView(ModelView):
 
 
 def init_admin(app, title, views):
-    flask_admin = admin.Admin(app, name=f"NIHR Leicester BRC {title}", url="/admin")
+    flask_admin = admin.Admin(app, name="NIHR Leicester BRC {}".format(title), url="/admin")
 
     for v in views:
         flask_admin.add_view(v)
