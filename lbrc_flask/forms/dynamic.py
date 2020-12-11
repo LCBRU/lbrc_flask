@@ -176,6 +176,17 @@ class FormBuilder:
         self._fields[field.field_name] = form_field
 
 
+# Initialisation
+
+def init_dynamic_forms(app):
+    
+    @app.before_first_request
+    def init_data():
+        FieldTypeSetup().setup()
+
+        db.session.commit()
+
+
 # Admin Forms
 
 class FieldlineView(InlineFormAdmin):
@@ -196,5 +207,5 @@ class FieldGroupView(AdminCustomView):
     inline_models = (FieldlineView(Field),)
 
 
-def get_dynamic_forms_admin_forms(session):
-    return [FieldGroupView(FieldGroup, session)]
+def get_dynamic_forms_admin_forms():
+    return [FieldGroupView(FieldGroup, db.session)]
