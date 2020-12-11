@@ -33,10 +33,15 @@ def init_standard_views(app):
         """Catch internal exceptions and 500 errors, display
             a nice error page and log the error.
         """
+        if 'lbrc_flask_title' in g:
+            app_name = g.lbrc_flask_title
+        else:
+            app_name = 'Application'
+
         print(traceback.format_exc())
         app.logger.error(traceback.format_exc())
         email(
-            subject="NIHR Leicester BRC {} Error".format(g.lbrc_flask_title),
+            subject="NIHR Leicester BRC {} Error".format(app_name),
             message=traceback.format_exc(),
             recipients=current_app.config["ADMIN_EMAIL_ADDRESSES"].split(";"),
         )

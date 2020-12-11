@@ -8,7 +8,7 @@ class BaseConfig:
     # Environment
     TESTING = False
     DEBUG = os.getenv("DEBUG", "False") == 'True'
-    
+
     # Mail
     SMTP_SERVER = os.getenv("SMTP_SERVER", None)
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "lcbruit@leicester.ac.uk")
