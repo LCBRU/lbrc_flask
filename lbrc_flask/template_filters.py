@@ -60,7 +60,12 @@ def init_template_filters(app):
 
     @app.context_processor
     def inject_now():
+        if 'lbrc_flask_title' in g:
+            app_name = g.lbrc_flask_title
+        else:
+            app_name = 'Application'
+
         return {
             'current_year': datetime.utcnow().strftime("%Y"),
-            'application_title': g.lbrc_flask_title
+            'application_title': app_name
         }
