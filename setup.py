@@ -9,4 +9,13 @@ setup(name='lbrc_flask',
       author_email='rabramley@gmail.com',
       url='https://github.com/LCBRU/lbrc_flask/',
       packages=['lbrc_flask'],
+      install_requires=[
+            'Flask',
+            'flask_mail',
+            'flask_admin',
+            'flask_sqlalchemy',
+            'python-dotenv',
+            'email_validator',
+            'flask_security',
+      ],
      )

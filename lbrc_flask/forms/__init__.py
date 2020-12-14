@@ -4,8 +4,26 @@ from wtforms import (
     IntegerField,
     StringField,
     HiddenField,
+    Field,
 )
 from wtforms.validators import Length, DataRequired
+from wtforms.widgets import html_params
+
+
+class DescriptionField(Field):
+
+    def __init__(self, label=None, validators=None, description=None, **kwargs):
+        super().__init__(label, validators, **kwargs)
+        if description is not None:
+            self.description = description
+
+    def widget(self, field, **kwargs):
+        field_id = kwargs.pop('id', field.id)
+        html = [u'<p {}>{}</p>'.format(html_params(id=field_id), field.description)]
+        return u''.join(html)
+
+    def process_formdata(self, data):
+        pass
 
 
 class FlashingForm(FlaskForm):

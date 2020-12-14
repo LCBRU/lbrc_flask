@@ -1,7 +1,1 @@
-Flask
-flask_mail
-flask_admin
-flask_sqlalchemy
-python-dotenv
-email_validator
-flask_security
+.

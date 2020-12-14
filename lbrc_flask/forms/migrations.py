@@ -3,11 +3,11 @@ from sqlalchemy import (
     Table,
     Column,
     Integer,
-    DateTime,
     NVARCHAR,
     Boolean,
     ForeignKey,
 )
+from sqlalchemy.sql.sqltypes import UnicodeText
 
 
 def get_field_table(meta):
@@ -30,6 +30,7 @@ def get_field_table(meta):
         Column("allowed_file_extensions", NVARCHAR(200)),
         Column("download_filename_format", NVARCHAR(200)),
         Column("validation_regex", NVARCHAR(500)),
+        Column("description", UnicodeText),
     )
 
 

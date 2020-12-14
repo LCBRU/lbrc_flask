@@ -4,7 +4,7 @@ from wtforms import validators
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
-from . import FlashingForm
+from . import DescriptionField, FlashingForm
 
 
 class FieldType(db.Model):
@@ -16,6 +16,7 @@ class FieldType(db.Model):
     TEXTAREA = 'TextAreaField'
     FILE = 'FileField'
     MULTIPLE_FILE = 'MultipleFileField'
+    DESCRIPTION = 'DescriptionField'
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String)
@@ -53,6 +54,10 @@ class FieldType(db.Model):
     def get_multifile(cls):
         return cls._get_field_type(FieldType.MULTIPLE_FILE)
 
+    @classmethod
+    def get_description(cls):
+        return cls._get_field_type(FieldType.DESCRIPTION)
+
     def __str__(self):
         return self.name
 
@@ -66,6 +71,7 @@ class FieldTypeSetup():
         self._add_field_type(FieldType(name=FieldType.TEXTAREA))
         self._add_field_type(FieldType(name=FieldType.FILE, is_file=True))
         self._add_field_type(FieldType(name=FieldType.MULTIPLE_FILE, is_file=True))
+        self._add_field_type(FieldType(name=FieldType.DESCRIPTION))
 
     def _add_field_type(self, field_type):
         if FieldType.query.filter_by(name=field_type.name).count() == 0:
@@ -97,6 +103,7 @@ class Field(db.Model):
     allowed_file_extensions = db.Column(db.String, default="")
     download_filename_format = db.Column(db.String, default="")
     validation_regex = db.Column(db.String, default="")
+    description = db.Column(db.UnicodeText, default="")
 
     def get_default(self):
         if self.default == '':
@@ -169,9 +176,12 @@ class FormBuilder:
                 )
             )
 
-        module = __import__("wtforms")
-        class_ = getattr(module, field.field_type.name)
-        form_field = class_(field.get_label(), **kwargs)
+        if field.field_type == FieldType.get_description():
+            form_field = DescriptionField(field.get_label(), description=field.description, **kwargs)
+        else:
+            module = __import__("wtforms")
+            class_ = getattr(module, field.field_type.name)
+            form_field = class_(field.get_label(), **kwargs)
 
         self._fields[field.field_name] = form_field
 

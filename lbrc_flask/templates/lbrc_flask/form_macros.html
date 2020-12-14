@@ -2,12 +2,14 @@
   <div class="row">
     <div class="form-group{% if field.errors %} has-error{%endif%} col-md-offset-1 col-md-10">
         {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
+        {% elif field.type == "DescriptionField" %}
+          {{ render_field_control(field, **kwargs) }}
         {% elif field.type == "BooleanField" %}
-            {{ field.label(class="control-label", text=label) }}{{ render_checkbox_field_control(field, **kwargs) }}
+          {{ field.label(class="control-label", text=label) }}{{ render_checkbox_field_control(field, **kwargs) }}
         {% elif field.type == "RadioField" %}
-            {{ field.label(class="control-label", text=label) }}{{ render_radio_field_control(field, **kwargs) }}
+          {{ field.label(class="control-label", text=label) }}{{ render_radio_field_control(field, **kwargs) }}
         {% else %}
-            {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, **kwargs) }}
+          {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, **kwargs) }}
         {% endif %}
     </div>
   </div>
