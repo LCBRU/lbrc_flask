@@ -17,5 +17,6 @@ setup(name='lbrc_flask',
             'python-dotenv',
             'email_validator',
             'flask_security',
+            'markdown',
       ],
      )

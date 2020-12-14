@@ -1,3 +1,4 @@
+import markdown
 from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import (
@@ -19,7 +20,7 @@ class DescriptionField(Field):
 
     def widget(self, field, **kwargs):
         field_id = kwargs.pop('id', field.id)
-        html = [u'<p {}>{}</p>'.format(html_params(id=field_id), field.description)]
+        html = [u'<p {}>{}</p>'.format(html_params(id=field_id), markdown.markdown(field.description))]
         return u''.join(html)
 
     def process_formdata(self, data):

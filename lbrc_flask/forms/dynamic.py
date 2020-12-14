@@ -1,4 +1,4 @@
-from lbrc_flask.admin import AdminCustomView, init_admin as flask_init_admin
+from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
 from wtforms import validators
 from wtforms.validators import Length, DataRequired, Optional, Regexp
