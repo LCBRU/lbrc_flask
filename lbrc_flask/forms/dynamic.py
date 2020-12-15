@@ -130,8 +130,11 @@ class Field(db.Model):
 
 class FormBuilder:
 
-    def __init__(self):
+    def __init__(self, field_group=None):
         self._fields = {}
+
+        if field_group:
+            self.add_field_group(field_group)
 
     def get_form(self):
         class DynamicForm(FlashingForm):
@@ -141,6 +144,10 @@ class FormBuilder:
             setattr(DynamicForm, name, field)
 
         return DynamicForm()
+    
+    def add_field_group(self, field_group):
+        for f in field_group.fields:
+            self.add_field(f)
 
     def add_field(self, field):
         form_field = None
