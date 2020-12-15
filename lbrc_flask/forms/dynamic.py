@@ -203,6 +203,7 @@ class FieldlineView(InlineFormAdmin):
     form_args = dict(
         field_name=dict(validators=[validators.DataRequired()]),
         order=dict(validators=[validators.DataRequired()]),
+        field_type=dict(query_factory=lambda: FieldType.query.order_by(FieldType.name)),
     )
 
 
