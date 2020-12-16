@@ -70,3 +70,10 @@ def drop_security_tables(migrate_engine):
     Table("roles_users", meta, autoload=True).drop()
     Table("role", meta, autoload=True).drop()
     Table("user", meta, autoload=True).drop()
+
+
+def get_audit_mixin_columns():
+    return [
+        Column("last_update_date", DateTime, nullable=False),
+        Column("last_update_by", NVARCHAR(500), nullable=False),
+    ]

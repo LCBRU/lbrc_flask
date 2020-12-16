@@ -16,7 +16,34 @@ from flask_security.utils import verify_and_update_password, get_message
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
-from .database import db
+from sqlalchemy.ext.declarative import declared_attr
+from ..database import db
+
+
+class AuditMixin(object):
+
+    @staticmethod
+    def current_user_email():
+        if current_user:
+            return current_user.email
+        else:
+            return '[None]'
+
+    last_update_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+    )
+
+    @declared_attr
+    def last_update_by(cls):
+        return db.Column(
+            db.String,
+            nullable=False,
+            default=AuditMixin.current_user_email,
+            onupdate=AuditMixin.current_user_email,
+        )
 
 
 def random_password():

@@ -85,6 +85,9 @@ class FieldGroup(db.Model):
     def __str__(self):
         return self.name
 
+    def get_field_for_field_name(self, field_name):
+        return {f.field_name: f for f in self.fields}.get(field_name)
+
 
 class Field(db.Model):
 
