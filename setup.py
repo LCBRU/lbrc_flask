@@ -18,5 +18,6 @@ setup(name='lbrc_flask',
             'email_validator',
             'flask_security',
             'markdown',
+            'arrow',
       ],
      )
