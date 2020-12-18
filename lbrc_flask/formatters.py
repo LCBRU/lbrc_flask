@@ -35,7 +35,7 @@ def format_date(value):
 
 def humanize_date(value):
     if value:
-        return arrow.get(value).to('Europe/London').humanize(granuality="day")
+        return arrow.get(value).to('Europe/London').humanize(granularity="day")
     else:
         return ""
 
