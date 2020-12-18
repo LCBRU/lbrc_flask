@@ -141,6 +141,20 @@ section {
   break-inside: avoid;
 }
 
+/* Recolour primary badge */ 
+.badge-primary {
+  color: #fff;
+  background-color: #46a86c;
+  border-color: #46a86c;
+}
+
+/* Recolour danger badge */ 
+.badge-danger {
+  color: #fff;
+  background-color: #EA5D4E;
+  border-color: #EA5D4E;
+}
+
 /* Recolour primary buttons */ 
 .btn-primary {
   color: #fff;
