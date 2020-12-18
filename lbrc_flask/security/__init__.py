@@ -46,6 +46,20 @@ class AuditMixin(object):
         )
 
 
+    created_date = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+    )
+
+    @declared_attr
+    def created_by(cls):
+        return db.Column(
+            db.String,
+            nullable=False,
+            default=AuditMixin.current_user_email,
+        )
+
 def random_password():
     return "".join(
         random.SystemRandom().choice(

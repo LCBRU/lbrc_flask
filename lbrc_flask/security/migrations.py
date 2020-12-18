@@ -76,4 +76,6 @@ def get_audit_mixin_columns():
     return [
         Column("last_update_date", DateTime, nullable=False),
         Column("last_update_by", NVARCHAR(500), nullable=False),
+        Column("created_date", DateTime, nullable=False),
+        Column("created_by", NVARCHAR(500), nullable=False),
     ]

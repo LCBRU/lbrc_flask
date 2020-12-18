@@ -1,3 +1,4 @@
+from wtforms.fields.core import IntegerField
 from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
 from wtforms import validators
@@ -5,6 +6,7 @@ from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
 from . import DescriptionField, FlashingForm
+from ..formatters import format_number, format_yesno
 
 
 class FieldType(db.Model):
@@ -21,6 +23,14 @@ class FieldType(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String)
     is_file = db.Column(db.Boolean)
+
+    def format_value(self, value):
+        if self.name == FieldType.INTEGER:
+            return format_number(value)
+        elif self.name == FieldType.BOOLEAN:
+            return format_yesno(value)
+        else:
+            return value
 
     @classmethod
     def _get_field_type(cls, name):
@@ -108,6 +118,9 @@ class Field(db.Model):
     validation_regex = db.Column(db.String, default="")
     description = db.Column(db.UnicodeText, default="")
 
+    def format_value(self, value):
+        return self.field_type.format_value(value)
+
     def get_default(self):
         if self.default == '':
             return None
@@ -193,8 +206,10 @@ class FormBuilder:
             class_ = getattr(module, field.field_type.name)
             form_field = class_(field.get_label(), **kwargs)
 
-        self._fields[field.field_name] = form_field
+        self.add_form_field(field.field_name, form_field)
 
+    def add_form_field(self, field_name, form_field):
+        self._fields[field_name] = form_field
 
 # Initialisation
 

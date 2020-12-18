@@ -1,39 +1,32 @@
-from datetime import datetime, date
+from datetime import datetime
 from flask import g
+from .formatters import format_currency, format_date, format_datetime, format_number, format_yesno
 
 
 def init_template_filters(app):
     @app.template_filter("yes_no")
     def yesno_format(value):
-        if value is None:
-            return ""
-        if value:
-            return "Yes"
-        else:
-            return "No"
+        return format_yesno(value)
 
     @app.template_filter("datetime_format")
     def datetime_format(value):
-        if value:
-            return value.strftime("%c")
-        else:
-            return ""
-
-    @app.template_filter("nbsp")
-    def nbsp(value):
-        if value:
-            return value.replace(' ', '\xa0')
-        else:
-            return ""
+        return format_datetime(value)
 
     @app.template_filter("date_format")
     def date_format(value):
-        if value is None:
-            return ''
-        if value and (isinstance(value, date) or isinstance(value, datetime)):
-            return value.strftime("%-d %b %Y")
-        else:
-            return value
+        return format_date(value)
+
+    @app.template_filter("currency")
+    def currency_format(value):
+        return format_currency(value)
+
+    @app.template_filter("separated_number")
+    def number_format(value):
+        return format_number(value)
+
+    @app.template_filter("title_case")
+    def title_case(value):
+        return value.title()
 
     @app.template_filter("blank_if_none")
     def blank_if_none(value):
@@ -43,20 +36,12 @@ def init_template_filters(app):
     def default_if_none(value, default):
         return value or default
 
-    @app.template_filter("currency")
-    def currency(value):
+    @app.template_filter("nbsp")
+    def nbsp(value):
         if value:
-            return "£{:.2f}".format(value)
+            return value.replace(' ', '\xa0')
         else:
             return ""
-
-    @app.template_filter("separated_number")
-    def currency(value):
-        return "{:,}".format(value)
-
-    @app.template_filter("title_case")
-    def currency(value):
-        return value.title()
 
     @app.context_processor
     def inject_now():

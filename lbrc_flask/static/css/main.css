@@ -20,6 +20,10 @@ a:hover {
   display: block;
 }
 
+.dropdown-item:active {
+  background-color: #46a86c;
+}
+
 .page-link {
   color: #46a86c;
 }
@@ -272,20 +276,20 @@ dd {
   font-size: 20px;
 }
 
-.upload_details h1 {
+.summary_details h1 {
   font-size: 20px;
   color: #23527c;
   font-weight: bold;
   margin: 0;
 }
 
-.upload_details h2 {
+.summary_details h2 {
   font-size: 14px;
   color: #666;
   margin: 0;
 }
 
-.upload_details h3 {
+.summary_details h3 {
   font-size: 16px;
   color: #23527c;
   font-weight: bold;
