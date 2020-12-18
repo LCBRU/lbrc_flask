@@ -268,14 +268,6 @@ dd {
   font-size: 80%;
 }
 
-.study_list li {
-  list-style: none;
-}
-
-.study_list a {
-  font-size: 20px;
-}
-
 .summary_details h1 {
   font-size: 20px;
   color: #23527c;
