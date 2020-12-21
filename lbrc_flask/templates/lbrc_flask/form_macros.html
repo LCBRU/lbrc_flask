@@ -95,7 +95,7 @@
   {% if searchForm | rejectattr("type", "ne", "SelectField") | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
-        {% for field in searchForm | rejectattr("type", "ne", "SelectField") %}
+        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField") %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col">
             <div>{{ field.label.text | nbsp}}</div>
             <div>{{ field(**kwargs)|safe }}</div>
