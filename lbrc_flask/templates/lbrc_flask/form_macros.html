@@ -1,6 +1,6 @@
 {% macro render_field(field, label=None) %}
-  <div class="row">
-    <div class="form-group{% if field.errors %} has-error{%endif%} col-md-offset-1 col-md-10">
+  <div>
+    <div class="form-group{% if field.errors %} has-error{%endif%}">
         {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
         {% elif field.type == "DescriptionField" %}
           {{ render_field_control(field, **kwargs) }}
