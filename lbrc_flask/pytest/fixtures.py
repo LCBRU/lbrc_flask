@@ -104,6 +104,7 @@ def initialised_app(request, app):
 @pytest.yield_fixture(scope="function")
 def client(initialised_app):
     client = initialised_app.test_client()
+    client.get('/') # Allow initialisation on first request
 
     yield client
 
