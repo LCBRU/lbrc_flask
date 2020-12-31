@@ -1,8 +1,8 @@
 {% extends "lbrc_flask/skeleton.html" %}
 
-{% block base_content %}NIHR Leicester BRC {{ application_title }}{% endblock %}
+{% block title %}NIHR Leicester BRC {{ application_title }}{% endblock %}
 
-{% block css %}
+{% block base_css %}
   <link href="{{ url_for('lbrc_flask.static', filename='css/main.css', ver=1) }}" rel="stylesheet">
   {% block css %}{% endblock %}
 {% endblock %}
