@@ -1,3 +1,4 @@
+import arrow
 from datetime import datetime, date
 
 def format_yesno(value):
@@ -18,6 +19,12 @@ def format_datetime(value):
     else:
         return ""
 
+def humanize_datetime(value):
+    if value:
+        return arrow.get(value).to('Europe/London').humanize()
+    else:
+        return ""
+
 def format_date(value):
     if value is None:
         return ''
@@ -25,6 +32,12 @@ def format_date(value):
         return value.strftime("%-d %b %Y")
     else:
         return value
+
+def humanize_date(value):
+    if value:
+        return arrow.get(value).to('Europe/London').humanize(granularity="day")
+    else:
+        return ""
 
 def format_currency(value):
     if value:

@@ -1,6 +1,7 @@
 import random
 import string
 from datetime import datetime
+from flask.globals import current_app
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.core import RoleMixin, UserMixin
 from flask_security.forms import (
@@ -24,7 +25,7 @@ class AuditMixin(object):
 
     @staticmethod
     def current_user_email():
-        if current_user:
+        if current_user and hasattr(current_user, 'email'):
             return current_user.email
         else:
             return '[None]'

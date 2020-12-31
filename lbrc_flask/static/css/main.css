@@ -141,6 +141,20 @@ section {
   break-inside: avoid;
 }
 
+/* Recolour primary badge */ 
+.badge-primary {
+  color: #fff;
+  background-color: #46a86c;
+  border-color: #46a86c;
+}
+
+/* Recolour danger badge */ 
+.badge-danger {
+  color: #fff;
+  background-color: #EA5D4E;
+  border-color: #EA5D4E;
+}
+
 /* Recolour primary buttons */ 
 .btn-primary {
   color: #fff;
@@ -331,6 +345,10 @@ a.fas, a.fas:link, a.fas:hover {
 .search-filters {
   padding: 10px;
   background-color: #f1f1f1;
+}
+
+.search-filters select{
+  width: 100%;
 }
 
 /** SPINNER CREATION **/

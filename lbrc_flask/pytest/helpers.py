@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 from lbrc_flask.database import db
+from flask_login import login_user
 
 
 def login(client, faker):
@@ -7,6 +8,16 @@ def login(client, faker):
     db.session.add(u)
     db.session.commit()
 
+    with client.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True # https://flask-login.readthedocs.org/en/latest/#fresh-logins
+    
+    # Some stuff is created on first request, so do that
+    client.get("/")
+
+    # Login for access to functions directly
+    login_user(u)
+    
     resp = client.get("/login")
     soup = BeautifulSoup(resp.data, "html.parser")
 
@@ -22,3 +33,21 @@ def login(client, faker):
     client.post("/login", data=data, follow_redirects=True)
 
     return u
+
+
+def get_test_field_group(faker, **kwargs):
+    fg = faker.field_group_details(**kwargs)
+
+    db.session.add(fg)
+    db.session.commit()
+
+    return fg
+
+
+def get_test_field(faker, **kwargs):
+    f = faker.field_details(**kwargs)
+
+    db.session.add(f)
+    db.session.commit()
+
+    return f
