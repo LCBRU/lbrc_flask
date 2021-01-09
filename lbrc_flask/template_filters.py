@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import g
+from flask import g, request
 from .formatters import format_currency, format_date, format_datetime, format_number, format_yesno, humanize_datetime, humanize_date
 
 
@@ -52,7 +52,7 @@ def init_template_filters(app):
             return ""
 
     @app.context_processor
-    def inject_now():
+    def inject_studd():
         if 'lbrc_flask_title' in g:
             app_name = g.lbrc_flask_title
         else:
@@ -60,5 +60,6 @@ def init_template_filters(app):
 
         return {
             'current_year': datetime.utcnow().strftime("%Y"),
-            'application_title': app_name
+            'application_title': app_name,
+            'current_endpoint': request.endpoint,
         }
