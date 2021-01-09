@@ -79,8 +79,15 @@
 
     <div class="input-group-append">
       {% for key, value in buttons.items() %}
+
+        {% set url="" %}
+
+        {% if value | length > 0 %}
+            {% set url=url_for(value, **kwargs) %}
+        {% endif %}
+  
         <span class="input-group-text">
-          <a href="{{ url_for(value, **kwargs) }}">{{ key }}</a>
+          <a href="{{ url }}">{{ key }}</a>
         </span>
       {% endfor %}
       <span class="input-group-text">
