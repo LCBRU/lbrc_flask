@@ -13,7 +13,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- Fonts -->
-    <link rel='stylesheet' id='megamenu-google-fonts-css'  href='//fonts.googleapis.com/css?family=Lato%3A400%2C700&#038;ver=5.2.4' type='text/css' media='all' />
+    <link rel='stylesheet' id='megamenu-google-fonts-css' href='//fonts.googleapis.com/css?family=Lato%3A400%2C700&#038;ver=5.2.4' type='text/css' media='all' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" crossorigin="anonymous">
     
     <!-- styles -->
@@ -23,6 +23,7 @@
 
     {% block icons %}{% endblock %}
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.5.0/fetch.min.js" integrity="sha512-TXERecoxO85MPkCFqSG3LSe5nVimbZddhrPP2PwSMH5C5+kIoXi30bm1RgBckHQMkNCZN/i5FvHIvJuytp6ECw==" crossorigin="anonymous"></script>
     <!--[if lt IE 9]>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
@@ -37,6 +38,9 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Common Functions -->
+    <script src="{{ url_for('lbrc_flask.static', filename='js/lbrc_flask.js', ver=1) }}"></script>
 
     <!-- Forms -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
