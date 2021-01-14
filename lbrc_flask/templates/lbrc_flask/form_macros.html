@@ -68,6 +68,7 @@
     <div class="col">
       <div class="input-group">
         {{ searchForm.search(class="form-control", placeholder=placeholder) | safe }}
+
         {% for field in searchForm %}
           {% if field.type == "BooleanField" %}
             <div class="input-group-append">
@@ -80,30 +81,29 @@
         {% endfor %}
     
         <div class="input-group-append">
-    
           <span class="input-group-text">
               <a href="{{ url_for(searchview, **kwargs) }}">Clear Search</a>
           </span>
-    
         </div>
     
         <div class="input-group-append">
           <button type="submit" class="btn btn-primary">Search</button>
         </div>
-    
+
       </div>
     </div>
+
     <div>
       {% for b in buttons %}
-    
-      {% set url="" %}
 
-      {% if b['endpoint'] | length > 0 %}
-          {% set url=url_for(b['endpoint'], **kwargs) %}
-      {% endif %}
+        {% set url="" %}
 
-      <a class="btn btn-primary" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
-    {% endfor %}
+        {% if b['endpoint'] | length > 0 %}
+            {% set url=url_for(b['endpoint'], **kwargs) %}
+        {% endif %}
+
+        <a class="btn btn-primary" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
+      {% endfor %}
 
     </div>
   </div>
