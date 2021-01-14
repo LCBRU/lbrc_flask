@@ -1,7 +1,7 @@
 {% macro render_nav_item(endpoint, name) %}
     {% set active_class="" %}
 
-    {% if endpoint == current_endpoint %}
+    {% if endpoint == request.endpoint %}
         {% set active_class="active" %}
     {% endif %}
 

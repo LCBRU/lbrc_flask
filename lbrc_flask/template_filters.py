@@ -61,5 +61,4 @@ def init_template_filters(app):
         return {
             'current_year': datetime.utcnow().strftime("%Y"),
             'application_title': app_name,
-            'current_endpoint': request.endpoint,
         }

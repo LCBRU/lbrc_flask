@@ -101,6 +101,9 @@
         {% if b['endpoint'] | length > 0 %}
             {% set url=url_for(b['endpoint'], **kwargs) %}
         {% endif %}
+        {% if b['url'] | length > 0 %}
+            {% set url=b['url'] %}
+        {% endif %}
 
         <a class="btn btn-primary" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
       {% endfor %}
