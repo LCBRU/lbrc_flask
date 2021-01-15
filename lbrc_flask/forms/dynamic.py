@@ -106,7 +106,7 @@ class Field(db.Model):
     field_group = db.relationship(FieldGroup, backref='fields')
     order = db.Column(db.Integer())
     field_type_id = db.Column(db.Integer(), db.ForeignKey(FieldType.id))
-    field_type = db.relationship(FieldType)
+    field_type = db.relationship(FieldType, lazy="joined")
     field_name = db.Column(db.String)
     label = db.Column(db.String)
     required = db.Column(db.Boolean, default=0)
