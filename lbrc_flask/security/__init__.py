@@ -108,6 +108,7 @@ class User(db.Model, UserMixin):
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     roles = db.relationship(
         "Role",
+        lazy="joined",
         enable_typechecks=False, # Required to allow specific applications
                                  # to override the Role class
         secondary=roles_users,
