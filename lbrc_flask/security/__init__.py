@@ -21,6 +21,10 @@ from sqlalchemy.ext.declarative import declared_attr
 from ..database import db
 
 
+def current_user_id():
+    return current_user.id
+
+
 class AuditMixin(object):
 
     @staticmethod

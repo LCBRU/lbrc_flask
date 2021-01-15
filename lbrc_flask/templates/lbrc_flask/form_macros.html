@@ -31,11 +31,14 @@
 {% endmacro %}
 
 
-{% macro render_button_bar(cancelview, submit_label="Save", cancelviewparams={}) %}
+{% macro render_button_bar(cancelview, submit_label="Save", cancelviewparams={}, cancel_url='') %}
       <div class="form-group text-right">
           <div>
               {% if cancelview %}
                 <a href="{{ url_for(cancelview, **cancelviewparams) }}" class="btn btn-default" role="button">Cancel</a>
+              {% endif %}
+              {% if cancel_url | length > 0 %}
+                <a href="{{ cancel_url }}" class="btn btn-default" role="button">Cancel</a>
               {% endif %}
               <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
           </div>

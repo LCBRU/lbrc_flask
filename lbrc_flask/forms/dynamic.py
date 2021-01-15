@@ -159,7 +159,7 @@ class FormBuilder:
         for name, field in self._fields.items():
             setattr(DynamicForm, name, field)
 
-        return DynamicForm()
+        return DynamicForm
     
     def add_field_group(self, field_group):
         for f in field_group.fields:
