@@ -66,14 +66,15 @@ def assert__error__required_field(soup, field_name):
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
     assert response.status_code == status.HTTP_302_FOUND
 
+    print(response.location)
+    print(url_for(endpoint, _external=True, **kwargs))
     if endpoint:
         assert response.location == url_for(endpoint, _external=True, **kwargs)
     if url:
         assert response.location == url
 
 
-def assert__requires_login(client, endpoint, post=False, **kwargs):
-    url = url_for(endpoint, **kwargs)
+def assert__requires_login(client, url, post=False):
     if post:
         resp = client.post(url)
     else:
