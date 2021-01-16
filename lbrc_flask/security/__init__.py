@@ -1,7 +1,6 @@
 import random
 import string
 from datetime import datetime
-from flask.globals import current_app
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_security.core import RoleMixin, UserMixin
 from flask_security.forms import (
@@ -18,6 +17,7 @@ from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
 from sqlalchemy.ext.declarative import declared_attr
+from lbrc_flask.model import CommonMixin
 from ..database import db
 
 
@@ -77,7 +77,7 @@ def random_password():
     )
 
 
-class Role(db.Model, RoleMixin):
+class Role(db.Model, RoleMixin, CommonMixin):
     ADMIN_ROLENAME = "admin"
 
     id = db.Column(db.Integer(), primary_key=True)
@@ -96,7 +96,7 @@ roles_users = db.Table(
 )
 
 
-class User(db.Model, UserMixin):
+class User(db.Model, UserMixin, CommonMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255), nullable=False, default=random_password)
@@ -113,14 +113,14 @@ class User(db.Model, UserMixin):
     roles = db.relationship(
         "Role",
         lazy="joined",
-        enable_typechecks=False, # Required to allow specific applications
-                                 # to override the Role class
+        enable_typechecks=False,    # Required to allow specific applications
+                                    # to override the Role class
         secondary=roles_users,
         backref=db.backref(
             "users",
             lazy="dynamic",
-            enable_typechecks=False, # Required to allow specific applications
-                                     # to override the User class
+            enable_typechecks=False,    # Required to allow specific applications
+                                        # to override the User class
         ),
     )
 

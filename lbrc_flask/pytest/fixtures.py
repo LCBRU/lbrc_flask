@@ -85,7 +85,7 @@ def app():
     return app
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def initialised_app(request, app):
     app_crsf = request.node.get_closest_marker("app_crsf")
     if app_crsf is not None:
@@ -101,7 +101,7 @@ def initialised_app(request, app):
     context.pop()
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def client(initialised_app):
     client = initialised_app.test_client()
     client.get('/') # Allow initialisation on first request
@@ -109,7 +109,7 @@ def client(initialised_app):
     yield client
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def faker():
     result = Faker("en_GB")
     result.add_provider(LbrcFlaskFakerProvider)
