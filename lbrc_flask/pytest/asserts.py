@@ -1,5 +1,8 @@
 import re
+
+from flask import url_for
 from lbrc_flask.pytest.helpers import login
+from flask_api import status
 
 
 def _assert_html_standards(soup):
@@ -55,5 +58,25 @@ def assert__error__message(soup, message):
     rx = re.compile(message, re.IGNORECASE)
     assert rx.search(errors) is not None
 
+
 def assert__error__required_field(soup, field_name):
     assert__error__message(soup, "Error in the {} field - This field is required.".format(field_name))
+
+
+def assert__redirect(response, endpoint=None, url=None, **kwargs):
+    assert response.status_code == status.HTTP_302_FOUND
+
+    if endpoint:
+        assert response.location == url_for(endpoint, _external=True, **kwargs)
+    if url:
+        assert response.location == url
+
+
+def assert__requires_login(client, endpoint, post=False, **kwargs):
+    url = url_for(endpoint, **kwargs)
+    if post:
+        resp = client.post(url)
+    else:
+        resp = client.get(url)
+
+    assert__redirect(resp, 'security.login', next=url)
