@@ -1,7 +1,7 @@
 from wtforms.fields.core import IntegerField
 from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
-from wtforms import validators
+from wtforms import fields, validators
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
@@ -31,6 +31,43 @@ class FieldType(db.Model):
             return format_yesno(value)
         else:
             return value
+
+    @property
+    def html_tag(self):
+        if self.name in [FieldType.BOOLEAN, FieldType.INTEGER, FieldType.STRING, FieldType.FILE, FieldType.MULTIPLE_FILE]:
+            return 'input'
+        elif self.name == FieldType.DESCRIPTION:
+            return 'p'
+        elif self.name == FieldType.RADIO:
+            return 'ul'
+        elif self.name == FieldType.TEXTAREA:
+            return 'textarea'
+
+    @property
+    def html_input_type(self):
+        if self.name == FieldType.BOOLEAN:
+            return 'checkbox'
+        elif self.name == FieldType.INTEGER:
+            return 'text'
+        elif self.name == FieldType.STRING:
+            return 'text'
+        elif self.name == FieldType.FILE:
+            return 'file'
+        elif self.name == FieldType.MULTIPLE_FILE:
+            return 'file'
+
+    @staticmethod
+    def all_field_type_name():
+        return [
+            FieldType.BOOLEAN,
+            FieldType.DESCRIPTION,
+            FieldType.FILE,
+            FieldType.INTEGER,
+            FieldType.MULTIPLE_FILE,
+            FieldType.RADIO,
+            FieldType.STRING,
+            FieldType.TEXTAREA,
+        ]
 
     @classmethod
     def _get_field_type(cls, name):
