@@ -22,6 +22,9 @@ from ..database import db
 
 
 def current_user_id():
+    print('!'* 100)
+    print(current_user.id)
+    print('!'* 100)
     return current_user.id
 
 
