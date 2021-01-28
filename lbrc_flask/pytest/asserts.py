@@ -28,16 +28,16 @@ def _assert_csrf_token(soup):
 
 
 def _assert_basic_navigation(soup, user):
-    soup.nav is not None
-    soup.nav.find("a", href="/") is not None
-    soup.nav.find("a", string=user.full_name) is not None
-    soup.nav.find("a", string=user.full_name) is not None
-    soup.nav.find("a", href="/change") is not None
-    soup.nav.find("a", href="/logout") is not None
+    assert soup.nav is not None
+    assert soup.nav.find("a", href="/") is not None
+    assert soup.nav.find("a", string=user.full_name) is not None
+    assert soup.nav.find("a", href="/change") is not None
+    assert soup.nav.find("a", href="/logout") is not None
 
 
-def assert__html_standards(client, faker, path):
-    user = login(client, faker)
+def assert__html_standards(client, faker, path, user=None):
+    if user is None:
+        user = login(client, faker)
 
     resp = client.get(path)
 
@@ -49,6 +49,8 @@ def assert__form_standards(client, faker, path):
     user = login(client, faker)
 
     resp = client.get(path)
+
+    print(resp.soup)
 
     _assert_csrf_token(resp.soup)
 
@@ -66,8 +68,6 @@ def assert__error__required_field(soup, field_name):
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
     assert response.status_code == status.HTTP_302_FOUND
 
-    print(response.location)
-    print(url_for(endpoint, _external=True, **kwargs))
     if endpoint:
         assert response.location == url_for(endpoint, _external=True, **kwargs)
     if url:
