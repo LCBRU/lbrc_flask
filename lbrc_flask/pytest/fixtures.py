@@ -1,6 +1,6 @@
 import json
 import pytest
-from flask import Response, Flask, render_template_string, url_for, redirect
+from flask import Response, Flask, Blueprint, render_template_string, url_for, redirect
 from flask.testing import FlaskClient
 from flask_login import login_required
 from faker import Faker
@@ -54,15 +54,20 @@ class CustomClient(FlaskClient):
 def app():
     app = Flask(__name__)
     app.config.from_object(BaseTestConfig)
+    ui_blueprint = Blueprint("ui", __name__)
+
+
+    @ui_blueprint.route('/')
+    @login_required
+    def index():
+        return render_template_string('{% extends "lbrc_flask/page.html" %}')
+
 
     with app.app_context():
         init_lbrc_flask(app, title='Requests')
         init_security(app, user_class=User, role_class=Role)
+        app.register_blueprint(ui_blueprint)
 
-    @app.route('/')
-    @login_required
-    def index():
-        return render_template_string('{% extends "lbrc_flask/page.html" %}')
 
     @app.route('/get_with_login')
     @login_required
@@ -80,7 +85,7 @@ def app():
 
     @app.route('/post_without_login', methods=["POST"])
     def post_without_login():
-        return redirect(url_for("index"))
+        return redirect(url_for("ui.index"))
 
     return app
 

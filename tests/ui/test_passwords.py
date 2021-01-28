@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-
 import pytest
-from flask import url_for
 from flask_security import url_for_security
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.database import db
