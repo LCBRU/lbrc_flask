@@ -50,8 +50,6 @@ def assert__form_standards(client, faker, path):
 
     resp = client.get(path)
 
-    print(resp.soup)
-
     _assert_csrf_token(resp.soup)
 
 
@@ -81,3 +79,10 @@ def assert__requires_login(client, url, post=False):
         resp = client.get(url)
 
     assert__redirect(resp, 'security.login', next=url)
+
+
+def assert__search_html(resp, clear_url):
+    assert resp.soup.find('input', id="search") is not None
+    assert resp.soup.find('a', string="Clear Search", href=clear_url) is not None
+    assert resp.soup.find('button', type="submit", string="Search") is not None
+
