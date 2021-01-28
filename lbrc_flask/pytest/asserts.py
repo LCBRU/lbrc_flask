@@ -1,5 +1,4 @@
 import re
-
 from flask import url_for
 from lbrc_flask.pytest.helpers import login
 from flask_api import status
@@ -45,8 +44,9 @@ def assert__html_standards(client, faker, path, user=None):
     _assert_basic_navigation(resp.soup, user)
 
 
-def assert__form_standards(client, faker, path):
-    user = login(client, faker)
+def assert__form_standards(client, faker, path, user=None):
+    if user is None:
+        user = login(client, faker)
 
     resp = client.get(path)
 
@@ -81,8 +81,16 @@ def assert__requires_login(client, url, post=False):
     assert__redirect(resp, 'security.login', next=url)
 
 
-def assert__search_html(resp, clear_url):
-    assert resp.soup.find('input', id="search") is not None
-    assert resp.soup.find('a', string="Clear Search", href=clear_url) is not None
-    assert resp.soup.find('button', type="submit", string="Search") is not None
+def assert__search_html(soup, clear_url):
+    assert soup.find('input', id="search") is not None
+    assert soup.find('a', string="Clear Search", href=clear_url) is not None
+    assert soup.find('button', type="submit", string="Search") is not None
 
+
+def assert__select(soup, id, options):
+    select = soup.find('select', id=id)
+    assert select is not None
+
+    print(select)
+    for o in options:
+        assert select.find('option', value=o[0], string=o[1])
