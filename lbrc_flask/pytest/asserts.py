@@ -91,6 +91,17 @@ def assert__select(soup, id, options):
     select = soup.find('select', id=id)
     assert select is not None
 
-    print(select)
     for o in options:
         assert select.find('option', value=o[0], string=o[1])
+
+
+def get_and_assert_standards(client, url, user, has_form=False):
+    resp = client.get(url)
+
+    _assert_html_standards(resp.soup)
+    _assert_basic_navigation(resp.soup, user)
+
+    if has_form:
+        _assert_csrf_token(resp.soup)
+
+    return resp
