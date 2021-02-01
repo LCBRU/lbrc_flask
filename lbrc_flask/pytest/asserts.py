@@ -2,6 +2,7 @@ import re
 from flask import url_for
 from lbrc_flask.pytest.helpers import login
 from flask_api import status
+from lbrc_flask.url_helpers import update_querystring
 
 
 def _assert_html_standards(soup):
@@ -105,3 +106,60 @@ def get_and_assert_standards(client, url, user, has_form=False):
         _assert_csrf_token(resp.soup)
 
     return resp
+
+
+def assert__page_navigation(client, url, items, page_size=5):
+    page_count = ((items - 1) // page_size) + 1
+
+    if page_count > 1:
+        assert__page_navigation__pages(url, client, page_count)
+    else:
+        resp = client.get(url)
+        paginator = resp.soup.find('ul', 'pagination')
+        assert paginator is None
+
+
+def assert__page_navigation__pages(url, client, page_count):
+    for current_page in range(1, page_count + 1):
+        resp = client.get(update_querystring(url, {'page': current_page}))
+        paginator = resp.soup.find('ul', 'pagination')
+
+        assert__page_navigation__page(url, paginator, page_count, current_page)
+
+
+def assert__page_navigation__page(url, paginator, page_count, current_page):
+    assert paginator is not None
+
+    assert__page_navigation__link_exists(paginator, 'Previous', url, current_page - 1, current_page, page_count)
+    assert__page_navigation__link_exists(paginator, 'Next', url, current_page + 1, current_page, page_count)
+
+    assert__page_navigation__link_exists(paginator, 1, url, 1, current_page, page_count)
+    assert__page_navigation__link_exists(paginator, page_count, url, page_count, current_page, page_count)
+
+    for page in range(max(current_page - 2, 2), min(current_page + 3, page_count - 1)):
+        assert__page_navigation__link_exists(paginator, page, url, page, current_page, page_count)
+
+
+def assert__page_navigation__link_exists(paginator, string, url, page, current_page, page_count):
+    link = paginator.find('a', 'page-link', string=string)
+
+    assert link is not None
+
+    if 0 < page <= page_count and page != current_page:
+        assert__urls_the_same(update_querystring(url, {'page': page}), link['href'])
+    else:
+        assert 'href' not in link
+
+    if 0 < page <= page_count:
+        assert 'disabled' not in link.parent['class']
+    else:
+        assert 'disabled' in link.parent['class']
+
+    if page == current_page:
+        assert 'active' in link.parent['class']
+    else:
+        assert 'active' not in link.parent['class']
+
+
+def assert__urls_the_same(url1, url2):
+    assert update_querystring(url1, {}) == update_querystring(url2, {})
