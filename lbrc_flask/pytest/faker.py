@@ -1,6 +1,7 @@
 from faker.providers import BaseProvider
-from lbrc_flask.security import User
+from lbrc_flask.security import Role, User
 from lbrc_flask.forms.dynamic import FieldGroup, Field, FieldType
+from lbrc_flask.database import db
 
 
 class LbrcFlaskFakerProvider(BaseProvider):
@@ -12,6 +13,17 @@ class LbrcFlaskFakerProvider(BaseProvider):
             active=True,
         )
         return u
+
+    def get_test_user(self, is_admin=False):
+        user = self.user_details()
+
+        if is_admin:
+            user.roles.append(Role.get_admin())
+
+        db.session.add(user)
+        db.session.commit()
+
+        return user
 
 
 class LbrcDynaicFormFakerProvider(BaseProvider):
@@ -44,3 +56,11 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
             field_name=name,
             choices=choices,
         )
+
+    def get_test_field(self, **kwargs):
+        result = self.field_details(**kwargs)
+
+        db.session.add(result)
+        db.session.commit()
+
+        return result

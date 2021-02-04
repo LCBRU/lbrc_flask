@@ -13,7 +13,6 @@ def init_mail(app):
 def email(subject, message, recipients):
 
     if current_app.config["SMTP_SERVER"] is not None:
-
         msg = Message(subject=subject, recipients=recipients, body=message)
 
         mail.send(msg)

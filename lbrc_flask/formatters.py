@@ -1,17 +1,17 @@
 import arrow
 from datetime import datetime, date
 
+
 def format_yesno(value):
-    if value is None:
-        return ""
-    elif value == "0":
+    value = str(value)
+
+    if value.lower() in ["false", "no", "0"]:
         return "No"
-    elif value == "False":
-        return "No"
-    elif value:
+    elif value.lower() in ["true", "yes", "1"]:
         return "Yes"
     else:
-        return "No"
+        return ""
+
 
 def format_datetime(value):
     if value:
@@ -19,11 +19,13 @@ def format_datetime(value):
     else:
         return ""
 
+
 def humanize_datetime(value):
     if value:
         return arrow.get(value).to('Europe/London').humanize()
     else:
         return ""
+
 
 def format_date(value):
     if value is None:
@@ -33,17 +35,20 @@ def format_date(value):
     else:
         return value
 
+
 def humanize_date(value):
     if value:
         return arrow.get(value).to('Europe/London').humanize(granularity="day")
     else:
         return ""
 
+
 def format_currency(value):
     if value:
         return "£{:.2f}".format(value)
     else:
         return ""
+
 
 def format_number(value):
     return "{:,}".format(value)

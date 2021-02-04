@@ -1,4 +1,5 @@
 import json
+from lbrc_flask.forms.dynamic import init_dynamic_forms
 import pytest
 from flask import Response, Flask, Blueprint, render_template_string, url_for, redirect
 from flask.testing import FlaskClient
@@ -10,7 +11,7 @@ from ..config import BaseTestConfig
 from ..json import DateTimeEncoder
 from .. import init_lbrc_flask
 from ..security import init_security, User, Role
-from .faker import LbrcFlaskFakerProvider
+from .faker import LbrcFlaskFakerProvider, LbrcDynaicFormFakerProvider
 
 
 class CustomResponse(Response):
@@ -66,6 +67,7 @@ def app():
     with app.app_context():
         init_lbrc_flask(app, title='Requests')
         init_security(app, user_class=User, role_class=Role)
+        init_dynamic_forms(app)
         app.register_blueprint(ui_blueprint)
 
 
@@ -118,5 +120,6 @@ def client(initialised_app):
 def faker():
     result = Faker("en_GB")
     result.add_provider(LbrcFlaskFakerProvider)
+    result.add_provider(LbrcDynaicFormFakerProvider)
 
     yield result

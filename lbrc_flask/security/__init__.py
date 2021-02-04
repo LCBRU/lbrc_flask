@@ -88,6 +88,10 @@ class Role(db.Model, RoleMixin, CommonMixin):
     def __str__(self):
         return self.name or ""
 
+    @staticmethod
+    def get_admin():
+        return Role.query.filter(Role.name == Role.ADMIN_ROLENAME).one()
+
 
 roles_users = db.Table(
     "roles_users",
