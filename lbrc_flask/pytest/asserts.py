@@ -35,25 +35,6 @@ def _assert_basic_navigation(soup, user):
     assert soup.nav.find("a", href="/logout") is not None
 
 
-def assert__html_standards(client, faker, path, user=None):
-    if user is None:
-        user = login(client, faker)
-
-    resp = client.get(path)
-
-    _assert_html_standards(resp.soup)
-    _assert_basic_navigation(resp.soup, user)
-
-
-def assert__form_standards(client, faker, path, user=None):
-    if user is None:
-        user = login(client, faker)
-
-    resp = client.get(path)
-
-    _assert_csrf_token(resp.soup)
-
-
 def assert__error__message(soup, message):
     errors = "\n".join([d.text for d in soup.find_all("div", "alert")])
     rx = re.compile(message, re.IGNORECASE)
@@ -67,6 +48,7 @@ def assert__error__required_field(soup, field_name):
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
     assert response.status_code == status.HTTP_302_FOUND
 
+    print(response.location)
     if endpoint:
         assert response.location == url_for(endpoint, _external=True, **kwargs)
     if url:
@@ -96,11 +78,13 @@ def assert__select(soup, id, options):
         assert select.find('option', value=o[0], string=o[1])
 
 
-def get_and_assert_standards(client, url, user, has_form=False):
+def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
     resp = client.get(url)
 
     _assert_html_standards(resp.soup)
-    _assert_basic_navigation(resp.soup, user)
+
+    if has_navigation:
+        _assert_basic_navigation(resp.soup, user)
 
     if has_form:
         _assert_csrf_token(resp.soup)

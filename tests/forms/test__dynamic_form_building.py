@@ -1,6 +1,6 @@
 import pytest
 import re
-from lbrc_flask.forms.dynamic import Field, FieldGroup, FieldType, FormBuilder
+from lbrc_flask.forms.dynamic import FieldGroup, FieldType, FormBuilder
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 
@@ -27,8 +27,8 @@ def build_form(field):
 def test__add_field__field_added(client, faker, x):
     out = FormBuilder()
 
-    for _ in range(x):
-        out.add_field(faker.get_test_field())
+    for i in range(x):
+        out.add_field(faker.get_test_field(order=i, name=str(i)))
 
     actual = out.get_form()()
 
@@ -94,6 +94,7 @@ def test__add_field__required_set(client, faker):
     field_actual = build_form(field)
 
     assert any(True for v in field_actual.validators if isinstance(v, DataRequired))
+    assert all(False for v in field_actual.validators if isinstance(v, Optional))
 
 
 def test__add_field__required_not_set(client, faker):
@@ -103,6 +104,7 @@ def test__add_field__required_not_set(client, faker):
     field_actual = build_form(field)
 
     assert all(False for v in field_actual.validators if isinstance(v, DataRequired))
+    assert any(True for v in field_actual.validators if isinstance(v, Optional))
 
 
 def test__add_field__label_set(client, faker):
@@ -170,7 +172,7 @@ def test__add_field__allowed_file_extensions_set(client, faker):
 
 
 def test__add_field__allowed_file_extensions_not_set(client, faker):
-    field = faker.get_test_field(field_type=FieldType.get_file())
+    field = faker.get_test_field(field_type=FieldType.get_multifile())
 
     field_actual = build_form(field)
 
@@ -178,7 +180,7 @@ def test__add_field__allowed_file_extensions_not_set(client, faker):
 
 
 def test__add_field__validation_regex_set(client, faker):
-    field = faker.get_test_field(field_type=FieldType.get_file())
+    field = faker.get_test_field(field_type=FieldType.get_textarea())
     field.validation_regex = '^.*$'
 
     field_actual = build_form(field)
@@ -189,7 +191,7 @@ def test__add_field__validation_regex_set(client, faker):
 
 
 def test__add_field__validation_regex_not_set(client, faker):
-    field = faker.get_test_field(field_type=FieldType.get_file())
+    field = faker.get_test_field(field_type=FieldType.get_textarea())
 
     field_actual = build_form(field)
 
@@ -207,6 +209,15 @@ def test__add_field__description_set(client, faker):
 
 def test__add_field__description_not_set(client, faker):
     field = faker.get_test_field(field_type=FieldType.get_description())
+
+    field_actual = build_form(field)
+
+    field_actual.description == ''
+
+
+def test__add_field__description_is_None(client, faker):
+    field = faker.get_test_field(field_type=FieldType.get_description())
+    field.description = None
 
     field_actual = build_form(field)
 

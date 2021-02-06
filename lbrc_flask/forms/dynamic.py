@@ -34,14 +34,14 @@ class FieldType(db.Model):
 
     @property
     def html_tag(self):
-        if self.name in [FieldType.BOOLEAN, FieldType.INTEGER, FieldType.STRING, FieldType.FILE, FieldType.MULTIPLE_FILE]:
-            return 'input'
-        elif self.name == FieldType.DESCRIPTION:
+        if self.name == FieldType.DESCRIPTION:
             return 'p'
         elif self.name == FieldType.RADIO:
             return 'ul'
         elif self.name == FieldType.TEXTAREA:
             return 'textarea'
+        else:
+            return 'input'
 
     @property
     def html_input_type(self):
@@ -178,7 +178,7 @@ class Field(db.Model):
 
     def __repr__(self):
         return 'Field(field_name="{}", order="{}", field_type="{}")'.format(
-            self.order, self.field_name, self.field_type.name
+            self.field_name, self.order, self.field_type.name
         )
 
 class FormBuilder:

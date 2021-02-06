@@ -1,69 +1,46 @@
+from lbrc_flask.pytest.asserts import assert__search_html, get_and_assert_standards, assert__page_navigation
 import pytest
-from flask import url_for
 from lbrc_flask.pytest.helpers import login
+from flask import url_for
 
 
-@pytest.mark.parametrize(
-    "path",
-    [
-        ("/"),
-    ],
-)
-def test__boilerplate__html_standards(client, faker, path):
+def test__boilerplate__html_standards(client, faker):
     user = login(client, faker)
-
-    resp = client.get(path)
-
-    assert resp.soup.html is not None
-    assert resp.soup.html["lang"] == "en"
-    assert resp.soup.head is not None
-    assert (
-        resp.soup.find(
-            lambda tag: tag.name == "meta"
-            and tag.has_attr("charset")
-            and tag["charset"] == "utf-8"
-        )
-        is not None
-    )
-    assert resp.soup.title is not None
-    assert resp.soup.body is not None
+    resp = get_and_assert_standards(client, url_for('ui.index'), user)
 
 
 @pytest.mark.parametrize(
-    "path, filename, requires_login",
+    "path, requires_login",
     [
-        ("security.login", None, False),
-        ("security.forgot_password", None, False),
-        ("security.change_password", None, True),
+        ("security.login", False),
+        ("security.forgot_password", False),
+        ("security.change_password", True),
     ],
 )
 @pytest.mark.app_crsf(True)
-def test__boilerplate__forms_csrf_token(client, faker, path, filename, requires_login):
-    if requires_login:
-        login(client, faker)
+def test__boilerplate__forms_csrf_token(client, faker, path, requires_login):
+    if not requires_login:
+        user = faker.user_details()
+    else:
+        user = login(client, faker)
 
-    resp = client.get(url_for(path, filename=filename))
+    resp = get_and_assert_standards(client, url_for(path), user, has_form=True, has_navigation=False)
 
-    assert (
-        resp.soup.find("input", {"name": "csrf_token"}, type="hidden", id="csrf_token")
-        is not None
-    )
+
+@pytest.mark.app_crsf(True)
+def test__boilerplate__search(client, faker):
+    user = login(client, faker)
+    resp = get_and_assert_standards(client, url_for('search'), user, has_form=True)
+    assert__search_html(resp.soup, clear_url=url_for('search'))
 
 
 @pytest.mark.parametrize(
-    "path",
-    [
-        ("/"),
-    ],
+    "item_count",
+    [0, 1, 5, 6, 11, 16, 21, 26, 31, 101],
 )
-def test__boilerplate__basic_navigation(client, faker, path):
+def test__boilerplate__pages(client, faker, item_count):
     user = login(client, faker)
 
-    resp = client.get(path)
+    the_fields = [faker.get_test_field() for _ in range(item_count)]
 
-    resp.soup.nav is not None
-    resp.soup.nav.find("a", href="/") is not None
-    resp.soup.nav.find("a", string=user.full_name) is not None
-    resp.soup.nav.find("a", string=user.full_name) is not None
-    resp.soup.nav.find("a", href="/change") is not None
-    resp.soup.nav.find("a", href="/logout") is not None
+    assert__page_navigation(client, url_for('pages_of_fields', _external=False), item_count)

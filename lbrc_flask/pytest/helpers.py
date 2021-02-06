@@ -35,21 +35,3 @@ def login(client, faker, user=None):
     client.post("/login", data=data, follow_redirects=True)
 
     return user
-
-
-def get_test_field_group(faker, **kwargs):
-    fg = faker.field_group_details(**kwargs)
-
-    db.session.add(fg)
-    db.session.commit()
-
-    return fg
-
-
-def get_test_field(faker, **kwargs):
-    f = faker.field_details(**kwargs)
-
-    db.session.add(f)
-    db.session.commit()
-
-    return f

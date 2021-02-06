@@ -1,3 +1,4 @@
+import re
 from faker.providers import BaseProvider
 from lbrc_flask.security import Role, User
 from lbrc_flask.forms.dynamic import FieldGroup, Field, FieldType
@@ -36,7 +37,7 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
             name=name,
         )
 
-    def field_details(self, field_group=None, field_type=None, order=None, name=None, choices=None):
+    def field_details(self, field_group=None, field_type=None, order=None, name=None, choices=None, required=None):
         if field_group is None:
             field_group = self.field_group_details()
 
@@ -49,7 +50,7 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
         if name is None:
             name = self.generator.pystr(min_chars=5, max_chars=10)
 
-        return Field(
+        result = Field(
             field_group=field_group,
             order=order,
             field_type=field_type,
@@ -57,8 +58,21 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
             choices=choices,
         )
 
+        if required is not None:
+            result.required = required
+
+        return result
+
     def get_test_field(self, **kwargs):
         result = self.field_details(**kwargs)
+
+        db.session.add(result)
+        db.session.commit()
+
+        return result
+
+    def get_test_field_group(self, **kwargs):
+        result = self.field_group_details(**kwargs)
 
         db.session.add(result)
         db.session.commit()

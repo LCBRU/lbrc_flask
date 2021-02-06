@@ -1,7 +1,9 @@
 import json
-from lbrc_flask.forms.dynamic import init_dynamic_forms
+from lbrc_flask.requests import get_value_from_all_arguments
+from lbrc_flask.forms import SearchForm
+from lbrc_flask.forms.dynamic import Field, FieldGroup, FormBuilder, init_dynamic_forms
 import pytest
-from flask import Response, Flask, Blueprint, render_template_string, url_for, redirect
+from flask import Response, Flask, Blueprint, render_template_string, url_for, redirect, request, abort
 from flask.testing import FlaskClient
 from flask_login import login_required
 from faker import Faker
@@ -10,7 +12,7 @@ from ..database import db
 from ..config import BaseTestConfig
 from ..json import DateTimeEncoder
 from .. import init_lbrc_flask
-from ..security import init_security, User, Role
+from ..security import current_user_id, init_security, User, Role
 from .faker import LbrcFlaskFakerProvider, LbrcDynaicFormFakerProvider
 
 
@@ -63,13 +65,101 @@ def app():
     def index():
         return render_template_string('{% extends "lbrc_flask/page.html" %}')
 
-
     with app.app_context():
         init_lbrc_flask(app, title='Requests')
         init_security(app, user_class=User, role_class=Role)
         init_dynamic_forms(app)
         app.register_blueprint(ui_blueprint)
 
+    @app.route('/form/<int:field_group_id>', methods=["GET", "POST"])
+    def form(field_group_id):
+
+        fg = FieldGroup.query.get(field_group_id)
+        fb = FormBuilder(field_group=fg)
+
+        form = fb.get_form()()
+
+        if form.validate_on_submit():
+            return redirect(url_for("ui.index"))
+
+        return render_template_string('''
+        
+        {% extends "lbrc_flask/page.html" %}
+        {% from "lbrc_flask/form_macros.html" import render_field %}
+
+        {% block content %}
+
+            <form>
+                {% for f in form %}
+                    {{ render_field(f) }}
+                {% endfor %}
+            </form>
+
+        {% endblock %}
+
+        ''', form=form)
+
+    @app.route('/search/', methods=["GET", "POST"])
+    def search():
+        search_form = SearchForm()
+
+        return render_template_string('''
+        
+        {% extends "lbrc_flask/page.html" %}
+        {% from "lbrc_flask/form_macros.html" import render_search %}
+
+        {% block content %}
+
+            {{ render_search(search_form, 'search', placeholder='enter search text - searches names') }}
+
+        {% endblock %}
+
+        ''', search_form=search_form)
+
+    @app.route('/pages_of_fields/', methods=["GET", "POST"])
+    def pages_of_fields():
+        search_form = SearchForm(formdata=request.args)
+
+        items = Field.query.paginate(
+            page=search_form.page.data,
+            per_page=5,
+            error_out=False,
+        )
+
+        return render_template_string('''
+        
+        {% extends "lbrc_flask/page.html" %}
+        {% from "lbrc_flask/form_macros.html" import render_pagination, render_search %}
+
+        {% block content %}
+
+            {{ render_search(search_form, 'search', placeholder='enter search text - searches names') }}
+
+            {{ render_pagination(items, 'pages_of_fields', form=search_form) }}
+
+        {% endblock %}
+
+        ''', items=items, search_form=search_form)
+
+    @app.route('/json', methods=["GET", "POST"])
+    @login_required
+    def json():
+        return {'result': request.get_json()['integer']}
+
+    @app.route('/json_requests/<string:field_name>', methods=["GET", "POST"])
+    @login_required
+    def json_requests(field_name):
+        return {'result': get_value_from_all_arguments(field_name)}
+
+    @app.route('/user_id', methods=["GET", "POST"])
+    @login_required
+    def user_id():
+        return {'result': current_user_id()}
+
+    @app.route('/give_me_error/<int:error_code>', methods=["GET", "POST"])
+    @login_required
+    def give_me_error(error_code):
+        abort(error_code)
 
     @app.route('/get_with_login')
     @login_required
