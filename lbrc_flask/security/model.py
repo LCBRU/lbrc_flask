@@ -123,3 +123,6 @@ class User(db.Model, UserMixin, CommonMixin):
 
     def __str__(self):
         return self.email
+
+    def verify_and_update_password(self, password):
+        super().verify_and_update_password(password)

@@ -19,5 +19,6 @@ setup(name='lbrc_flask',
             'flask_security',
             'markdown',
             'arrow',
+            'python-ldap',
       ],
-     )
+)
