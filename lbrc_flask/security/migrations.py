@@ -16,6 +16,7 @@ def get_user_table(meta):
         meta,
         Column("id", Integer, primary_key=True),
         Column("email", NVARCHAR(255), unique=True),
+        Column("username", NVARCHAR(255), unique=True),
         Column("password", NVARCHAR(255)),
         Column("first_name", NVARCHAR(255)),
         Column("last_name", NVARCHAR(255)),
