@@ -1,3 +1,4 @@
+import datetime
 import json
 from lbrc_flask.requests import get_value_from_all_arguments
 from lbrc_flask.forms import SearchForm
@@ -66,7 +67,7 @@ def app():
         return render_template_string('{% extends "lbrc_flask/page.html" %}')
 
     with app.app_context():
-        init_lbrc_flask(app, title='Requests')
+        init_lbrc_flask(app, title='LBRC Flask')
         init_security(app, user_class=User, role_class=Role)
         init_dynamic_forms(app)
         app.register_blueprint(ui_blueprint)
@@ -160,6 +161,34 @@ def app():
     @login_required
     def give_me_error(error_code):
         abort(error_code)
+
+    @app.route('/use_the_template_filters')
+    @login_required
+    def use_the_template_filters():
+        return render_template_string('''
+        
+            <ul>
+                <li id='yesno_format'>{{ True | yes_no }}</li>
+                <li id='datetime_format'>{{ date | datetime_format }}</li>
+                <li id='date_format'>{{ date | date_format }}</li>
+                <li id='datetime_humanize'>{{ date | datetime_humanize }}</li>
+                <li id='date_humanize'>{{ date | date_humanize }}</li>
+                <li id='currency'>{{ 23.87 | currency }}</li>
+                <li id='separated_number'>{{ 1_000_765 | separated_number }}</li>
+                <li id='title_case'>{{ 'this is only in lowercase' | title_case }}</li>
+                <li id='blank_if_none__none'>{{ None | blank_if_none }}</li>
+                <li id='blank_if_none__not_none'>{{ 'Lorem Ipsum' | blank_if_none }}</li>
+                <li id='default_if_none__none'>{{ None | default_if_none('On the fence') }}</li>
+                <li id='default_if_none__not_none'>{{ 'Lorem Ipsum' | default_if_none('On the fence') }}</li>
+                <li id='nbsp'>{{ 'Lorem ipsum dolor sit amet.' | nbsp }}</li>
+                <li id='nbsp__none'>{{ None | nbsp }}</li>
+                <li id='current_year'>{{ current_year }}</li>
+                <li id='application_title'>{{ application_title }}</li>
+                <li id='previous_page'>{{ previous_page }}</li>
+            </ul>
+
+        ''', date=datetime.datetime(2007, 12, 5, 13, 23, 34))
+
 
     @app.route('/get_with_login')
     @login_required
