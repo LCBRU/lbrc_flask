@@ -25,7 +25,15 @@ class Ldap():
         return len((Ldap._ldap_uri() or '').strip()) > 0
 
     @staticmethod
-    def search(username):
+    def search_username(username):
+        return Ldap.search('sAMAccountName={}'.format(username))
+
+    @staticmethod
+    def search_email(email):
+        return Ldap.search('(mail={})'.format(email))
+
+    @staticmethod
+    def search(search_string):
         result = None
 
         try:
@@ -41,7 +49,7 @@ class Ldap():
             search_result = l.search_s(
                 Ldap._ldap_basedn(),
                 SCOPE_SUBTREE,
-                'sAMAccountName={}'.format(username),
+                search_string,
             )
 
             if isinstance(search_result[0][1], dict):
