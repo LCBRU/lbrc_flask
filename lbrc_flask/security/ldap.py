@@ -17,6 +17,10 @@ class Ldap():
         return current_app.config['LDAP_PASSWORD']
 
     @staticmethod
+    def _ldap_basedn():
+        return current_app.config['LDAP_BASEDN']
+
+    @staticmethod
     def is_enabled():
         return len((Ldap._ldap_uri() or '').strip()) > 0
 
@@ -35,7 +39,7 @@ class Ldap():
             )
 
             search_result = l.search_s(
-                'DC=xuhl-tr,DC=nhs,DC=uk',
+                Ldap._ldap_basedn(),
                 ldap.SCOPE_SUBTREE,
                 'sAMAccountName={}'.format(username),
             )
