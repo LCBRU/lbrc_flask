@@ -15,6 +15,7 @@ from ..json import DateTimeEncoder
 from .. import init_lbrc_flask
 from ..security import current_user_id, init_security, User, Role
 from .faker import LbrcFlaskFakerProvider, LbrcDynaicFormFakerProvider
+from unittest.mock import patch
 
 
 class CustomResponse(Response):
@@ -242,3 +243,9 @@ def faker():
     result.add_provider(LbrcDynaicFormFakerProvider)
 
     yield result
+
+
+@pytest.fixture(scope="function")
+def ldap_initialize():
+    with patch('lbrc_flask.security.ldap.initialize') as mock:
+        yield mock

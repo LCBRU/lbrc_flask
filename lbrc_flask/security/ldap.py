@@ -1,4 +1,4 @@
-import ldap
+from ldap import initialize, SCOPE_SUBTREE, LDAPError, OPT_REFERRALS
 import traceback
 from flask import current_app
 
@@ -6,19 +6,19 @@ from flask import current_app
 class Ldap():
     @staticmethod
     def _ldap_uri():
-        return current_app.config['LDAP_URI']
+        return current_app.config.get('LDAP_URI', None)
 
     @staticmethod
     def _ldap_user():
-        return current_app.config['LDAP_USER']
+        return current_app.config.get('LDAP_USER', None)
 
     @staticmethod
     def _ldap_password():
-        return current_app.config['LDAP_PASSWORD']
+        return current_app.config.get('LDAP_PASSWORD', None)
 
     @staticmethod
     def _ldap_basedn():
-        return current_app.config['LDAP_BASEDN']
+        return current_app.config.get('LDAP_BASEDN', None)
 
     @staticmethod
     def is_enabled():
@@ -29,9 +29,9 @@ class Ldap():
         result = None
 
         try:
-            l = ldap.initialize(Ldap._ldap_uri())
+            l = initialize(Ldap._ldap_uri())
             l.protocol_version = 3
-            l.set_option(ldap.OPT_REFERRALS, 0)
+            l.set_option(OPT_REFERRALS, 0)
 
             l.simple_bind_s(
                 Ldap._ldap_user(),
@@ -40,7 +40,7 @@ class Ldap():
 
             search_result = l.search_s(
                 Ldap._ldap_basedn(),
-                ldap.SCOPE_SUBTREE,
+                SCOPE_SUBTREE,
                 'sAMAccountName={}'.format(username),
             )
 
@@ -54,7 +54,7 @@ class Ldap():
                     'given_name': user['givenName'][0].decode("utf-8"),
                 }
 
-        except ldap.LDAPError as e:
+        except LDAPError as e:
             print(traceback.format_exc())
             current_app.logger.error(traceback.format_exc())
         
@@ -63,15 +63,18 @@ class Ldap():
 
     @staticmethod
     def validate_password(username, password):
-        l = ldap.initialize(Ldap._ldap_uri())
+        if not (username or '').strip() or not (password or '').strip():
+            return False
+
+        l = initialize(Ldap._ldap_uri())
         l.protocol_version = 3
-        l.set_option(ldap.OPT_REFERRALS, 0)
+        l.set_option(OPT_REFERRALS, 0)
 
         try:
             l.simple_bind_s(username, password)
             return True
 
-        except ldap.LDAPError as e:
+        except LDAPError as e:
             print(e)
             current_app.logger.error(e)
             return False
