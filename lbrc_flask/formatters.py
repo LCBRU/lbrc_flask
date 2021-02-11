@@ -13,6 +13,17 @@ def format_yesno(value):
         return ""
 
 
+def format_boolean(value):
+    value = str(value)
+
+    if value.lower() in ["false", "no", "0"]:
+        return False
+    elif value.lower() in ["true", "yes", "1"]:
+        return True
+    else:
+        return None
+
+
 def format_datetime(value):
     if value:
         return value.strftime("%c")

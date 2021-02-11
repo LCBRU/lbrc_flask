@@ -6,7 +6,8 @@ from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
 from . import DescriptionField, FlashingForm
-from ..formatters import format_number, format_yesno
+from ..formatters import format_boolean, format_number, format_yesno
+from icecream import ic
 
 
 class FieldType(db.Model):
@@ -29,6 +30,12 @@ class FieldType(db.Model):
             return format_number(value)
         elif self.name == FieldType.BOOLEAN:
             return format_yesno(value)
+        else:
+            return value
+
+    def data_value(self, value):
+        if self.name == FieldType.BOOLEAN:
+            return format_boolean(value)
         else:
             return value
 
@@ -157,6 +164,9 @@ class Field(db.Model):
 
     def format_value(self, value):
         return self.field_type.format_value(value)
+
+    def data_value(self, value):
+        return self.field_type.data_value(value)
 
     def get_default(self):
         if self.default == '':
