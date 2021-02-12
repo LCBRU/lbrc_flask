@@ -1,6 +1,7 @@
 from ldap import initialize, SCOPE_SUBTREE, LDAPError, OPT_REFERRALS
 import traceback
 from flask import current_app
+from icecream import ic
 
 
 class Ldap():

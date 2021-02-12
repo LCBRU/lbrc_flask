@@ -3,6 +3,7 @@ from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
 from ..database import db
 from .model import User, Role, AuditMixin
+from icecream import ic
 
 
 def current_user_id():
@@ -10,6 +11,7 @@ def current_user_id():
 
 
 def init_security(app, user_class, role_class):
+    ic()
     user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
     Security(
         app,

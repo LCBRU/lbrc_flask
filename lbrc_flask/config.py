@@ -37,6 +37,12 @@ class BaseConfig:
     # Forms
     WTF_CSRF_ENABLED = True
 
+    # LDAP
+    LDAP_URI = os.getenv("LDAP_URI", '')
+    LDAP_USER = os.getenv("LDAP_USER", '')
+    LDAP_PASSWORD = os.getenv("LDAP_PASSWORD", '')
+    LDAP_BASEDN = os.getenv("LDAP_BASEDN", '')
+
 
 class BaseTestConfig(BaseConfig):
     # Environment

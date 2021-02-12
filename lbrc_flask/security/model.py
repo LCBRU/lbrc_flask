@@ -2,11 +2,13 @@ import random
 import string
 from datetime import datetime
 from flask_security.core import RoleMixin, UserMixin
+from flask_security.utils import verify_and_update_password
 from flask_login import current_user
 from sqlalchemy.ext.declarative import declared_attr
 from lbrc_flask.model import CommonMixin
 from ..database import db
 from .ldap import Ldap
+from icecream import ic
 
 
 class AuditMixin(object):
@@ -84,7 +86,7 @@ roles_users = db.Table(
 )
 
 
-class User(db.Model, UserMixin, CommonMixin):
+class User(db.Model, CommonMixin, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(255), unique=True)
@@ -129,7 +131,7 @@ class User(db.Model, UserMixin, CommonMixin):
     def verify_and_update_password(self, password):
         # First try to Ldap, then locally
         if Ldap.is_enabled():
-            if Ldap.validate_password(self.username, password):
+            if Ldap.validate_password(self.email, password):
                 return True
 
-        return super().verify_and_update_password(password)
+        return verify_and_update_password(password, self)

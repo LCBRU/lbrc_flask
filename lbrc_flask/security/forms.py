@@ -10,12 +10,14 @@ from flask_security.forms import (
     Form,
     PasswordFormMixin,
 )
-from flask_security.utils import verify_and_update_password, get_message, _datastore
+from flask_security.utils import hash_password, verify_and_update_password, get_message, _datastore
+from flask_security.confirmable import requires_confirmation
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
 from flask_security.forms import LoginForm
 from lbrc_flask.database import db
+from icecream import ic
 
 
 class PasswordPolicy(ValidatorMixin):
@@ -93,12 +95,15 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 class LbrcLoginForm(LoginForm):
     def validate(self):
+        ic()
         if not super(LoginForm, self).validate():
+            ic()
             return False
 
         user = _datastore.get_user(self.email.data)
 
         if not user:
+            ic()
             ldap_user = Ldap.search_email(self.email.data)
 
             if ldap_user:
@@ -111,4 +116,31 @@ class LbrcLoginForm(LoginForm):
                 )
                 db.session.commit()
 
-        return super().validate()
+        # return super().validate()
+
+        # Note: The code below is from the LoginForm NEXT VERSION that
+        #       is on github.  So this will need to be refactored when
+        #       the dev version is released.
+
+        self.user = _datastore.get_user(self.email.data)
+
+        if self.user is None:
+            self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
+            # Reduce timing variation between existing and non-existung users
+            hash_password(self.password.data)
+            return False
+        if not self.user.password:
+            self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
+            # Reduce timing variation between existing and non-existung users
+            hash_password(self.password.data)
+            return False
+        if not self.user.verify_and_update_password(self.password.data):
+            self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+            return False
+        if requires_confirmation(self.user):
+            self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
+            return False
+        if not self.user.is_active:
+            self.email.errors.append(get_message('DISABLED_ACCOUNT')[0])
+            return False
+        return True
