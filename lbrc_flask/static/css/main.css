@@ -323,7 +323,7 @@ dd {
 }
 
 .login-form .card-body .description {
-  flex: 1;
+  flex: 1 0 auto;
   margin-left: 10px;
   border-left: 10px solid #138496;
   padding: 10px;
