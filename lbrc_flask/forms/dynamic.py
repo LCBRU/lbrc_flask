@@ -7,7 +7,6 @@ from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
 from . import DescriptionField, FlashingForm
 from ..formatters import format_boolean, format_number, format_yesno
-from icecream import ic
 
 
 class FieldType(db.Model):

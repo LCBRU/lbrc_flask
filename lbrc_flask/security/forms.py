@@ -17,7 +17,6 @@ from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
 from flask_security.forms import LoginForm
 from lbrc_flask.database import db
-from icecream import ic
 
 
 class PasswordPolicy(ValidatorMixin):

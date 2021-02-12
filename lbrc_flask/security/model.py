@@ -8,7 +8,6 @@ from sqlalchemy.ext.declarative import declared_attr
 from lbrc_flask.model import CommonMixin
 from ..database import db
 from .ldap import Ldap
-from icecream import ic
 
 
 class AuditMixin(object):

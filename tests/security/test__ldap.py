@@ -1,8 +1,6 @@
 import ldap as ldap_lib
 from lbrc_flask.security.ldap import Ldap
 from flask import current_app
-from icecream import ic
-from unittest.mock import MagicMock
 
 
 def test__ldap__is_enable__nouri(client, faker, ldap_initialize):
