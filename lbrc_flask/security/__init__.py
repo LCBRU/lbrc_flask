@@ -10,7 +10,6 @@ def current_user_id():
 
 
 def init_security(app, user_class, role_class):
-    ic()
     user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
     Security(
         app,

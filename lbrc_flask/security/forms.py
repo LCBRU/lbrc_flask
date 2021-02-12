@@ -94,15 +94,12 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 class LbrcLoginForm(LoginForm):
     def validate(self):
-        ic()
         if not super(LoginForm, self).validate():
-            ic()
             return False
 
         user = _datastore.get_user(self.email.data)
 
         if not user:
-            ic()
             ldap_user = Ldap.search_email(self.email.data)
 
             if ldap_user:
