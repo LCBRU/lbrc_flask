@@ -21,6 +21,10 @@ class Ldap():
         return current_app.config.get('LDAP_BASEDN', None)
 
     @staticmethod
+    def _ldap_bind_who_format():
+        return current_app.config.get('LDAP_BIND_WHO_FORMAT', None)
+
+    @staticmethod
     def is_enabled():
         return len((Ldap._ldap_uri() or '').strip()) > 0
 
@@ -70,8 +74,8 @@ class Ldap():
             return result
 
     @staticmethod
-    def validate_password(username, password):
-        if not (username or '').strip() or not (password or '').strip():
+    def validate_password(user, password):
+        if user is None or not (password or '').strip():
             return False
 
         l = initialize(Ldap._ldap_uri())
@@ -79,7 +83,13 @@ class Ldap():
         l.set_option(OPT_REFERRALS, 0)
 
         try:
-            l.simple_bind_s(username, password)
+            l.simple_bind_s(
+                Ldap._ldap_bind_who_format().format(
+                    user=user,
+                    basedn=Ldap._ldap_basedn(),
+                ),
+                password,
+            )
             return True
 
         except LDAPError as e:

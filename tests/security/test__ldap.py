@@ -15,36 +15,28 @@ def test__ldap__is_enable__withuri(client, faker, ldap_initialize):
     assert Ldap.is_enabled()
 
 
-def test__ldap__validate_password__username_none(client, faker, ldap_initialize):
+def test__ldap__validate_password__user_none(client, faker, ldap_initialize):
     assert Ldap.validate_password(None, faker.pystr(min_chars=5, max_chars=10)) == False
 
 
-def test__ldap__validate_password__username_empty(client, faker, ldap_initialize):
-    assert Ldap.validate_password('', faker.pystr(min_chars=5, max_chars=10)) == False
-
-
-def test__ldap__validate_password__username_blank(client, faker, ldap_initialize):
-    assert Ldap.validate_password('    ', faker.pystr(min_chars=5, max_chars=10)) == False
-
-
 def test__ldap__validate_password__password_none(client, faker, ldap_initialize):
-    assert Ldap.validate_password(faker.pystr(min_chars=5, max_chars=10), None) == False
+    assert Ldap.validate_password(faker.get_test_user(), None) == False
 
 
 def test__ldap__validate_password__password_empty(client, faker, ldap_initialize):
-    assert Ldap.validate_password(faker.pystr(min_chars=5, max_chars=10), '') == False
+    assert Ldap.validate_password(faker.get_test_user(), '') == False
 
 
 def test__ldap__validate_password__password_blank(client, faker, ldap_initialize):
-    assert Ldap.validate_password(faker.pystr(min_chars=5, max_chars=10), '   ') == False
+    assert Ldap.validate_password(faker.get_test_user(), '   ') == False
 
 
 def test__ldap__validate_password__valid(client, faker, ldap_initialize):
-    assert Ldap.validate_password(faker.pystr(min_chars=5, max_chars=10), faker.pystr(min_chars=5, max_chars=10))
+    assert Ldap.validate_password(faker.get_test_user(), faker.pystr(min_chars=5, max_chars=10))
 
 
 def test__ldap__validate_password__bind_fails(client, faker, ldap_initialize):
     ldap_initialize.return_value.simple_bind_s.side_effect = ldap_lib.LDAPError
 
-    assert Ldap.validate_password(faker.pystr(min_chars=5, max_chars=10), faker.pystr(min_chars=5, max_chars=10)) == False
+    assert Ldap.validate_password(faker.get_test_user(), faker.pystr(min_chars=5, max_chars=10)) == False
 
