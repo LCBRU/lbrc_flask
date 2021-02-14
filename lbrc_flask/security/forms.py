@@ -99,18 +99,20 @@ class LbrcLoginForm(LoginForm):
 
         user = _datastore.get_user(self.email.data)
 
-        if not user:
-            ldap_user = Ldap.search_email(self.email.data)
+        ldap_user = Ldap.search_email(self.email.data)
 
-            if ldap_user:
+        if ldap_user:
+            if not user:
                 user = _datastore.create_user(
                     email=ldap_user['email'],
-                    username=ldap_user['username'],
-                    first_name=ldap_user['given_name'],
-                    last_name=ldap_user['surname'],
                     password=random_password(),
                 )
-                db.session.commit()
+
+            user.username = ldap_user['username']
+            user.first_name = ldap_user['given_name']
+            user.last_name = ldap_user['surname']
+
+            db.session.commit()
 
         # return super().validate()
 
