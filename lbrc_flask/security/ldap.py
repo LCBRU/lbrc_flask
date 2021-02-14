@@ -4,66 +4,54 @@ from flask import current_app
 
 
 class Ldap():
-    @staticmethod
-    def _ldap_uri():
-        return current_app.config.get('LDAP_URI', None)
+    def __init__(self):
+        self.ldap = None
 
-    @staticmethod
-    def _ldap_user():
-        return current_app.config.get('LDAP_USER', None)
+    def is_enabled(self):
+        return len((current_app.config.get('LDAP_URI', None) or '').strip()) > 0
 
-    @staticmethod
-    def _ldap_password():
-        return current_app.config.get('LDAP_PASSWORD', None)
+    def login(self, username, password):
+        if not (username or '').strip() or not (password or '').strip():
+            return False
 
-    @staticmethod
-    def _ldap_basedn():
-        return current_app.config.get('LDAP_BASEDN', None)
+        self.ldap = initialize(current_app.config.get('LDAP_URI', None))
+        self.ldap.protocol_version = 3
+        self.ldap.set_option(OPT_REFERRALS, 0)
 
-    @staticmethod
-    def _ldap_bind_who_format():
-        return current_app.config.get('LDAP_BIND_WHO_FORMAT', None)
+        try:
+            self.ldap.simple_bind_s(
+                current_app.config.get('LDAP_BIND_WHO_FORMAT', None).format(
+                    username=username,
+                    basedn=current_app.config.get('LDAP_BASEDN', None),
+                ),
+                password,
+            )
 
-    @staticmethod
-    def is_enabled():
-        return len((Ldap._ldap_uri() or '').strip()) > 0
+            return True
 
-    @staticmethod
-    def search_username(username):
-        return Ldap.search('sAMAccountName={}'.format(username))
+        except LDAPError as e:
+            self.ldap = None
+            print(e)
+            current_app.logger.error(e)
+            return False
 
-    @staticmethod
-    def search_email(email):
-        return Ldap.search('(mail={})'.format(email))
+    def search_username(self, username):
+        return self.search('sAMAccountName={}'.format(username))
 
-    @staticmethod
-    def search(search_string):
-        current_app.logger.error('A')
+    def search_email(self, email):
+        return self.search('(mail={})'.format(email))
+
+    def search(self, search_string):
         result = None
 
         try:
-            current_app.logger.error('B')
-            l = initialize(Ldap._ldap_uri())
-            l.protocol_version = 3
-            l.set_option(OPT_REFERRALS, 0)
-
-            current_app.logger.error('C')
-            l.simple_bind_s(
-                Ldap._ldap_user(),
-                Ldap._ldap_password(),
-            )
-
-            current_app.logger.error('D')
-            search_result = l.search_s(
-                Ldap._ldap_basedn(),
+            search_result = self.ldap.search_s(
+                current_app.config.get('LDAP_BASEDN', None),
                 SCOPE_SUBTREE,
                 search_string,
             )
 
-            current_app.logger.error('E')
-            print(search_result)
             if isinstance(search_result[0][1], dict):
-                current_app.logger.error('F')
                 user = search_result[0][1]
                 result = {
                     'username': user['sAMAccountName'][0].decode("utf-8"),
@@ -73,61 +61,9 @@ class Ldap():
                     'given_name': user['givenName'][0].decode("utf-8"),
                 }
 
-            current_app.logger.error('G')
-
         except LDAPError as e:
-            current_app.logger.error('H')
             print(traceback.format_exc())
             current_app.logger.error(traceback.format_exc())
         
         finally:
-            current_app.logger.error('I')
             return result
-
-    @staticmethod
-    def validate_password(user, password):
-        current_app.logger.error('1')
-        if user is None or not (password or '').strip():
-            return False
-
-        current_app.logger.error('2')
-
-        l = initialize(Ldap._ldap_uri())
-        l.protocol_version = 3
-        l.set_option(OPT_REFERRALS, 0)
-
-        current_app.logger.error('3')
-        who = Ldap._ldap_bind_who_format().format(
-            user=user,
-            basedn=Ldap._ldap_basedn(),
-        )
-
-        current_app.logger.error('4')
-        try:
-            current_app.logger.error('5')
-            l.simple_bind_s(
-                Ldap._ldap_bind_who_format().format(
-                    user=user,
-                    basedn=Ldap._ldap_basedn(),
-                ),
-                password,
-            )
-
-            current_app.logger.error('6')
-
-            search_result = l.search_s(
-                Ldap._ldap_basedn(),
-                SCOPE_SUBTREE,
-                who,
-            )
-
-            current_app.logger.error('7')
-
-            current_app.logger.error(search_result)
-
-            return True
-
-        except LDAPError as e:
-            print(e)
-            current_app.logger.error(e)
-            return False

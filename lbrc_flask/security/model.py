@@ -129,8 +129,11 @@ class User(db.Model, CommonMixin, UserMixin):
 
     def verify_and_update_password(self, password):
         # First try to Ldap, then locally
-        if Ldap.is_enabled():
-            if Ldap.validate_password(self, password):
-                return True
+        # ldap = Ldap()
+
+        # if ldap.is_enabled():
+        #     if ldap.login(self, password):
+        #         user_details = ldap.search_email(self.email)
+        #         return True
 
         return verify_and_update_password(password, self)

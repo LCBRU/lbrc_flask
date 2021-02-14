@@ -99,46 +99,54 @@ class LbrcLoginForm(LoginForm):
 
         user = _datastore.get_user(self.email.data)
 
-        ldap_user = Ldap.search_email(self.email.data)
+        ldap = Ldap()
 
-        if ldap_user:
-            if not user:
-                user = _datastore.create_user(
-                    email=ldap_user['email'],
-                    password=random_password(),
-                )
+        if ldap.is_enabled():
+            if ldap.login(self.email.data, self.password.data):
+                ldap_user = ldap.search_email(self.email.data)
 
-            user.username = ldap_user['username']
-            user.first_name = ldap_user['given_name']
-            user.last_name = ldap_user['surname']
+                if not user:
+                    user = _datastore.create_user(
+                        email = ldap_user['email'],
+                        password=random_password(),
+                    )
 
-            db.session.commit()
+                user.username=ldap_user['username']
+                user.first_name=ldap_user['given_name']
+                user.last_name=ldap_user['surname']
+                
+                db.session.add(user)
+                db.session.commit()
 
-        # return super().validate()
+                self.user = _datastore.get_user(self.email.data)
+
+                return True
+
+        return super().validate()
 
         # Note: The code below is from the LoginForm NEXT VERSION that
         #       is on github.  So this will need to be refactored when
         #       the dev version is released.
 
-        self.user = _datastore.get_user(self.email.data)
+        # self.user = _datastore.get_user(self.email.data)
 
-        if self.user is None:
-            self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
-            # Reduce timing variation between existing and non-existung users
-            hash_password(self.password.data)
-            return False
-        if not self.user.password:
-            self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
-            # Reduce timing variation between existing and non-existung users
-            hash_password(self.password.data)
-            return False
-        if not self.user.verify_and_update_password(self.password.data):
-            self.password.errors.append(get_message('INVALID_PASSWORD')[0])
-            return False
-        if requires_confirmation(self.user):
-            self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
-            return False
-        if not self.user.is_active:
-            self.email.errors.append(get_message('DISABLED_ACCOUNT')[0])
-            return False
-        return True
+        # if self.user is None:
+        #     self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
+        #     # Reduce timing variation between existing and non-existung users
+        #     hash_password(self.password.data)
+        #     return False
+        # if not self.user.password:
+        #     self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
+        #     # Reduce timing variation between existing and non-existung users
+        #     hash_password(self.password.data)
+        #     return False
+        # if not self.user.verify_and_update_password(self.password.data):
+        #     self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+        #     return False
+        # if requires_confirmation(self.user):
+        #     self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
+        #     return False
+        # if not self.user.is_active:
+        #     self.email.errors.append(get_message('DISABLED_ACCOUNT')[0])
+        #     return False
+        # return True
