@@ -1,6 +1,7 @@
 from ldap import initialize, SCOPE_SUBTREE, LDAPError, OPT_REFERRALS
 import traceback
 from flask import current_app
+from icecream import ic
 
 
 class Ldap():
@@ -87,8 +88,8 @@ class Ldap():
             basedn=Ldap._ldap_basedn(),
         )
 
-        print(who)
-        print(password)
+        ic(who)
+        ic(password)
 
         try:
             l.simple_bind_s(
