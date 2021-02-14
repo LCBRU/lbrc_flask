@@ -61,6 +61,7 @@ class Ldap():
             )
 
             current_app.logger.error('E')
+            print(search_result)
             if isinstance(search_result[0][1], dict):
                 current_app.logger.error('F')
                 user = search_result[0][1]
