@@ -38,25 +38,31 @@ class Ldap():
 
     @staticmethod
     def search(search_string):
+        current_app.logger.error('A')
         result = None
 
         try:
+            current_app.logger.error('B')
             l = initialize(Ldap._ldap_uri())
             l.protocol_version = 3
             l.set_option(OPT_REFERRALS, 0)
 
+            current_app.logger.error('C')
             l.simple_bind_s(
                 Ldap._ldap_user(),
                 Ldap._ldap_password(),
             )
 
+            current_app.logger.error('D')
             search_result = l.search_s(
                 Ldap._ldap_basedn(),
                 SCOPE_SUBTREE,
                 search_string,
             )
 
+            current_app.logger.error('E')
             if isinstance(search_result[0][1], dict):
+                current_app.logger.error('F')
                 user = search_result[0][1]
                 result = {
                     'username': user['sAMAccountName'][0].decode("utf-8"),
@@ -66,11 +72,15 @@ class Ldap():
                     'given_name': user['givenName'][0].decode("utf-8"),
                 }
 
+            current_app.logger.error('G')
+
         except LDAPError as e:
+            current_app.logger.error('H')
             print(traceback.format_exc())
             current_app.logger.error(traceback.format_exc())
         
         finally:
+            current_app.logger.error('I')
             return result
 
     @staticmethod
