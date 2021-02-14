@@ -82,6 +82,14 @@ class Ldap():
         l.protocol_version = 3
         l.set_option(OPT_REFERRALS, 0)
 
+        who = Ldap._ldap_bind_who_format().format(
+            user=user,
+            basedn=Ldap._ldap_basedn(),
+        )
+
+        print(who)
+        print(password)
+
         try:
             l.simple_bind_s(
                 Ldap._ldap_bind_who_format().format(
