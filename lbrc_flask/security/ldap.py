@@ -86,19 +86,25 @@ class Ldap():
 
     @staticmethod
     def validate_password(user, password):
+        current_app.logger.error('1')
         if user is None or not (password or '').strip():
             return False
+
+        current_app.logger.error('2')
 
         l = initialize(Ldap._ldap_uri())
         l.protocol_version = 3
         l.set_option(OPT_REFERRALS, 0)
 
+        current_app.logger.error('3')
         who = Ldap._ldap_bind_who_format().format(
             user=user,
             basedn=Ldap._ldap_basedn(),
         )
 
+        current_app.logger.error('4')
         try:
+            current_app.logger.error('5')
             l.simple_bind_s(
                 Ldap._ldap_bind_who_format().format(
                     user=user,
@@ -106,6 +112,19 @@ class Ldap():
                 ),
                 password,
             )
+
+            current_app.logger.error('6')
+
+            search_result = l.search_s(
+                Ldap._ldap_basedn(),
+                SCOPE_SUBTREE,
+                who,
+            )
+
+            current_app.logger.error('7')
+
+            current_app.logger.error(search_result)
+
             return True
 
         except LDAPError as e:
