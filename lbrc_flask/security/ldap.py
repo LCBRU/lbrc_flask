@@ -19,13 +19,12 @@ class Ldap():
         self.ldap.set_option(OPT_REFERRALS, 0)
 
         try:
-            self.ldap.simple_bind_s(
-                current_app.config.get('LDAP_BIND_WHO_FORMAT', None).format(
-                    username=username,
-                    basedn=current_app.config.get('LDAP_BASEDN', None),
-                ),
-                password,
+            who = current_app.config.get('LDAP_BIND_WHO_FORMAT', None).format(
+                username=username,
+                basedn=current_app.config.get('LDAP_BASEDN', None),
             )
+
+            self.ldap.simple_bind_s(who, password)
 
             return True
 
