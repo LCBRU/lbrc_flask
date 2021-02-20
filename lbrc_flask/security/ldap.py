@@ -26,6 +26,8 @@ class Ldap():
 
             self.ldap.simple_bind_s(who, password)
 
+            print('LDAP login Success')
+
             return True
 
         except LDAPError as e:
@@ -35,10 +37,7 @@ class Ldap():
             return False
 
     def search_username(self, username):
-        return self.search('sAMAccountName={}'.format(username))
-
-    def search_email(self, email):
-        return self.search('(mail={})'.format(email))
+        return self.search(current_app.config.get('LDAP_SEARCH_FORMAT', None).format(username=username))
 
     def search(self, search_string):
         result = None

@@ -43,6 +43,7 @@ class BaseConfig:
     LDAP_PASSWORD = os.getenv("LDAP_PASSWORD", '')
     LDAP_BASEDN = os.getenv("LDAP_BASEDN", '')
     LDAP_BIND_WHO_FORMAT = os.getenv("LDAP_BIND_WHO_FORMAT", '')
+    LDAP_SEARCH_FORMAT = os.getenv("LDAP_SEARCH_FORMAT", '')
 
 
 class BaseTestConfig(BaseConfig):

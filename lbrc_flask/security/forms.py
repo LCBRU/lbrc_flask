@@ -97,13 +97,19 @@ class LbrcLoginForm(LoginForm):
         if not super(LoginForm, self).validate():
             return False
 
-        user = _datastore.get_user(self.email.data)
-
         ldap = Ldap()
 
         if ldap.is_enabled():
             if ldap.login(self.email.data, self.password.data):
-                ldap_user = ldap.search_email(self.email.data)
+                ldap_user = ldap.search_username(self.email.data)
+
+                # GUARD: Even if they've managed to login, if we can't get the
+                #        user details we're not letting 'em in.  It's probably
+                #        a config error, but it's probably safer to deny entry.
+                if ldap_user is None:
+                    return False
+
+                user = _datastore.get_user(ldap_user['email'])
 
                 if not user:
                     user = _datastore.create_user(
@@ -118,35 +124,8 @@ class LbrcLoginForm(LoginForm):
                 db.session.add(user)
                 db.session.commit()
 
-                self.user = _datastore.get_user(self.email.data)
+                self.user = _datastore.get_user(ldap_user['email'])
 
                 return True
 
         return super().validate()
-
-        # Note: The code below is from the LoginForm NEXT VERSION that
-        #       is on github.  So this will need to be refactored when
-        #       the dev version is released.
-
-        # self.user = _datastore.get_user(self.email.data)
-
-        # if self.user is None:
-        #     self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])
-        #     # Reduce timing variation between existing and non-existung users
-        #     hash_password(self.password.data)
-        #     return False
-        # if not self.user.password:
-        #     self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
-        #     # Reduce timing variation between existing and non-existung users
-        #     hash_password(self.password.data)
-        #     return False
-        # if not self.user.verify_and_update_password(self.password.data):
-        #     self.password.errors.append(get_message('INVALID_PASSWORD')[0])
-        #     return False
-        # if requires_confirmation(self.user):
-        #     self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
-        #     return False
-        # if not self.user.is_active:
-        #     self.email.errors.append(get_message('DISABLED_ACCOUNT')[0])
-        #     return False
-        # return True
