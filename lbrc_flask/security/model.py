@@ -100,6 +100,7 @@ class User(db.Model, CommonMixin, UserMixin):
     current_login_ip = db.Column(db.String(50))
     login_count = db.Column(db.Integer())
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    ldap_user = db.Column(db.Boolean())
     roles = db.relationship(
         "Role",
         lazy="joined",

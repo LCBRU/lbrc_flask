@@ -28,6 +28,7 @@ def get_user_table(meta):
         Column("current_login_ip", NVARCHAR(50)),
         Column("login_count", Integer),
         Column("date_created", DateTime),
+        Column("ldap_user", Boolean()),
     )
 
 
