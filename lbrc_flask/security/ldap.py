@@ -70,10 +70,7 @@ class Ldap():
                 search_string,
             )
 
-            print('Search Results', search_result)
-
             if isinstance(search_result[0][1], dict):
-                print('User', search_result[0][1])
                 user = search_result[0][1]
 
                 result = {
@@ -82,7 +79,6 @@ class Ldap():
                     'surname': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
                     'given_name': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                 }
-                print('Result', result)
 
         except LDAPError as e:
             print(traceback.format_exc())
