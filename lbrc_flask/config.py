@@ -48,6 +48,7 @@ class BaseConfig:
     LDAP_FIELDNAME_EMAIL = os.getenv("LDAP_FIELDNAME_EMAIL", '')
     LDAP_FIELDNAME_GIVENNAME = os.getenv("LDAP_FIELDNAME_GIVENNAME", '')
     LDAP_FIELDNAME_SURNAME = os.getenv("LDAP_FIELDNAME_SURNAME", '')
+    LDAP_TEST_USER = os.getenv("LDAP_TEST_USER", '')
 
 
 class BaseTestConfig(BaseConfig):
