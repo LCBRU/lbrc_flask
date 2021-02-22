@@ -76,8 +76,8 @@ class Ldap():
                 result = {
                     'username': user[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
                     'email': user[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
-                    'surname': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
-                    'given_name': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
+                    'given_name': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
+                    'surname': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                 }
 
         except LDAPError as e:
