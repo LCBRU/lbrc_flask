@@ -69,6 +69,8 @@ class Ldap():
     def search(self, search_string):
         result = []
 
+        print(search_string)
+
         try:
             search_result = self.ldap.search_s(
                 current_app.config.get('LDAP_BASEDN', None),
@@ -77,7 +79,9 @@ class Ldap():
             )
 
             if isinstance(search_result[0][1], dict):
+                print(search_result[0][1])
                 for u in search_result[0][1]:
+                    print(u)
                     result.append({
                         'username': u[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
                         'email': u[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
