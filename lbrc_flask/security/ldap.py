@@ -36,6 +36,27 @@ class Ldap():
             current_app.logger.error(e)
             return False
 
+    def login_nonpriv(self):
+        self.ldap = initialize(current_app.config.get('LDAP_URI', None))
+        self.ldap.protocol_version = 3
+        self.ldap.set_option(OPT_REFERRALS, 0)
+
+        try:
+            self.ldap.simple_bind_s(
+                current_app.config.get('LDAP_USER', None),
+                current_app.config.get('LDAP_PASSWORD', None),
+            )
+
+            print('LDAP login Success')
+
+            return True
+
+        except LDAPError as e:
+            self.ldap = None
+            print(e)
+            current_app.logger.error(e)
+            return False
+
     def search_username(self, username):
         return self.search(current_app.config.get('LDAP_SEARCH_FORMAT', None).format(username=username))
 
