@@ -75,6 +75,13 @@ class Ldap():
             if isinstance(search_result[0][1], dict):
                 print('User', search_result[0][1])
                 user = search_result[0][1]
+
+                print('username', user['uid'][0].decode("utf-8"))
+                print('email', user['mail'][0].decode("utf-8"))
+                print('name', user['name'][0].decode("utf-8"))
+                print('surname', user['sn'][0].decode("utf-8"))
+                print('given_name', user['givenName'][0].decode("utf-8"))
+
                 result = {
                     'username': user['uid'][0].decode("utf-8"),
                     'email': user['mail'][0].decode("utf-8"),
