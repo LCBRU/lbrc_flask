@@ -78,7 +78,7 @@ class Ldap():
 
                 print('username', user['uid'][0].decode("utf-8"))
                 print('email', user['mail'][0].decode("utf-8"))
-                print('name', user['name'][0].decode("utf-8"))
+                print('name', user['cn'][0].decode("utf-8"))
                 print('surname', user['sn'][0].decode("utf-8"))
                 print('given_name', user['givenName'][0].decode("utf-8"))
 
