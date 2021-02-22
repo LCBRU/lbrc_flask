@@ -60,6 +60,12 @@ class Ldap():
     def search_username(self, username):
         return self.search(current_app.config.get('LDAP_SEARCH_FORMAT', None).format(username=username))
 
+    def search_name(self, search_string):
+        return self.search('{}=*{}*'.format(
+            current_app.config.get('LDAP_FIELDNAME_FULLNAME', None),
+            search_string,
+        ))
+
     def search(self, search_string):
         result = None
 
