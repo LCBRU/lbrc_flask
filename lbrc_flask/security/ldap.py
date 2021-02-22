@@ -70,7 +70,10 @@ class Ldap():
                 search_string,
             )
 
+            print('Search Results', search_result)
+
             if isinstance(search_result[0][1], dict):
+                print('User', search_result[0][1])
                 user = search_result[0][1]
                 result = {
                     'username': user['uid'][0].decode("utf-8"),
