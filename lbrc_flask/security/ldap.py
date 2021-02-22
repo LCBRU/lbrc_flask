@@ -73,7 +73,7 @@ class Ldap():
             if isinstance(search_result[0][1], dict):
                 user = search_result[0][1]
                 result = {
-                    'username': user['sAMAccountName'][0].decode("utf-8"),
+                    'username': user['uid'][0].decode("utf-8"),
                     'email': user['mail'][0].decode("utf-8"),
                     'name': user['name'][0].decode("utf-8"),
                     'surname': user['sn'][0].decode("utf-8"),
