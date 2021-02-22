@@ -76,18 +76,11 @@ class Ldap():
                 print('User', search_result[0][1])
                 user = search_result[0][1]
 
-                print('username', user['uid'][0].decode("utf-8"))
-                print('email', user['mail'][0].decode("utf-8"))
-                print('name', user['cn'][0].decode("utf-8"))
-                print('surname', user['sn'][0].decode("utf-8"))
-                print('given_name', user['givenName'][0].decode("utf-8"))
-
                 result = {
-                    'username': user['uid'][0].decode("utf-8"),
-                    'email': user['mail'][0].decode("utf-8"),
-                    'name': user['cn'][0].decode("utf-8"),
-                    'surname': user['sn'][0].decode("utf-8"),
-                    'given_name': user['givenName'][0].decode("utf-8"),
+                    'username': user[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
+                    'email': user[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
+                    'surname': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
+                    'given_name': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                 }
                 print('Result', result)
 

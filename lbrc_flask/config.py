@@ -44,6 +44,10 @@ class BaseConfig:
     LDAP_BASEDN = os.getenv("LDAP_BASEDN", '')
     LDAP_BIND_WHO_FORMAT = os.getenv("LDAP_BIND_WHO_FORMAT", '')
     LDAP_SEARCH_FORMAT = os.getenv("LDAP_SEARCH_FORMAT", '')
+    LDAP_FIELDNAME_USERID = os.getenv("LDAP_FIELDNAME_USERID", '')
+    LDAP_FIELDNAME_EMAIL = os.getenv("LDAP_FIELDNAME_EMAIL", '')
+    LDAP_FIELDNAME_GIVENNAME = os.getenv("LDAP_FIELDNAME_GIVENNAME", '')
+    LDAP_FIELDNAME_SURNAME = os.getenv("LDAP_FIELDNAME_SURNAME", '')
 
 
 class BaseTestConfig(BaseConfig):
