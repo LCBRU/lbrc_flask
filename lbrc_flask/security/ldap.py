@@ -80,7 +80,7 @@ class Ldap():
 
             if isinstance(search_result[0][1], dict):
                 print(search_result[0][1])
-                for u in search_result[0][1]:
+                for u in search_result[0]:
                     print(u)
                     result.append({
                         'username': u[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
