@@ -67,7 +67,7 @@ class Ldap():
         ))
 
     def search(self, search_string):
-        result = None
+        result = []
 
         try:
             search_result = self.ldap.search_s(
@@ -77,14 +77,13 @@ class Ldap():
             )
 
             if isinstance(search_result[0][1], dict):
-                user = search_result[0][1]
-
-                result = {
-                    'username': user[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
-                    'email': user[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
-                    'given_name': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
-                    'surname': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
-                }
+                for u in search_result[0][1]:
+                    result.append({
+                        'username': u[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
+                        'email': u[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
+                        'given_name': u[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
+                        'surname': u[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
+                    })
 
         except LDAPError as e:
             print(traceback.format_exc())
