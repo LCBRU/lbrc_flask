@@ -82,6 +82,7 @@ class Ldap():
                     'surname': user['sn'][0].decode("utf-8"),
                     'given_name': user['givenName'][0].decode("utf-8"),
                 }
+                print('Result', result)
 
         except LDAPError as e:
             print(traceback.format_exc())
