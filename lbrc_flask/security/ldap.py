@@ -78,15 +78,15 @@ class Ldap():
                 search_string,
             )
 
-            if isinstance(search_result[0][1], dict):
-                print(search_result[0][1])
-                for u in search_result[0]:
-                    print(u)
+            for u in search_result:
+                if isinstance(u[1], dict):
+                    user = u[1]
+                    print('A', user)
                     result.append({
-                        'username': u[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
-                        'email': u[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
-                        'given_name': u[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
-                        'surname': u[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
+                        'username': user[current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
+                        'email': user[current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
+                        'given_name': user[current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
+                        'surname': user[current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                     })
 
         except LDAPError as e:
