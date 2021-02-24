@@ -43,6 +43,6 @@ def init_standard_views(app):
         email(
             subject="NIHR Leicester BRC {} Error".format(app_name),
             message=traceback.format_exc(),
-            recipients=current_app.config["ADMIN_EMAIL_ADDRESSES"].split(";"),
+            recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
         )
         return render_template("lbrc_flask/500.html"), 500

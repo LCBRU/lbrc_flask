@@ -13,6 +13,7 @@ class BaseConfig:
     SMTP_SERVER = os.getenv("SMTP_SERVER", None)
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "lcbruit@leicester.ac.uk")
     SECURITY_EMAIL_SENDER = os.getenv("SECURITY_EMAIL_SENDER", "lcbruit@leicester.ac.uk")
+    MAIL_DEBUG = os.getenv("MAIL_DEBUG", "False") == 'True'
 
     # Database
     SQLALCHEMY_ECHO = os.getenv("SQLALCHEMY_ECHO", "False") == 'True'
