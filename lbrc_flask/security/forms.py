@@ -10,8 +10,7 @@ from flask_security.forms import (
     Form,
     PasswordFormMixin,
 )
-from flask_security.utils import hash_password, verify_and_update_password, get_message, _datastore
-from flask_security.confirmable import requires_confirmation
+from flask_security.utils import verify_and_update_password, get_message, _datastore
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField

@@ -21,6 +21,7 @@ class BaseConfig:
 
     # Security
     SECRET_KEY = os.environ["SECRET_KEY"]
+    SECURITY_USER_IDENTITY_ATTRIBUTES = ['email', 'username']
     SECURITY_PASSWORD_SALT = os.getenv("SECURITY_PASSWORD_SALT", SECRET_KEY)
     SECURITY_CONFIRM_SALT = os.getenv("SECURITY_CONFIRM_SALT", SECURITY_PASSWORD_SALT)
     SECURITY_RESET_SALT = os.getenv("SECURITY_RESET_SALT", SECURITY_PASSWORD_SALT)
@@ -32,7 +33,8 @@ class BaseConfig:
     SECURITY_RECOVERABLE = True
 
     # Users
-    ADMIN_EMAIL_ADDRESSES = os.getenv("ADMIN_EMAIL_ADDRESSES", '')
+    ADMIN_EMAIL_ADDRESS = os.getenv("ADMIN_EMAIL_ADDRESS", '')
+    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", '')
 
     # Forms
     WTF_CSRF_ENABLED = True

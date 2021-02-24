@@ -25,10 +25,14 @@ def init_security(app, user_class, role_class):
             name=role_class.ADMIN_ROLENAME, description=role_class.ADMIN_ROLENAME
         )
 
-        for a in app.config["ADMIN_EMAIL_ADDRESSES"].split(";"):
-            if not user_datastore.find_user(email=a):
-                print('Creating administrator "{}"'.format(a))
-                user = user_datastore.create_user(email=a)
-                user_datastore.add_role_to_user(user, admin_role)
+        admin_email = app.config["ADMIN_EMAIL_ADDRESS"]
+
+        if not user_datastore.find_user(email=admin_email):
+            print('Creating administrator "{}"'.format(admin_email))
+            user = user_datastore.create_user(
+                email=admin_email,
+                username=app.config["ADMIN_USERNAME"],
+            )
+            user_datastore.add_role_to_user(user, admin_role)
 
         db.session.commit()
