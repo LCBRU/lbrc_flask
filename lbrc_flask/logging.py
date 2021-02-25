@@ -24,7 +24,7 @@ def init_logging(app):
 
     app.logger.info('Flask app created')
 
-    print(f'LOG LEVEL = {app.config["LOG_LEVEL"]}')
+    print('LOG LEVEL = {}'.format(app.config["LOG_LEVEL"]))
     
     app.logger.setLevel(app.config['LOG_LEVEL'])
 
