@@ -1,5 +1,8 @@
+import traceback
 import logging
 from logging import FileHandler
+from flask import current_app
+from lbrc_flask.emailing import email
 
 
 def init_logging(app):
@@ -24,3 +27,13 @@ def init_logging(app):
     print(f'LOG LEVEL = {app.config["LOG_LEVEL"]}')
     
     app.logger.setLevel(app.config['LOG_LEVEL'])
+
+
+def log_exception(e):
+    print(traceback.format_exc())
+    current_app.logger.error(traceback.format_exc())
+    email(
+        subject=current_app.config["ERROR_EMAIL_SUBJECT"],
+        message=traceback.format_exc(),
+        recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
+    )
