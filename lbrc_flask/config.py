@@ -9,6 +9,7 @@ class BaseConfig:
     TESTING = False
     DEBUG = os.getenv("DEBUG", "False") == 'True'
     LOG_LEVEL = os.getenv("LOG_LEVEL", "WARNING")
+    LOG_DIRECTORY = os.getenv("LOG_DIRECTORY", ".")
 
     # Mail
     SMTP_SERVER = os.getenv("SMTP_SERVER", None)
