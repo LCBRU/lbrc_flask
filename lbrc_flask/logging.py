@@ -9,7 +9,7 @@ from pathlib import Path
 def init_logging(app):
     log_directory = Path(app.config["LOG_DIRECTORY"])
 
-    info_handler = FileHandler(log_directory / 'info.log')
+    info_handler = FileHandler(str(log_directory / 'info.log'))
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(logging.Formatter(
         '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
@@ -17,7 +17,7 @@ def init_logging(app):
 
     app.logger.addHandler(info_handler)
 
-    error_handler = FileHandler(log_directory / 'error.log')
+    error_handler = FileHandler(str(log_directory / 'error.log'))
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(logging.Formatter(
         '[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
