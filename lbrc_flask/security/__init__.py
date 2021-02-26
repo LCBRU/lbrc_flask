@@ -1,12 +1,24 @@
 from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcResetPasswordForm
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
+from flask import current_app
 from ..database import db
 from .model import User, Role, AuditMixin
 
 
 def current_user_id():
     return current_user.id
+
+
+SYSTEM_USER_NAME = 'system'
+
+
+def get_system_user():
+    return User.query.filter_by(username=SYSTEM_USER_NAME).first()
+
+
+def get_admin_user():
+    return User.query.filter_by(email=current_app.config["ADMIN_EMAIL_ADDRESS"]).first()
 
 
 def init_security(app, user_class, role_class):
@@ -24,6 +36,14 @@ def init_security(app, user_class, role_class):
         admin_role = user_datastore.find_or_create_role(
             name=role_class.ADMIN_ROLENAME, description=role_class.ADMIN_ROLENAME
         )
+
+        if not get_system_user():
+            user = user_datastore.create_user(
+                email='hal@discovery_one.uss',
+                username=SYSTEM_USER_NAME,
+                firstname='HAL',
+                last_name='',
+            )
 
         admin_email = app.config["ADMIN_EMAIL_ADDRESS"]
 

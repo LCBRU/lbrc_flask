@@ -116,6 +116,10 @@ class User(db.Model, CommonMixin, UserMixin):
     )
 
     @property
+    def is_active(self):
+        return self.active
+
+    @property
     def is_admin(self):
         return self.has_role(Role.ADMIN_ROLENAME)
 
