@@ -13,12 +13,19 @@ def init_standard_views(app):
             mimetype="image/vnd.microsoft.icon",
         )
 
-    @app.errorhandler(404)
+    @app.errorhandler(400)
     def missing_page(exception):
         """Catch internal 404 errors, display
             a nice error page and log the error.
         """
-        return render_template("lbrc_flask/404.html"), 404
+        return render_template("lbrc_flask/404.html"), 400
+
+    @app.errorhandler(401)
+    def missing_page(exception):
+        """Catch internal 404 errors, display
+            a nice error page and log the error.
+        """
+        return render_template("lbrc_flask/404.html"), 401
 
     @app.errorhandler(403)
     def forbidden_page(exception):
@@ -26,6 +33,13 @@ def init_standard_views(app):
             a nice error page and log the error.
         """
         return render_template("lbrc_flask/404.html"), 403
+
+    @app.errorhandler(404)
+    def missing_page(exception):
+        """Catch internal 404 errors, display
+            a nice error page and log the error.
+        """
+        return render_template("lbrc_flask/404.html"), 404
 
     @app.errorhandler(500)
     @app.errorhandler(Exception)

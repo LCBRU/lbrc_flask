@@ -4,7 +4,7 @@ from lbrc_flask.pytest.helpers import login
 
 
 def test__json__posting(client, faker):
-    login(client, faker)
+    u = login(client, faker)
 
     expected = 43
 
@@ -14,5 +14,5 @@ def test__json__posting(client, faker):
         'datetime': datetime.datetime.now(),
         'date': datetime.datetime.now().date(),
     })
-
+    print(resp.get_json())
     assert resp.get_json()['result'] == expected

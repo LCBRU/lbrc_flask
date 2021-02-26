@@ -146,6 +146,7 @@ def app():
     @app.route('/json', methods=["GET", "POST"])
     @login_required
     def json():
+        print('*******    HELLO        ****')
         return {'result': request.get_json()['integer']}
 
     @app.route('/json_requests/<string:field_name>', methods=["GET", "POST"])
