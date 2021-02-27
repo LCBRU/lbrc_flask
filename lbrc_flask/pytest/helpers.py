@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from lbrc_flask.database import db
 from flask_login import login_user
+from flask_security.utils import _datastore, url_for_security
 
 
 def login(client, faker, user=None):
@@ -32,6 +33,10 @@ def login(client, faker, user=None):
     if crf_token:
         data["csrf_token"] = crf_token.get("value")
 
-    client.post("/login", data=data, follow_redirects=True)
+    resp = client.post("/login", data=data, follow_redirects=True)
 
-    return user
+    return _datastore.find_user(email=user.email)
+
+
+def logout(client):
+    client.get(url_for_security('logout'))
