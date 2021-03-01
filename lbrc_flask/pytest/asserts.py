@@ -147,3 +147,8 @@ def assert__page_navigation__link_exists(paginator, string, url, page, current_p
 
 def assert__urls_the_same(url1, url2):
     assert update_querystring(url1, {}) == update_querystring(url2, {})
+
+
+def assert__flash_messages_contains_error(client):
+    with client.session_transaction() as session:
+        return dict(session['_flashes']).get('error') is not None
