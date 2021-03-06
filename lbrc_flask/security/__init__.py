@@ -19,7 +19,9 @@ def get_system_user():
 
 
 def get_admin_user():
-    return _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"])
+    result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
+
+    return result
 
 
 def init_security(app, user_class, role_class):
@@ -49,12 +51,13 @@ def init_users():
         )
 
     admin_email = current_app.config["ADMIN_EMAIL_ADDRESS"]
+    admin_username = current_app.config["ADMIN_USERNAME"]
 
-    if not _datastore.find_user(email=admin_email):
+    if not _datastore.find_user(email=admin_email) and not _datastore.find_user(username=admin_username):
         print('Creating administrator "{}"'.format(admin_email))
         user = _datastore.create_user(
             email=admin_email,
-            username=current_app.config["ADMIN_USERNAME"],
+            username=admin_username,
         )
         _datastore.add_role_to_user(user, admin_role)
 

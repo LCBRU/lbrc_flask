@@ -100,15 +100,17 @@ class LbrcLoginForm(LoginForm):
 
         if ldap.is_enabled():
             if ldap.login(self.email.data, self.password.data):
-                ldap_user = ldap.search_username(self.email.data)
+                ldap_users = ldap.search_username(self.email.data)
 
                 # GUARD: Even if they've managed to login, if we can't get the
                 #        user details we're not letting 'em in.  It's probably
                 #        a config error, but it's probably safer to deny entry.
-                if ldap_user is None:
+                if len(ldap_users) != 1:
                     return False
 
-                user = _datastore.get_user(ldap_user['email'])
+                ldap_user = ldap_users[0]
+
+                user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
 
                 if not user:
                     user = _datastore.create_user(
@@ -116,6 +118,7 @@ class LbrcLoginForm(LoginForm):
                         password=random_password(),
                     )
 
+                user.email = ldap_user['email']
                 user.username = ldap_user['username']
                 user.first_name = ldap_user['given_name']
                 user.last_name = ldap_user['surname']
