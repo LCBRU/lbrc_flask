@@ -14,11 +14,11 @@ class Ldap():
         if not (username or '').strip() or not (password or '').strip():
             return False
 
-        self.ldap = initialize(current_app.config.get('LDAP_URI', None))
-        self.ldap.protocol_version = 3
-        self.ldap.set_option(OPT_REFERRALS, 0)
-
         try:
+            self.ldap = initialize(current_app.config.get('LDAP_URI', None))
+            self.ldap.protocol_version = 3
+            self.ldap.set_option(OPT_REFERRALS, 0)
+
             who = current_app.config.get('LDAP_BIND_WHO_FORMAT', None).format(
                 username=username,
                 basedn=current_app.config.get('LDAP_BASEDN', None),
