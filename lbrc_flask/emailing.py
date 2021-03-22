@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-
 from flask_mail import Mail, Message
 from flask import current_app
+
 
 mail = Mail()
 
@@ -11,8 +10,9 @@ def init_mail(app):
 
 
 def email(subject, message, recipients):
-
     if current_app.config["SMTP_SERVER"] is not None:
         msg = Message(subject=subject, recipients=recipients, body=message)
+
+        current_app.logger.info('Sending email to {}'.format(recipients))
 
         mail.send(msg)
