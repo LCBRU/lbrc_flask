@@ -16,3 +16,5 @@ def email(subject, message, recipients):
         current_app.logger.info('Sending email to {}'.format(recipients))
 
         mail.send(msg)
+    else:
+        current_app.logger.info('Skipping email to {}'.format(recipients))
