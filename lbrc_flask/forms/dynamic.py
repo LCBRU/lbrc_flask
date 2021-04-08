@@ -208,7 +208,7 @@ class FormBuilder:
         return DynamicForm
     
     def add_field_group(self, field_group):
-        for f in field_group.fields:
+        for f in sorted(field_group.fields, key=lambda x: x.order):
             self.add_field(f)
 
     def add_field(self, field):
