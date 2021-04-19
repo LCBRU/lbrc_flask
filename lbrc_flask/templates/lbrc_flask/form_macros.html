@@ -110,7 +110,7 @@
             {% set url=b['url'] %}
         {% endif %}
 
-        <a class="btn btn-primary" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
+        <a class="btn btn-primary {{ b['class'] }}" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
       {% endfor %}
 
     </div>
