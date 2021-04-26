@@ -22,5 +22,6 @@ setup(name='lbrc_flask',
             'arrow',
             'python-ldap',
             'bcrypt',
+            'markdown',
       ],
 )

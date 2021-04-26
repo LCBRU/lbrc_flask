@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import g, request
+import markdown
 from .formatters import format_currency, format_date, format_datetime, format_number, format_yesno, humanize_datetime, humanize_date
 
 
@@ -43,6 +44,11 @@ def init_template_filters(app):
     @app.template_filter("default_if_none")
     def default_if_none(value, default):
         return value or default
+
+    @app.template_filter("markdown")
+    def markdown(value):
+        if value:
+            return markdown.markdown(value)
 
     @app.template_filter("nbsp")
     def nbsp(value):
