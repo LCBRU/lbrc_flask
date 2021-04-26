@@ -332,6 +332,12 @@ dd {
   width: 300px;
 }
 
+.login-form .card-body .description a {
+  color: #FFF;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
 .errors {
   margin-top: 10px;
 }

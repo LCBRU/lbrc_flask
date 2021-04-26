@@ -35,12 +35,21 @@
 			{{ login_user_form.remember }} Remember me on this computer
 		</label>
 	</div>
-		  
+
 	<div class="text-right">
 		<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
 		<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
 		<button type="submit" class="btn btn-primary">Login</button>
 	</div>
 </form>
+
+{% if config['LBRC_FLASK_LOGIN_FORM_DESCRIPTION'] %}
+
+	{% set message=config['LBRC_FLASK_LOGIN_FORM_DESCRIPTION'] %}
+
+	<div class="description">
+		{{ message | markdown }}
+	</div>
+{% endif %}
 
 {% endblock %}
