@@ -11,8 +11,6 @@ class Ldap():
         return len((current_app.config.get('LDAP_URI', None) or '').strip()) > 0
 
     def login(self, username, password):
-        username = self._standardize_username(username)
-
         if not (username or '').strip() or not (password or '').strip():
             return False
 
@@ -95,8 +93,3 @@ class Ldap():
         
         finally:
             return result
-
-
-    def _standardize_username(self, username):
-        result, *_ = username.split('@')
-        return result

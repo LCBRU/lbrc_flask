@@ -99,8 +99,10 @@ class LbrcLoginForm(LoginForm):
         ldap = Ldap()
 
         if ldap.is_enabled():
-            if ldap.login(self.email.data, self.password.data):
-                ldap_users = ldap.search_username(self.email.data)
+            username = self._standardize_username(self.email.data)
+
+            if ldap.login(username, self.password.data):
+                ldap_users = ldap.search_username(username)
 
                 # GUARD: Even if they've managed to login, if we can't get the
                 #        user details we're not letting 'em in.  It's probably
@@ -132,3 +134,7 @@ class LbrcLoginForm(LoginForm):
                 return True
 
         return super().validate()
+
+    def _standardize_username(self, username):
+        result, *_ = username.split('@')
+        return result
