@@ -19,6 +19,8 @@ class FieldType(db.Model):
     FILE = 'FileField'
     MULTIPLE_FILE = 'MultipleFileField'
     DESCRIPTION = 'DescriptionField'
+    SELECT = 'SelectField'
+    MULTISELECT = 'SelectMultipleField'
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String)
@@ -46,6 +48,8 @@ class FieldType(db.Model):
             return 'ul'
         elif self.name == FieldType.TEXTAREA:
             return 'textarea'
+        elif self.name in [FieldType.SELECT, FieldType.MULTISELECT]:
+            return 'select'
         else:
             return 'input'
 
@@ -73,6 +77,8 @@ class FieldType(db.Model):
             FieldType.RADIO,
             FieldType.STRING,
             FieldType.TEXTAREA,
+            FieldType.SELECT,
+            FieldType.MULTISELECT,
         ]
 
     @classmethod
@@ -111,6 +117,14 @@ class FieldType(db.Model):
     def get_description(cls):
         return cls._get_field_type(FieldType.DESCRIPTION)
 
+    @classmethod
+    def get_select(cls):
+        return cls._get_field_type(FieldType.SELECT)
+
+    @classmethod
+    def get_multiselect(cls):
+        return cls._get_field_type(FieldType.MULTISELECT)
+
     def __str__(self):
         return self.name
 
@@ -125,6 +139,8 @@ class FieldTypeSetup():
         self._add_field_type(FieldType(name=FieldType.FILE, is_file=True))
         self._add_field_type(FieldType(name=FieldType.MULTIPLE_FILE, is_file=True))
         self._add_field_type(FieldType(name=FieldType.DESCRIPTION))
+        self._add_field_type(FieldType(name=FieldType.SELECT))
+        self._add_field_type(FieldType(name=FieldType.MULTISELECT))
 
     def _add_field_type(self, field_type):
         if FieldType.query.filter_by(name=field_type.name).count() == 0:

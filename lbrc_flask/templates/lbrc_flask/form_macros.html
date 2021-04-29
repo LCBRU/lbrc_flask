@@ -11,6 +11,8 @@
           {{ field.label(class="control-label", text=label) }}{{ render_checkbox_field_control(field, **kwargs) }}
         {% elif field.type == "RadioField" %}
           {{ field.label(class="control-label", text=label) }}{{ render_radio_field_control(field, **kwargs) }}
+        {% elif field.type == "SelectMultipleField" %}
+          {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, class="form-control select2", **kwargs) }}
         {% else %}
           {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, **kwargs) }}
         {% endif %}
