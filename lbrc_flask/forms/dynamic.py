@@ -192,6 +192,7 @@ class Field(db.Model):
     def get_choices(self):
         return [(c, c) for c in self.choices.split("|")]
 
+
     def get_allowed_file_extensions(self):
         return self.allowed_file_extensions.split("|")
     
@@ -266,7 +267,7 @@ class FormBuilder:
         else:
             module = __import__("wtforms")
             class_ = getattr(module, field.field_type.name)
-            form_field = class_(field.get_label(), **kwargs)
+            form_field = class_(field.get_label(), description=field.description, **kwargs)
 
         self.add_form_field(field.field_name, form_field)
 

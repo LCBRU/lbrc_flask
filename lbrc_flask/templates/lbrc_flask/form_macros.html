@@ -4,22 +4,39 @@
 {% endif %}
 <div>
     <div class="form-group{% if field.errors %} has-error{%endif%}">
-        {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
-        {% elif field.type == "DescriptionField" %}
-          {{ render_field_control(field, **kwargs) }}
-        {% elif field.type == "BooleanField" %}
-          {{ field.label(class="control-label", text=label) }}{{ render_checkbox_field_control(field, **kwargs) }}
-        {% elif field.type == "RadioField" %}
-          {{ field.label(class="control-label", text=label) }}{{ render_radio_field_control(field, **kwargs) }}
-        {% elif field.type == "SelectMultipleField" %}
-          {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, class="form-control select2", **kwargs) }}
-        {% else %}
-          {{ field.label(class="control-label", text=label) }}{{ render_field_control(field, **kwargs) }}
-        {% endif %}
+      {{ render_field_controls(field, **kwargs) }}
     </div>
   </div>
 {% endmacro %}
 
+
+{% macro render_field_controls(field, label=None) %}
+  {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
+  {% else %}
+    {% if field.type != "DescriptionField" %}
+      {{ render_label(field, label) }}
+    {% endif %}
+    {% if field.type == "BooleanField" %}
+      {{ render_checkbox_field_control(field, **kwargs) }}
+    {% elif field.type == "RadioField" %}
+      {{ render_radio_field_control(field, **kwargs) }}
+    {% elif field.type == "SelectMultipleField" %}
+      {{ render_field_control(field, class="form-control select2", **kwargs) }}
+    {% else %}
+      {{ render_field_control(field, **kwargs) }}
+    {% endif %}
+  {% endif %}
+{% endmacro %}
+
+
+{% macro render_label(field, label) %}
+  {{ field.label(class="control-label", text=label) }}
+  {% if field.description %}
+    <span data-toggle="modal" data-target="#help_modal" data-title="{{ field.name }}" data-text="{{ field.description }}">
+      <span class="fas fa-question-circle"></span>
+    </span>
+  {% endif %}
+{% endmacro %}
 
 {% macro render_checkbox_field_control(field) %}
     {{ field(class="checkbox", **kwargs)|safe }}
