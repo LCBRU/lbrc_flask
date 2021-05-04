@@ -23,5 +23,6 @@ setup(name='lbrc_flask',
             'python-ldap',
             'bcrypt',
             'markdown',
+            'openpyxl',
       ],
 )
