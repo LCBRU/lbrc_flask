@@ -122,17 +122,7 @@
 
     <div>
       {% for b in buttons %}
-
-        {% set url="" %}
-
-        {% if b['endpoint'] | length > 0 %}
-            {% set url=url_for(b['endpoint'], **kwargs) %}
-        {% endif %}
-        {% if b['url'] | length > 0 %}
-            {% set url=b['url'] %}
-        {% endif %}
-
-        <a class="btn btn-primary {{ b['class'] }}" id="{{ b['id'] }}" href="{{ url }}">{{ b['text'] }}</a>
+        {{ _render_search_button(b, searchForm, **kwargs) }}
       {% endfor %}
 
     </div>
@@ -141,7 +131,7 @@
   {% if searchForm | rejectattr("type", "ne", "SelectField") | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
-        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField") %}
+        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col">
             <div>{{ field.label.text | nbsp}}</div>
             <div>{{ field(class="form-control", **kwargs)|safe }}</div>
@@ -154,6 +144,25 @@
 </form>
 {% endmacro %}
 
+
+{% macro _render_search_button(button, form) %}
+  {% set url="" %}
+
+  {% if button['add_form_fields'] %}
+    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("data") %}
+      {% if kwargs.update({f.name: f.data}) %} {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if button['endpoint'] | length > 0 %}
+      {% set url=url_for(button['endpoint'], **kwargs) %}
+  {% endif %}
+  {% if button['url'] | length > 0 %}
+      {% set url=button['url'] %}
+  {% endif %}
+
+  <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}">{{ button['text'] }}</a>
+{% endmacro %}
 
 {% macro render_pagination(pagination, endpoint, form) %}
   {% if pagination.pages > 1 %}
