@@ -24,5 +24,6 @@ setup(name='lbrc_flask',
             'bcrypt',
             'markdown',
             'openpyxl',
+            'pygal',
       ],
 )

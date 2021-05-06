@@ -2,6 +2,7 @@ import uuid
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.types import TypeDecorator, CHAR
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.sql import func
 
 
 db = SQLAlchemy()
@@ -42,3 +43,18 @@ class GUID(TypeDecorator):
             if not isinstance(value, uuid.UUID):
                 value = uuid.UUID(value)
             return value
+
+def dialect_date_format_string(format_string):
+    if db.session.bind.dialect.name == 'sqlite':
+        return format_string.replace('%b', '%m')
+    elif db.session.bind.dialect.name == 'mysql':
+        return format_string
+
+
+def dialect_format_date(field, format_string):
+    if db.session.bind.dialect.name == 'sqlite':
+        return func.strftime(format_string, field)
+    elif db.session.bind.dialect.name == 'mysql':
+        return func.date_format(field, format_string)
+
+
