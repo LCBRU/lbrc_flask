@@ -31,10 +31,15 @@
 
 {% macro render_label(field, label) %}
   {{ field.label(class="control-label", text=label) }}
+  {% if field.flags.required %}
+    <small data-toggle="tooltip" title="{{ field.label.text }} is a mandatory field">
+      <small class="fas fa-asterisk text-danger"></small>
+    </small>
+  {% endif %}
   {% if field.description %}
-    <span data-toggle="modal" data-target="#help_modal" data-title="{{ field.name }}" data-text="{{ field.description }}">
+    <a href="#" data-toggle="modal" data-target="#help_modal" data-title="{{ field.name }}" data-text="{{ field.description }}">
       <span class="fas fa-question-circle"></span>
-    </span>
+    </a>
   {% endif %}
 {% endmacro %}
 
