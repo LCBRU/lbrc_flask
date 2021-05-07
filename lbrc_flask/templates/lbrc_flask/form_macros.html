@@ -125,7 +125,7 @@
       </div>
     </div>
 
-    <div>
+    <div class="col-auto">
       {% for b in buttons %}
         {{ _render_search_button(b, searchForm, **kwargs) }}
       {% endfor %}
@@ -137,7 +137,7 @@
     <div class="search-filters">
       <div class="row">
         {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") %}
-          <div class="form-group{% if field.errors %} has-error{%endif%} col-3">
+          <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
             <div>{{ field.label.text | nbsp}}</div>
             <div>{{ field(class="form-control", **kwargs)|safe }}</div>
           </div>
