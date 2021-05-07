@@ -92,7 +92,7 @@
 
 
 {% macro render_search(searchForm, searchview, placeholder='enter search text', buttons={}, checkboxes={}) %}
-<form method="GET" class="form-horizontal" action="{{ url_for(searchview, **kwargs) }}">
+<form method="GET" class="form-horizontal search-form" action="{{ url_for(searchview, **kwargs) }}">
 
   <div class="row">
     <div class="col">
@@ -125,12 +125,14 @@
       </div>
     </div>
 
-    <div class="col-auto">
-      {% for b in buttons %}
-        {{ _render_search_button(b, searchForm, **kwargs) }}
-      {% endfor %}
+    {% if buttons | length > 0 %}
+      <div class="col-auto">
+        {% for b in buttons %}
+          {{ _render_search_button(b, searchForm, **kwargs) }}
+        {% endfor %}
+      </div>
+    {% endif %}
 
-    </div>
   </div>
 
   {% if searchForm | rejectattr("type", "ne", "SelectField") | list | length is ge(1) %}

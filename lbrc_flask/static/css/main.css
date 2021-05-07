@@ -348,12 +348,17 @@ a.fas, a.fas:link, a.fas:hover {
   cursor: pointer;
 }
 
-.search-filters {
+.search-form {
+  background-color: #f9f9f9;
+  border: #eee 1px solid;
   padding: 10px;
-  background-color: #f1f1f1;
 }
 
-.search-filters select{
+.search-filters {
+  padding-top: 10px;
+}
+
+.search-filters select {
   width: 100%;
 }
 
