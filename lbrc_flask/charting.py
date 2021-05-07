@@ -15,4 +15,4 @@ def grouped_bar_chart(title, buckets, details, group_column=0, value_column=1):
 
         chart.add(group_name, values.values())
 
-    return chart.render_response()
+    return chart
