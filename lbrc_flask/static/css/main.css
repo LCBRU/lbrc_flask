@@ -352,10 +352,12 @@ a.fas, a.fas:link, a.fas:hover {
   background-color: #f9f9f9;
   border: #eee 1px solid;
   padding: 10px;
+  padding-bottom: 0;
 }
 
 .search-filters {
   padding-top: 10px;
+  padding-bottom: 0;
 }
 
 .search-filters select {
