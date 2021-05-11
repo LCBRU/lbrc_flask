@@ -24,6 +24,7 @@ def get_field_table(meta):
         Column("field_name", NVARCHAR(200)),
         Column("label", NVARCHAR(200)),
         Column("required", Boolean),
+        Column("reportable", Boolean),
         Column("max_length", Integer),
         Column("default", NVARCHAR(200)),
         Column("choices", NVARCHAR(500)),

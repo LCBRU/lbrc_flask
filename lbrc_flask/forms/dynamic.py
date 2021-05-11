@@ -69,6 +69,14 @@ class FieldType(db.Model):
         elif self.name == FieldType.MULTIPLE_FILE:
             return 'file'
 
+    @property
+    def is_boolean(self):
+        return self.name == FieldType.BOOLEAN
+
+    @property
+    def is_select_multiple(self):
+        return self.name == FieldType.MULTISELECT
+
     @staticmethod
     def all_field_type_name():
         return [
@@ -172,6 +180,7 @@ class Field(db.Model):
     field_name = db.Column(db.String)
     label = db.Column(db.String)
     required = db.Column(db.Boolean, default=0)
+    reportable = db.Column(db.Boolean, default=0)
     max_length = db.Column(db.Integer(), default=0)
     default = db.Column(db.String, default="")
     choices = db.Column(db.String, default="")
@@ -193,7 +202,12 @@ class Field(db.Model):
             return self.default
 
     def get_choices(self):
-        return [(c, c) for c in self.choices.split("|")]
+        if self.field_type.is_boolean:
+            return ['Yes', 'No']
+        elif not self.choices:
+            return []
+        else:
+            return [(c, c) for c in self.choices.split("|")]
 
 
     def get_allowed_file_extensions(self):
