@@ -319,7 +319,7 @@ dd {
 }
 
 .login-form .card-body form {
-  width: 500px;
+  width: 300px;
 }
 
 .login-form .card-body .description {
@@ -329,7 +329,7 @@ dd {
   padding: 10px;
   background-color: #17A2B8;
   color: #FFF;
-  width: 300px;
+  width: 250px;
 }
 
 .login-form .card-body .description a {
