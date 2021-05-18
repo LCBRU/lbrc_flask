@@ -37,8 +37,10 @@
 	</div>
 
 	<div class="text-right">
-		<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
-		<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
+		{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
+			<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
+			<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
+		{% endif %}
 		<button type="submit" class="btn btn-primary">Login</button>
 	</div>
 </form>
