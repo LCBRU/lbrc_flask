@@ -50,8 +50,10 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
 
     print(response.location)
     if endpoint:
+        print(url_for(endpoint, _external=True, **kwargs))
         assert response.location == url_for(endpoint, _external=True, **kwargs)
     if url:
+        print(url)
         assert response.location == url
 
 
@@ -92,18 +94,26 @@ def get_and_assert_standards(client, url, user, has_form=False, has_navigation=T
     return resp
 
 
-def assert__page_navigation(client, url, items, page_size=5):
+def assert__page_navigation(client, endpoint, parameters, items, page_size=5, form=None):
     page_count = ((items - 1) // page_size) + 1
 
+    if form is not None:
+        form_fields = filter(lambda x: x.name not in ['page', 'csrf_token'] and x.data, form)
+        params = {**parameters, **{f.name: f.data for f in form_fields}}
+    else:
+        params = {**parameters}
+
+    url = url_for(endpoint, **params)
+
     if page_count > 1:
-        assert__page_navigation__pages(url, client, page_count)
+        assert__page_navigation__pages(url, client, page_count, form)
     else:
         resp = client.get(url)
         paginator = resp.soup.find('ul', 'pagination')
         assert paginator is None
 
 
-def assert__page_navigation__pages(url, client, page_count):
+def assert__page_navigation__pages(url, client, page_count, form):
     for current_page in range(1, page_count + 1):
         resp = client.get(update_querystring(url, {'page': current_page}))
         paginator = resp.soup.find('ul', 'pagination')

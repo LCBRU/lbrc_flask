@@ -77,6 +77,10 @@ class FieldType(db.Model):
     def is_select_multiple(self):
         return self.name == FieldType.MULTISELECT
 
+    @property
+    def has_choices(self):
+        return self.name in [FieldType.MULTISELECT, FieldType.SELECT, FieldType.RADIO]
+
     @staticmethod
     def all_field_type_name():
         return [
@@ -201,6 +205,10 @@ class Field(db.Model):
         else:
             return self.default
 
+    @property
+    def has_choices(self):
+        return self.field_type.has_choices
+
     def get_choices(self):
         if self.field_type.is_boolean:
             return ['Yes', 'No']
@@ -208,7 +216,6 @@ class Field(db.Model):
             return []
         else:
             return [(c, c) for c in self.choices.split("|")]
-
 
     def get_allowed_file_extensions(self):
         return self.allowed_file_extensions.split("|")
@@ -258,7 +265,7 @@ class FormBuilder:
         if field.max_length:
             kwargs["validators"].append(Length(max=field.max_length))
 
-        if field.choices:
+        if field.has_choices:
             kwargs["choices"] = field.get_choices()
 
         if field.allowed_file_extensions:
