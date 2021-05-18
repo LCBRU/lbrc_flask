@@ -107,7 +107,7 @@ class User(db.Model, CommonMixin, UserMixin):
         enable_typechecks=False,    # Required to allow specific applications
                                     # to override the Role class
         secondary=roles_users,
-        collection_class=set,
+        # collection_class=set,
         backref=db.backref(
             "users",
             lazy="dynamic",
