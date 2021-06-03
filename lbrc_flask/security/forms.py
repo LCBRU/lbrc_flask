@@ -10,12 +10,12 @@ from flask_security.forms import (
     ValidatorMixin,
     Form,
     PasswordFormMixin,
+    LoginForm,
 )
 from flask_security.utils import verify_and_update_password, get_message, _datastore
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
-from flask_security.forms import LoginForm
 from lbrc_flask.database import db
 
 
@@ -130,6 +130,7 @@ class LbrcLoginForm(LoginForm):
 
                     return True
                 else:
+                    self.password.errors.append(get_message("INVALID_PASSWORD")[0])
                     return False
 
         return super().validate()
