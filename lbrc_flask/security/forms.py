@@ -130,7 +130,7 @@ class LbrcLoginForm(LoginForm):
 
                     return True
                 else:
-                    self.password.errors.append(get_message("INVALID_PASSWORD")[0])
+                    self.password.errors.append('Invalid password - please use your password for you network account')
                     return False
 
         return super().validate()
