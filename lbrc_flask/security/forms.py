@@ -90,7 +90,7 @@ class LbrcResetPasswordForm(Form, NewPasswordFormMixin, PasswordConfirmFormMixin
         ldap = Ldap()
 
         if ldap.is_enabled():
-            username = self._standardize_username(self.email.data)
+            username = self.standardize_username(self.email.data)
             ldap.login_nonpriv()
 
             ldap_user = ldap.search_username(username)
@@ -141,7 +141,7 @@ class LbrcLoginForm(LoginForm):
         ldap = Ldap()
 
         if ldap.is_enabled():
-            username = self._standardize_username(self.email.data)
+            username = self.standardize_username(self.email.data)
 
             ldap.login_nonpriv()
 
@@ -176,6 +176,6 @@ class LbrcLoginForm(LoginForm):
 
         return super().validate()
 
-    def _standardize_username(self, username):
-        result, *_ = username.split('@')
-        return result
+def standardize_username(self, username):
+    result, *_ = username.split('@')
+    return result
