@@ -1,4 +1,4 @@
-from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcResetPasswordForm
+from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcResetPasswordForm, LbrcForgotPasswordForm
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
 from flask import current_app
@@ -29,6 +29,7 @@ def init_security(app, user_class, role_class):
     Security(
         app,
         user_datastore,
+        forgot_password_form=LbrcForgotPasswordForm,
         reset_password_form=LbrcResetPasswordForm,
         change_password_form=LbrcChangePasswordForm,
         login_form=LbrcLoginForm,

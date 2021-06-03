@@ -11,6 +11,7 @@ from flask_security.forms import (
     Form,
     PasswordFormMixin,
     LoginForm,
+    ForgotPasswordForm,
 )
 from flask_security.utils import verify_and_update_password, get_message, _datastore
 from flask_login import current_user
@@ -53,6 +54,28 @@ class PasswordConfirmFormMixin:
             password_required,
         ],
     )
+
+
+class LbrcForgotPasswordForm(ForgotPasswordForm):
+    """The default forgot password form"""
+
+    def validate(self):
+        if not super().validate():
+            return False
+
+        ldap = Ldap()
+
+        if ldap.is_enabled():
+            username = self._standardize_username(self.email.data)
+            ldap.login_nonpriv()
+
+            ldap_user = ldap.search_username(username)
+
+            if ldap_user is not None:
+                self.email.errors.append('Cannot reset password - please use your username and password for you network account')
+                return False
+
+        return True
 
 
 class LbrcResetPasswordForm(Form, NewPasswordFormMixin, PasswordConfirmFormMixin):
