@@ -72,7 +72,7 @@ class LbrcForgotPasswordForm(ForgotPasswordForm):
             ldap_user = ldap.search_username(username)
 
             if ldap_user is not None:
-                self.email.errors.append('Cannot reset password - please use your username and password for you network account')
+                self.email.errors.append('Cannot reset password - please use the username and password for your network account')
                 return False
 
         return True
@@ -96,7 +96,7 @@ class LbrcResetPasswordForm(Form, NewPasswordFormMixin, PasswordConfirmFormMixin
             ldap_user = ldap.search_username(username)
 
             if ldap_user is not None:
-                self.email.errors.append('Cannot reset password - please use your username and password for you network account')
+                self.email.errors.append('Cannot reset password - please use the username and password for your network account')
                 return False
 
         return True
@@ -171,7 +171,7 @@ class LbrcLoginForm(LoginForm):
 
                     return True
                 else:
-                    self.password.errors.append('Invalid password - please use your password for you network account')
+                    self.password.errors.append('Invalid password - please use the password for your network account')
                     return False
 
         return super().validate()
