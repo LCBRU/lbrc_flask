@@ -66,7 +66,7 @@ class LbrcForgotPasswordForm(ForgotPasswordForm):
         ldap = Ldap()
 
         if ldap.is_enabled():
-            username = self._standardize_username(self.email.data)
+            username = self.standardize_username(self.email.data)
             ldap.login_nonpriv()
 
             ldap_user = ldap.search_username(username)
