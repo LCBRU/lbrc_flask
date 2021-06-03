@@ -63,7 +63,7 @@ class Ldap():
         if len(users) != 1:
             return None
 
-        return next(users)
+        return users[0]
 
     def search_user(self, search_string):
         return self.search('(|({}=*{}*)({}={}*))'.format(
