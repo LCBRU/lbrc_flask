@@ -14,6 +14,8 @@ class Ldap():
         if not (username or '').strip() or not (password or '').strip():
             return False
 
+        print('Attempting login for {}'.format(username))
+
         try:
             self.ldap = initialize(current_app.config.get('LDAP_URI', None))
             self.ldap.protocol_version = 3
@@ -26,7 +28,7 @@ class Ldap():
 
             self.ldap.simple_bind_s(who, password)
 
-            print('LDAP login Success')
+            print('LDAP login Success for {}'.format(username))
 
             return True
 
@@ -47,7 +49,7 @@ class Ldap():
                 current_app.config.get('LDAP_PASSWORD', None),
             )
 
-            print('LDAP login Success')
+            print('No Priv LDAP login Success')
 
             return True
 
