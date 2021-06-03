@@ -99,36 +99,39 @@ class LbrcLoginForm(LoginForm):
         ldap = Ldap()
 
         if ldap.is_enabled():
-
             username = self._standardize_username(self.email.data)
 
-            ldap.login_nonpriv()
-            ldap_user = ldap.search_username(username)
+            if ldap.login(username, self.password.data):
+                ldap_users = ldap.search_username(username)
 
-            if ldap_user:
-                if ldap.login(username, self.password.data):
-                    user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
-
-                    if not user:
-                        user = _datastore.create_user(
-                            email=ldap_user['email'],
-                            password=random_password(),
-                        )
-
-                    user.email = ldap_user['email']
-                    user.username = ldap_user['username']
-                    user.first_name = ldap_user['given_name']
-                    user.last_name = ldap_user['surname']
-                    user.ldap_user = True
-                    
-                    db.session.add(user)
-                    db.session.commit()
-
-                    self.user = _datastore.get_user(ldap_user['email'])
-
-                    return True
-                else:
+                # GUARD: Even if they've managed to login, if we can't get the
+                #        user details we're not letting 'em in.  It's probably
+                #        a config error, but it's probably safer to deny entry.
+                if len(ldap_users) != 1:
                     return False
+
+                ldap_user = ldap_users[0]
+
+                user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
+
+                if not user:
+                    user = _datastore.create_user(
+                        email=ldap_user['email'],
+                        password=random_password(),
+                    )
+
+                user.email = ldap_user['email']
+                user.username = ldap_user['username']
+                user.first_name = ldap_user['given_name']
+                user.last_name = ldap_user['surname']
+                user.ldap_user = True
+                
+                db.session.add(user)
+                db.session.commit()
+
+                self.user = _datastore.get_user(ldap_user['email'])
+
+                return True
 
         return super().validate()
 
