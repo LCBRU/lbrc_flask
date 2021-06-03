@@ -76,6 +76,7 @@ class Ldap():
         ))
 
     def search(self, search_string):
+        print('Searching LDAP for {}'.format(search_string))
         result = []
 
         try:

@@ -148,7 +148,6 @@ class LbrcLoginForm(LoginForm):
             ldap_user = ldap.search_username(username)
 
             if ldap_user is not None:
-
                 if ldap.login(username, self.password.data):
                     user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
 
