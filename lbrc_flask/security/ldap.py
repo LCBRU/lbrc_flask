@@ -26,6 +26,8 @@ class Ldap():
                 basedn=current_app.config.get('LDAP_BASEDN', None),
             )
 
+            print(who)
+
             self.ldap.simple_bind_s(who, password)
 
             print('LDAP login Success for {}'.format(username))
