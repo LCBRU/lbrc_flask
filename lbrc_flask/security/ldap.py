@@ -15,6 +15,7 @@ class Ldap():
             return False
 
         print('Attempting login for {}'.format(username))
+        print('Attempting {}'.format(len(password)))
 
         try:
             self.ldap = initialize(current_app.config.get('LDAP_URI', None))
