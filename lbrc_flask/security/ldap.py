@@ -97,6 +97,8 @@ class Ldap():
                         'surname': u[1][current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                     })
 
+            print(search_result)
+
         except LDAPError as e:
             print(traceback.format_exc())
             current_app.logger.error(traceback.format_exc())
