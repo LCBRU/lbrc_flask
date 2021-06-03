@@ -14,6 +14,9 @@ class Ldap():
         if not (username or '').strip() or not (password or '').strip():
             return False
 
+        username = (username or '').strip()
+        password = (password or '').strip()
+
         print('Attempting login for {}'.format(username))
         print('Attempting {}'.format(len(password)))
 
