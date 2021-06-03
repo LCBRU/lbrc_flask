@@ -340,6 +340,7 @@ dd {
 
 .errors {
   margin-top: 10px;
+  z-index: 99;
 }
 
 a.fas, a.fas:link, a.fas:hover {
