@@ -58,7 +58,12 @@ class Ldap():
             return False
 
     def search_username(self, username):
-        return self.search(current_app.config.get('LDAP_SEARCH_FORMAT', None).format(username=username))
+        users = self.search(current_app.config.get('LDAP_SEARCH_FORMAT', None).format(username=username))
+
+        if len(users) != 1:
+            return None
+
+        return next(users)
 
     def search_user(self, search_string):
         return self.search('(|({}=*{}*)({}={}*))'.format(
