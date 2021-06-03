@@ -176,6 +176,6 @@ class LbrcLoginForm(LoginForm):
 
         return super().validate()
 
-def standardize_username(self, username):
+def standardize_username(username):
     result, *_ = username.split('@')
     return result
