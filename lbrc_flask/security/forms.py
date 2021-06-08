@@ -83,34 +83,6 @@ class LbrcForgotPasswordForm(ForgotPasswordForm):
         return True
 
 
-class LbrcResetPasswordForm(Form, NewPasswordFormMixin, PasswordConfirmFormMixin):
-    """The default reset password form"""
-
-    submit = SubmitField(get_form_field_label("reset_password"))
-
-    def validate(self):
-        if not super(LbrcResetPasswordForm, self).validate():
-            return False
-
-        ldap = Ldap()
-
-        if ldap.is_enabled():
-            username = standardize_username(self.email.data)
-            ldap.login_nonpriv()
-
-            ldap_user = ldap.search_username(username)
-
-            if ldap_user is not None:
-                self.password.errors.append(
-                    'Cannot reset password - use the username and password that you use to log into your {} PC'.format(
-                        current_app.config.get('LDAP_NETWORK_NAME', None)
-                    )
-                )
-                return False
-
-        return True
-
-
 class LbrcChangePasswordForm(Form, PasswordFormMixin):
     """The default change password form"""
 

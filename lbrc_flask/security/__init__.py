@@ -30,7 +30,6 @@ def init_security(app, user_class, role_class):
         app,
         user_datastore,
         forgot_password_form=LbrcForgotPasswordForm,
-        reset_password_form=LbrcResetPasswordForm,
         change_password_form=LbrcChangePasswordForm,
         login_form=LbrcLoginForm,
     )
