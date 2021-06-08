@@ -1,4 +1,4 @@
-from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcResetPasswordForm, LbrcForgotPasswordForm
+from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcForgotPasswordForm
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
 from flask import current_app
