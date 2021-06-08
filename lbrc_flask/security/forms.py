@@ -2,6 +2,7 @@ from logging import fatal
 from lbrc_flask.security.model import random_password
 from lbrc_flask.security.ldap import Ldap
 import string
+from flask import current_app
 from flask_security.forms import (
     EqualTo,
     password_length,
@@ -72,7 +73,11 @@ class LbrcForgotPasswordForm(ForgotPasswordForm):
             ldap_user = ldap.search_username(username)
 
             if ldap_user is not None:
-                self.email.errors.append('Cannot reset password - please use the username and password for your network account')
+                self.password.errors.append(
+                    'Cannot reset password - use the username and password that you use to log into your {} PC'.format(
+                        current_app.config.get('LDAP_NETWORK_NAME', None)
+                    )
+                )
                 return False
 
         return True
@@ -96,7 +101,11 @@ class LbrcResetPasswordForm(Form, NewPasswordFormMixin, PasswordConfirmFormMixin
             ldap_user = ldap.search_username(username)
 
             if ldap_user is not None:
-                self.email.errors.append('Cannot reset password - please use the username and password for your network account')
+                self.password.errors.append(
+                    'Cannot reset password - use the username and password that you use to log into your {} PC'.format(
+                        current_app.config.get('LDAP_NETWORK_NAME', None)
+                    )
+                )
                 return False
 
         return True
@@ -170,7 +179,11 @@ class LbrcLoginForm(LoginForm):
 
                     return True
                 else:
-                    self.password.errors.append('Invalid password - please use the password for your network account')
+                    self.password.errors.append(
+                        'Invalid password - use the username and password that you use to log into your {} PC'.format(
+                            current_app.config.get('LDAP_NETWORK_NAME', None)
+                        )
+                    )
                     return False
 
         return super().validate()
