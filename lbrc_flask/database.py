@@ -44,6 +44,9 @@ class GUID(TypeDecorator):
                 value = uuid.UUID(value)
             return value
 
+    def __str__(self) -> str:
+        return 'GUID'
+
 def dialect_date_format_string(format_string):
     if db.session.bind.dialect.name == 'sqlite':
         return format_string.replace('%b', '%m')
