@@ -1,5 +1,6 @@
 from celery import Celery
 
+celery = Celery()
 
 class Config():
     def __init__(self, app):
@@ -13,12 +14,6 @@ class Config():
 
 def init_celery(app, title):
     global celery
-
-    celery = Celery(
-        title,
-        broker=app.config["BROKER_URL"],
-        backend=app.config["CELERY_RESULT_BACKEND"],
-    )
 
     celery.config_from_object(Config(app))
 
