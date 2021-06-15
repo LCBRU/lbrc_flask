@@ -62,6 +62,14 @@ class BaseConfig:
     LDAP_TEST_USER = os.getenv("LDAP_TEST_USER", '')
     LDAP_NETWORK_NAME = os.getenv("LDAP_NETWORK_NAME", '')
 
+    # Celery
+    BROKER_URL = os.getenv("BROKER_URL", '')
+    CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", '')
+    CELERY_RATE_LIMIT = os.getenv("CELERY_RATE_LIMIT", '')
+    CELERY_REDIRECT_STDOUTS_LEVEL = os.getenv("CELERY_REDIRECT_STDOUTS_LEVEL", '')
+    CELERY_DEFAULT_QUEUE = os.getenv("CELERY_DEFAULT_QUEUE", '')
+
+
 
 class BaseTestConfig(BaseConfig):
     # Environment
