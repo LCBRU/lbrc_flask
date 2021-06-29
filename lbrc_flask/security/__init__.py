@@ -10,6 +10,9 @@ from .model import User, Role, AuditMixin
 def current_user_id():
     return current_user.id
 
+def system_user_id():
+    return get_system_user().id
+
 
 SYSTEM_USER_NAME = 'system'
 

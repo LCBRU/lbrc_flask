@@ -67,9 +67,17 @@ def init_template_filters(app):
         else:
             app_name = 'Application'
 
+        try:
+            prev = request.args.get('prev', '')
+        except:
+            # Eat errors because it is possible that we are running outside
+            # of a request context - i.e., if we're doing templating from
+            # celery.
+            prev = ''
+
         return {
             'current_date': datetime.utcnow().strftime("%c"),
             'current_year': datetime.utcnow().strftime("%Y"),
             'application_title': app_name,
-            'previous_page': request.args.get('prev', ''),
+            'previous_page': prev,
         }

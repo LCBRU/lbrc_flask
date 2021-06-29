@@ -65,7 +65,7 @@ def convert_name(name):
 def convert_dob(dob):
     try:
         parsed_dob = parse_date(dob)
-    except ValueError:
+    except:
         return 'Invalid date', ''
 
     if is_invalid_dob(parsed_dob):
