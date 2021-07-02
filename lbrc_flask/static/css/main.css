@@ -349,7 +349,7 @@ a.fas, a.fas:link, a.fas:hover {
   cursor: pointer;
 }
 
-.search-form {
+.search-form, .page-header {
   background-color: #f9f9f9;
   border: #eee 1px solid;
   padding: 10px;
