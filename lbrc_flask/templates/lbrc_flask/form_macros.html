@@ -16,6 +16,14 @@
     {% if field.type != "DescriptionField" %}
       {{ render_label(field, label) }}
     {% endif %}
+    {{ render_field_actual(field, **kwargs) }}
+  {% endif %}
+{% endmacro %}
+
+
+{% macro render_field_actual(field) %}
+  {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
+  {% else %}
     {% if field.type == "BooleanField" %}
       {{ render_checkbox_field_control(field, **kwargs) }}
     {% elif field.type == "RadioField" %}
@@ -135,13 +143,13 @@
 
   </div>
 
-  {% if searchForm | rejectattr("type", "ne", "SelectField") | list | length is ge(1) %}
+  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
         {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
             <div>{{ field.label.text | nbsp}}</div>
-            <div>{{ field(class="form-control", **kwargs)|safe }}</div>
+            <div>{{ render_field_actual(field, **kwargs) |safe }}</div>
           </div>
         {% endfor %}
       </div>
