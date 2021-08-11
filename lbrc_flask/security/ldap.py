@@ -78,7 +78,7 @@ class Ldap():
     def search_user(self, search_string):
         return self.search('(|({}=*{}*)({}={}*))'.format(
             current_app.config.get('LDAP_FIELDNAME_FULLNAME', None),
-            search_string.replace(' ', '*'),
+            search_string.strip().replace(' ', '*'),
             current_app.config.get('LDAP_FIELDNAME_USERID', None),
             search_string,
         ))
