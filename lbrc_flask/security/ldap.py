@@ -20,8 +20,7 @@ class Ldap():
         username = (username or '').strip()
         password = (password or '').strip()
 
-        print('Attempting login for {}'.format(username))
-        print('Attempting {}'.format(len(password)))
+        current_app.logger.info('Attempting login for {}'.format(username))
 
         try:
             self.ldap = initialize(current_app.config.get('LDAP_URI', None))
@@ -37,7 +36,7 @@ class Ldap():
 
             self.ldap.simple_bind_s(who, password)
 
-            print('LDAP login Success for {}'.format(username))
+            current_app.logger.info('LDAP login Success for {}'.format(username))
 
             return True
 
@@ -58,7 +57,7 @@ class Ldap():
                 current_app.config.get('LDAP_PASSWORD', None),
             )
 
-            print('No Priv LDAP login Success')
+            current_app.logger.info('No Priv LDAP login Success')
 
             return True
 
@@ -79,13 +78,13 @@ class Ldap():
     def search_user(self, search_string):
         return self.search('(|({}=*{}*)({}={}*))'.format(
             current_app.config.get('LDAP_FIELDNAME_FULLNAME', None),
-            search_string,
+            search_string.replace(' ', '*'),
             current_app.config.get('LDAP_FIELDNAME_USERID', None),
             search_string,
         ))
 
     def search(self, search_string):
-        print('Searching LDAP for {}'.format(search_string))
+        current_app.logger.info('Searching LDAP for {}'.format(search_string))
         result = []
 
         try:
@@ -97,12 +96,16 @@ class Ldap():
 
             for u in search_result:
                 if isinstance(u[1], dict):
+                    current_app.logger.info('LDAP found {}'.format(u))
                     result.append({
+                        'cn': u[1]['cn'][0].decode("utf-8"),
                         'username': u[1][current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
                         'email': u[1][current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
                         'given_name': u[1][current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
                         'surname': u[1][current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                     })
+
+            # current_app.logger.info('LDAP found {}'.format(result))
 
         except LDAPError as e:
             print(traceback.format_exc())
