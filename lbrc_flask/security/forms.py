@@ -1,6 +1,4 @@
-from logging import fatal
-from lbrc_flask.security.model import random_password
-from lbrc_flask.security.ldap import Ldap
+from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user
 import string
 from flask import current_app
 from flask_security.forms import (
@@ -18,7 +16,6 @@ from flask_security.utils import verify_and_update_password, get_message, _datas
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
-from lbrc_flask.database import db
 
 
 class PasswordPolicy(ValidatorMixin):
@@ -126,28 +123,11 @@ class LbrcLoginForm(LoginForm):
 
             ldap.login_nonpriv()
 
-            ldap_user = ldap.search_username(username)
+            ldap_user = get_or_create_ldap_user(username)
 
             if ldap_user is not None:
                 if ldap.login(username, self.password.data):
-                    user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
-
-                    if not user:
-                        user = _datastore.create_user(
-                            email=ldap_user['email'],
-                            password=random_password(),
-                        )
-
-                    user.email = ldap_user['email']
-                    user.username = ldap_user['username']
-                    user.first_name = ldap_user['given_name']
-                    user.last_name = ldap_user['surname']
-                    user.ldap_user = True
-                    
-                    db.session.add(user)
-                    db.session.commit()
-
-                    self.user = _datastore.get_user(ldap_user['email'])
+                    self.user = ldap_user
 
                     return True
                 else:

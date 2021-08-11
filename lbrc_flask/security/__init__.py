@@ -4,7 +4,7 @@ from flask_login import current_user
 from flask import current_app
 from flask_security.utils import _datastore
 from ..database import db
-from .model import User, Role, AuditMixin
+from .model import User, Role, AuditMixin, random_password
 
 
 def current_user_id():
@@ -25,7 +25,6 @@ def get_admin_user():
     result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
 
     return result
-
 
 def init_security(app, user_class, role_class):
     user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
