@@ -1,4 +1,4 @@
-from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user
+from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user, standardize_username
 import string
 from flask import current_app
 from flask_security.forms import (
@@ -139,7 +139,3 @@ class LbrcLoginForm(LoginForm):
                     return False
 
         return super().validate()
-
-def standardize_username(username):
-    result, *_ = username.split('@')
-    return result
