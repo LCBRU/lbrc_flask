@@ -1,9 +1,10 @@
-from flask import send_file
+from flask import send_file, render_template
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font
 from tempfile import NamedTemporaryFile
 from datetime import datetime
+from flask_weasyprint import HTML, render_pdf
 
 
 def excel_download(title, headers, details):
@@ -30,3 +31,7 @@ def excel_download(title, headers, details):
             cache_timeout=0,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
+
+
+def pdf_download(template, **kwargs):
+    return render_pdf(HTML(string=render_template(template, **kwargs)))
