@@ -1,6 +1,9 @@
+from lbrc_flask.security.model import random_password
 from ldap import initialize, SCOPE_SUBTREE, LDAPError, OPT_REFERRALS
 import traceback
 from flask import current_app
+from lbrc_flask.database import db
+from flask_security.utils import _datastore
 
 
 class Ldap():
@@ -17,8 +20,7 @@ class Ldap():
         username = (username or '').strip()
         password = (password or '').strip()
 
-        print('Attempting login for {}'.format(username))
-        print('Attempting {}'.format(len(password)))
+        current_app.logger.info('Attempting login for {}'.format(username))
 
         try:
             self.ldap = initialize(current_app.config.get('LDAP_URI', None))
@@ -34,7 +36,7 @@ class Ldap():
 
             self.ldap.simple_bind_s(who, password)
 
-            print('LDAP login Success for {}'.format(username))
+            current_app.logger.info('LDAP login Success for {}'.format(username))
 
             return True
 
@@ -55,7 +57,7 @@ class Ldap():
                 current_app.config.get('LDAP_PASSWORD', None),
             )
 
-            print('No Priv LDAP login Success')
+            current_app.logger.info('No Priv LDAP login Success')
 
             return True
 
@@ -76,13 +78,13 @@ class Ldap():
     def search_user(self, search_string):
         return self.search('(|({}=*{}*)({}={}*))'.format(
             current_app.config.get('LDAP_FIELDNAME_FULLNAME', None),
-            search_string,
+            search_string.strip().replace(' ', '*'),
             current_app.config.get('LDAP_FIELDNAME_USERID', None),
             search_string,
         ))
 
     def search(self, search_string):
-        print('Searching LDAP for {}'.format(search_string))
+        current_app.logger.info('Searching LDAP for {}'.format(search_string))
         result = []
 
         try:
@@ -94,12 +96,16 @@ class Ldap():
 
             for u in search_result:
                 if isinstance(u[1], dict):
+                    current_app.logger.info('LDAP found {}'.format(u))
                     result.append({
+                        'cn': u[1]['cn'][0].decode("utf-8"),
                         'username': u[1][current_app.config.get('LDAP_FIELDNAME_USERID', None)][0].decode("utf-8"),
                         'email': u[1][current_app.config.get('LDAP_FIELDNAME_EMAIL', None)][0].decode("utf-8"),
                         'given_name': u[1][current_app.config.get('LDAP_FIELDNAME_GIVENNAME', None)][0].decode("utf-8"),
                         'surname': u[1][current_app.config.get('LDAP_FIELDNAME_SURNAME', None)][0].decode("utf-8"),
                     })
+
+            # current_app.logger.info('LDAP found {}'.format(result))
 
         except LDAPError as e:
             print(traceback.format_exc())
@@ -107,3 +113,38 @@ class Ldap():
         
         finally:
             return result
+
+def get_or_create_ldap_user(username):
+    ldap = Ldap()
+
+    if ldap.is_enabled():
+        username = standardize_username(username)
+
+        ldap.login_nonpriv()
+
+        ldap_user = ldap.search_username(username)
+
+        if ldap_user is not None:
+            user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
+
+            if not user:
+                user = _datastore.create_user(
+                    email=ldap_user['email'],
+                    password=random_password(),
+                )
+
+            user.email = ldap_user['email']
+            user.username = ldap_user['username']
+            user.first_name = ldap_user['given_name']
+            user.last_name = ldap_user['surname']
+            user.ldap_user = True
+            
+            db.session.add(user)
+            db.session.commit()
+
+            return _datastore.get_user(ldap_user['email'])
+
+
+def standardize_username(username):
+    result, *_ = username.split('@')
+    return result
