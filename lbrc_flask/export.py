@@ -33,7 +33,7 @@ def excel_download(title, headers, details):
         )
 
 
-def pdf_download(template, **kwargs):
+def pdf_download(template, title="report", **kwargs):
     resp = render_pdf(HTML(string=render_template(template, **kwargs)))
-    resp.headers['Content-Disposition'] = 'attachment;filename=report.pdf'
+    resp.headers['Content-Disposition'] = f'attachment;filename={title}_{datetime.utcnow():%Y%m%d_%H%M%S}.pdf'
     return resp
