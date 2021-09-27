@@ -34,4 +34,6 @@ def excel_download(title, headers, details):
 
 
 def pdf_download(template, **kwargs):
-    return render_pdf(HTML(string=render_template(template, **kwargs)))
+    resp = render_pdf(HTML(string=render_template(template, **kwargs)))
+    resp.headers['Content-Disposition'] = 'attachment;filename=report.pdf'
+    return resp
