@@ -78,6 +78,10 @@ class FieldType(db.Model):
         return self.name == FieldType.MULTISELECT
 
     @property
+    def is_textarea(self):
+        return self.name == FieldType.TEXTAREA
+
+    @property
     def has_choices(self):
         return self.name in [FieldType.MULTISELECT, FieldType.SELECT, FieldType.RADIO]
 

@@ -60,6 +60,13 @@ def init_template_filters(app):
         else:
             return ""
 
+    @app.template_filter("pre")
+    def pre(value):
+        if value:
+            return Markup(f'<PRE>{value}</PRE>')
+        else:
+            return ""
+
     @app.context_processor
     def inject_studd():
         if 'lbrc_flask_title' in g:
