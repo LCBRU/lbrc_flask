@@ -48,6 +48,7 @@ class BaseConfig:
     WTF_CSRF_ENABLED = True
 
     # LDAP
+    LDAP_REQUIRE_EXISTING_USER = os.getenv("LDAP_REQUIRE_EXISTING_USER", "False") == 'True'
     LDAP_URI = os.getenv("LDAP_URI", '')
     LDAP_USER = os.getenv("LDAP_USER", '')
     LDAP_PASSWORD = os.getenv("LDAP_PASSWORD", '')

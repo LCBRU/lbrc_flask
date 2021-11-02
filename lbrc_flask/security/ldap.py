@@ -128,6 +128,12 @@ def get_or_create_ldap_user(username):
             user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
 
             if not user:
+                print('A')
+                if current_app.config.get('LDAP_REQUIRE_EXISTING_USER', False):
+                    print('B')
+                    return None
+
+                print('A')
                 user = _datastore.create_user(
                     email=ldap_user['email'],
                     password=random_password(),
