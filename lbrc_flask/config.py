@@ -15,7 +15,7 @@ class BaseConfig:
     SMTP_SERVER = os.getenv("SMTP_SERVER", None)
     MAIL_SERVER = SMTP_SERVER
     MAIL_DEFAULT_SENDER = os.getenv("MAIL_DEFAULT_SENDER", "lcbruit@leicester.ac.uk")
-    MAIL_DEFAULT_SENDER = os.getenv("MAIL_REPLY_TO", None)
+    MAIL_REPLY_TO = os.getenv("MAIL_REPLY_TO", None)
     SECURITY_EMAIL_SENDER = os.getenv("SECURITY_EMAIL_SENDER", "lcbruit@leicester.ac.uk")
     MAIL_DEBUG = os.getenv("MAIL_DEBUG", "False") == 'True'
 
