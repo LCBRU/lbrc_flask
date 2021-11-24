@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import g, request
+from flask import g, request, current_app
 from markdown import markdown
 from .formatters import format_currency, format_date, format_datetime, format_number, format_yesno, humanize_datetime, humanize_date
 from markupsafe import Markup
@@ -87,4 +87,5 @@ def init_template_filters(app):
             'current_year': datetime.utcnow().strftime("%Y"),
             'application_title': app_name,
             'previous_page': prev,
+            'admin_email_address': current_app.config["ADMIN_EMAIL_ADDRESS"],
         }
