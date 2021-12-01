@@ -1,4 +1,5 @@
 import flask_admin as admin
+from flask import current_app
 from flask_security import current_user
 from flask_admin.contrib.sqla import ModelView
 
@@ -9,7 +10,7 @@ class AdminCustomView(ModelView):
 
 
 def init_admin(app, title, views):
-    flask_admin = admin.Admin(app, name="NIHR Leicester BRC {}".format(title), url="/admin", template_mode='bootstrap4')
+    flask_admin = admin.Admin(app, name="{} {}".format(current_app.config["ORGANISATION_NAME"], title), url="/admin", template_mode='bootstrap4')
 
     for v in views:
         flask_admin.add_view(v)

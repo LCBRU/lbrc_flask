@@ -55,7 +55,7 @@ def init_standard_views(app):
         print(traceback.format_exc())
         app.logger.error(traceback.format_exc())
         email(
-            subject="NIHR Leicester BRC {} Error".format(app_name),
+            subject="{} {} Error".format(current_app.config["ORGANISATION_NAME"], app_name),
             message=traceback.format_exc(),
             recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
         )

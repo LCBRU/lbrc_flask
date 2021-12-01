@@ -5,6 +5,8 @@ load_dotenv()
 
 
 class BaseConfig:
+    ORGANISATION_NAME = os.getenv("ORGANISATION_NAME", "NIHR Leicester BRC")
+
     # Environment
     TESTING = False
     DEBUG = os.getenv("DEBUG", "False") == 'True'

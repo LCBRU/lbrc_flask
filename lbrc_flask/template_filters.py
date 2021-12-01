@@ -85,6 +85,7 @@ def init_template_filters(app):
         return {
             'current_date': datetime.utcnow().strftime("%c"),
             'current_year': datetime.utcnow().strftime("%Y"),
+            'organisation_name': current_app.config["ORGANISATION_NAME"],
             'application_title': app_name,
             'previous_page': prev,
             'admin_email_address': current_app.config["ADMIN_EMAIL_ADDRESS"],
