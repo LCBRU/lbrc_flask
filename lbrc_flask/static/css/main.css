@@ -189,29 +189,29 @@ section {
 
 /* Primary - Outline */
 
-.btn-primary-outline {
+.btn-outline-primary {
   color: #46a86c;
   background-color: #FFF;
   border-color: #46a86c;
 }
 
-.btn-primary-outline:hover {
+.btn-outline-primary:hover {
   color: #fff;
   background-color: #2D8F53;
   border-color: #2D8F53;
 }
 
-.btn-primary-outline:not(:disabled):not(.disabled).active, .btn-primary-outline:not(:disabled):not(.disabled):active, .show>.btn-primary-outline.dropdown-toggle {
+.btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):active, .show>.btn-outline-primary.dropdown-toggle {
   color: #fff;
   background-color: #60C286;
   border-color: #60C286;
 }
 
-.btn-primary:focus {
+.btn-outline-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
 }
 
-/* Success */ 
+/* Success */
 .btn-success {
   color: #fff;
   background-color: #46a86c;
@@ -231,6 +231,29 @@ section {
 }
 
 .btn-success:focus {
+  box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
+}
+
+/* Success - Outline */
+.btn-outline-success {
+  background-color: #fff;
+  color: #46a86c;
+  border-color: #46a86c;
+}
+
+.btn-outline-success:hover {
+  color: #fff;
+  background-color: #2D8F53;
+  border-color: #2D8F53;
+}
+
+.btn-outline-success:not(:disabled):not(.disabled).active, .btn-outline-success:not(:disabled):not(.disabled):active, .show>.btn-outline-success.dropdown-toggle {
+  color: #fff;
+  background-color: #60C286;
+  border-color: #60C286;
+}
+
+.btn-outline-success:focus {
   box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
 }
 
@@ -256,6 +279,33 @@ section {
 .btn-danger:focus {
   box-shadow: 0 0 0 0.2rem rgba(234, 93, 78, 0.5);
 }
+
+/* Danger - Outline */ 
+.btn-outline-danger {
+  background-color: #fff;
+  color: #EA5D4E;
+  border-color: #EA5D4E;
+}
+
+.btn-outline-danger:hover {
+  color: #fff;
+  background-color: #D14435;
+  border-color: #D14435;
+}
+
+.btn-outline-danger:not(:disabled):not(.disabled).active, .btn-outline-danger:not(:disabled):not(.disabled):active, .show>.btn-outline-danger.dropdown-toggle {
+  color: #fff;
+  background-color: #FF7768;
+  border-color: #FF7768;
+}
+
+.btn-outline-danger:focus {
+  box-shadow: 0 0 0 0.2rem rgba(234, 93, 78, 0.5);
+}
+
+/**
+  List Groups
+**/
 
 textarea {
   resize: vertical;
