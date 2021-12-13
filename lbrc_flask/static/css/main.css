@@ -141,21 +141,30 @@ section {
   break-inside: avoid;
 }
 
-/* Recolour primary badge */ 
+/**
+    Badges
+**/
+
+/* Primary */ 
 .badge-primary {
   color: #fff;
   background-color: #46a86c;
   border-color: #46a86c;
 }
 
-/* Recolour danger badge */ 
+/* Danger */ 
 .badge-danger {
   color: #fff;
   background-color: #EA5D4E;
   border-color: #EA5D4E;
 }
 
-/* Recolour primary buttons */ 
+/**
+    Buttons
+**/
+
+/* Primary */
+
 .btn-primary {
   color: #fff;
   background-color: #46a86c;
@@ -178,7 +187,31 @@ section {
   box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
 }
 
-/* Recolour success buttons */ 
+/* Primary - Outline */
+
+.btn-primary-outline {
+  color: #46a86c;
+  background-color: #FFF;
+  border-color: #46a86c;
+}
+
+.btn-primary-outline:hover {
+  color: #fff;
+  background-color: #2D8F53;
+  border-color: #2D8F53;
+}
+
+.btn-primary-outline:not(:disabled):not(.disabled).active, .btn-primary-outline:not(:disabled):not(.disabled):active, .show>.btn-primary-outline.dropdown-toggle {
+  color: #fff;
+  background-color: #60C286;
+  border-color: #60C286;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
+}
+
+/* Success */ 
 .btn-success {
   color: #fff;
   background-color: #46a86c;
@@ -201,7 +234,7 @@ section {
   box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
 }
 
-/* Recolour danger buttons */ 
+/* Danger */ 
 .btn-danger {
   color: #fff;
   background-color: #EA5D4E;
