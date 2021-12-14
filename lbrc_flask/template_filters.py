@@ -67,6 +67,13 @@ def init_template_filters(app):
         else:
             return ""
 
+    @app.template_filter("br")
+    def br(value):
+        if value:
+            return Markup(value.replace('\n', '<BR/>'))
+        else:
+            return ""
+
     @app.context_processor
     def inject_studd():
         if 'lbrc_flask_title' in g:
