@@ -26,5 +26,6 @@ setup(name='lbrc_flask',
             'openpyxl',
             'pygal',
             'xlrd',
+            'chardet',
       ],
 )
