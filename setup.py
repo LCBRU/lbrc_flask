@@ -25,5 +25,6 @@ setup(name='lbrc_flask',
             'markdown',
             'openpyxl',
             'pygal',
+            'xlrd',
       ],
 )
