@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from flask import g, request, current_app
 from markdown import markdown
@@ -71,6 +72,13 @@ def init_template_filters(app):
     def br(value):
         if value:
             return Markup(value.replace('\n', '<BR/>'))
+        else:
+            return ""
+
+    @app.template_filter("jsonify")
+    def br(value):
+        if value:
+            return json.dumps(value)
         else:
             return ""
 
