@@ -78,7 +78,7 @@ def init_template_filters(app):
     @app.template_filter("jsonify")
     def br(value):
         if value:
-            return json.dumps(value)
+            return Markup(json.dumps(value))
         else:
             return ""
 
