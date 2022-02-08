@@ -3,6 +3,7 @@ import csv
 import xlrd
 from openpyxl import load_workbook
 from itertools import takewhile, zip_longest
+from itertools import islice
 
 
 class ColumnData():
@@ -80,7 +81,7 @@ class CsvData(ColumnData):
         column_names = self.get_column_names()
 
         with open(self.filepath, 'r', encoding=self._get_encoding()) as f:
-            reader = csv.DictReader(f)
+            reader = csv.reader(f)
 
-            for row in reader:
-                yield zip_longest(column_names, row.values(), fillvalue='')
+            for row in islice(reader, 1, None):
+                yield zip_longest(column_names, row, fillvalue='')

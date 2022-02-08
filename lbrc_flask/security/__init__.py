@@ -1,8 +1,9 @@
 from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcForgotPasswordForm
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
-from flask import current_app
+from flask import current_app, abort
 from flask_security.utils import _datastore
+from functools import wraps
 from ..database import db
 from .model import User, Role, AuditMixin, random_password
 
@@ -64,3 +65,18 @@ def init_users():
         _datastore.add_role_to_user(user, admin_role)
 
     db.session.commit()
+
+
+def must_be_admin():
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not current_user.is_admin:
+                abort(403)
+
+            return f(*args, **kwargs)
+
+        return decorated_function
+
+    return decorator
+
