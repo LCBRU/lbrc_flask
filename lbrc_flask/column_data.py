@@ -27,7 +27,7 @@ class ExcelData(ColumnData):
 
         column_names = self.get_column_names()
         for r in ws.iter_rows(min_row=2, values_only=True):
-            yield zip(column_names, r)
+            yield dict(zip(column_names, r))
 
 
 class Excel97Data(ColumnData):
@@ -47,7 +47,7 @@ class Excel97Data(ColumnData):
         rows = ws.get_rows()
         next(rows)
         for r in rows:
-            yield zip(column_names, [self._value_from_cell(c, wb.datemode) for c in r])
+            yield dict(zip(column_names, [self._value_from_cell(c, wb.datemode) for c in r]))
 
     def _value_from_cell(self, cell, datemode):
         if cell.ctype == xlrd.book.XL_CELL_DATE:
@@ -84,4 +84,4 @@ class CsvData(ColumnData):
             reader = csv.reader(f)
 
             for row in islice(reader, 1, None):
-                yield zip_longest(column_names, row, fillvalue='')
+                yield dict(zip_longest(column_names, row, fillvalue=''))
