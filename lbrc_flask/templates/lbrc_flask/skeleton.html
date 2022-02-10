@@ -116,7 +116,21 @@
             $('[data-toggle="tooltip"]').tooltip()
           })
       });
-    </script>
+
+      setTimeout(reload, 10000);
+
+      function reload() {
+          console.log('Reloading?');
+
+          var classnameExists = document.getElementsByClassName("inline_loader").length > 0;
+
+          if (classnameExists) {
+              console.log('Reloading...');
+              location.reload();
+          }
+      }
+
+</script>
 
     {% block js %}{% endblock %}
 
