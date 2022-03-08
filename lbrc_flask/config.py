@@ -46,6 +46,7 @@ class BaseConfig:
     # Users
     ADMIN_EMAIL_ADDRESS = os.getenv("ADMIN_EMAIL_ADDRESS", '')
     ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", '')
+    ROLES = os.getenv("ROLES", '')
 
     # Forms
     WTF_CSRF_ENABLED = True

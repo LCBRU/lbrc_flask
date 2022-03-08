@@ -21,6 +21,8 @@ SYSTEM_USER_NAME = 'system'
 def get_system_user():
     return _datastore.find_user(username=SYSTEM_USER_NAME)
 
+def get_admin_role():
+    return _datastore.find_user(role=Role.ADMIN_ROLENAME)
 
 def get_admin_user():
     result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
@@ -39,14 +41,19 @@ def init_security(app, user_class, role_class):
 
     @app.before_first_request
     def init_security():
+        init_roles()
         init_users()
 
 
-def init_users():
-    admin_role = _datastore.find_or_create_role(
-        name=Role.ADMIN_ROLENAME, description=Role.ADMIN_ROLENAME
-    )
+def init_roles():
+    for r in [Role.ADMIN_ROLENAME] + current_app.config["ROLES"].split(';'):
+        if r:
+            _datastore.find_or_create_role(
+                name=r, description=r
+            )
 
+
+def init_users():
     if not get_system_user():
         user = _datastore.create_user(
             email='hal@discovery_one.uss',
@@ -62,7 +69,7 @@ def init_users():
             email=admin_email,
             username=admin_username,
         )
-        _datastore.add_role_to_user(user, admin_role)
+        _datastore.add_role_to_user(user, get_admin_role())
 
     db.session.commit()
 
