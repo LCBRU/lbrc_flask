@@ -7,7 +7,7 @@ from wtforms import (
     HiddenField,
     Field,
 )
-from wtforms.validators import Length, DataRequired
+from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput
@@ -70,3 +70,16 @@ class FileField(_FileField):
         super(FileField, self).__init__(*args, **kwargs)
 
 
+class Unique(object):
+    """ validator that checks field uniqueness """
+    def __init__(self, model, field, message=None):
+        self.model = model
+        self.field = field
+        if not message:
+            message = u'this element already exists'
+        self.message = message
+
+    def __call__(self, form, field):         
+        check = self.model.query.filter(self.field == field.data).first()
+        if check:
+            raise ValidationError(self.message)
