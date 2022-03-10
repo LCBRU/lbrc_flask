@@ -22,7 +22,7 @@ def get_system_user():
     return _datastore.find_user(username=SYSTEM_USER_NAME)
 
 def get_admin_role():
-    return _datastore.find_or_create_role(role=Role.ADMIN_ROLENAME)
+    return _datastore.find_or_create_role(name=Role.ADMIN_ROLENAME)
 
 def get_admin_user():
     result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
