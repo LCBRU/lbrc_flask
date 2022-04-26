@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse
 from flask import url_for
 from lbrc_flask.pytest.helpers import login
 from flask_api import status
@@ -48,11 +49,14 @@ def assert__error__required_field(soup, field_name):
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
     assert response.status_code == status.HTTP_302_FOUND
 
-    print(response.location)
     if endpoint:
-        print(url_for(endpoint, _external=True, **kwargs))
-        assert response.location == url_for(endpoint, _external=True, **kwargs)
+        if urlparse(response.location).netloc:
+            url = url_for(endpoint, _external=True, **kwargs)
+        else:
+            url = url_for(endpoint, _external=False, **kwargs)
+
     if url:
+        print(response.location)
         print(url)
         assert response.location == url
 
