@@ -1,3 +1,4 @@
+import csv
 from flask import send_file, render_template
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -30,6 +31,25 @@ def excel_download(title, headers, details):
             attachment_filename='{}_{}.xlsx'.format(title, datetime.utcnow().strftime("%Y%m%d_%H%M%S")),
             cache_timeout=0,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+
+
+def csv_download(title, headers, details):
+    with NamedTemporaryFile() as tmp:
+        writer = csv.DictWriter(tmp, fieldnames=headers)
+
+        writer.writeheader()
+
+        for d in details:
+            writer.writerow(d)
+
+        tmp.flush()
+        tmp.seek(0)
+
+        return send_file(
+            tmp.name,
+            as_attachment=True,
+            download_name=f'{title}.csv',
         )
 
 
