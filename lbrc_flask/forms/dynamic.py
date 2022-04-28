@@ -1,4 +1,4 @@
-from wtforms.fields.core import IntegerField
+from wtforms.fields import IntegerField
 from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
 from wtforms import fields, validators
