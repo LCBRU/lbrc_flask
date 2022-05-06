@@ -36,7 +36,7 @@ def excel_download(title, headers, details):
 
 def csv_download(title, headers, details):
     with NamedTemporaryFile(mode='w+', delete=True) as tmp:
-        writer = csv.DictWriter(tmp, fieldnames=headers)
+        writer = csv.DictWriter(tmp, fieldnames=list(headers))
 
         writer.writeheader()
 
