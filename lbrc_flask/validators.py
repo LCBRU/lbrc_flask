@@ -101,3 +101,20 @@ def is_invalid_postcode(postcode):
         return True
 
     return False
+
+
+def is_integer(n):
+    try:
+        float(n)
+    except ValueError:
+        return False
+    else:
+        return float(n).is_integer()
+
+
+def is_float(n):
+    try:
+        float(n)
+        return True
+    except ValueError:
+        return False
