@@ -28,5 +28,6 @@ setup(name='lbrc_flask',
             'pygal',
             'xlrd',
             'chardet',
+            'rich',
       ],
 )
