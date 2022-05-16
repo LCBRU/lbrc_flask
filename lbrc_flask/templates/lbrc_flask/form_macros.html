@@ -177,7 +177,7 @@
   {% endif %}
 
   {% if button['disabled'] %}
-      {% set disabled='diabled="true"' %}
+      {% set disabled='disabled' %}
   {% endif %}
 
   <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}" {{ disabled }}>{{ button['text'] }}</a>
