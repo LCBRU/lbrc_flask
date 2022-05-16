@@ -178,6 +178,7 @@
 
   {% if button['disabled'] %}
       {% set disabled='disabled' %}
+      {% set url='' %}
   {% endif %}
 
   <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}" {{ disabled }}>{{ button['text'] }}</a>
