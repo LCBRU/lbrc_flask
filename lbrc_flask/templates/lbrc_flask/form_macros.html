@@ -180,7 +180,7 @@
       {% set disabled='diabled="true"' %}
   {% endif %}
 
-  <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}" {% disabled %}>{{ button['text'] }}</a>
+  <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}" {{ disabled }}>{{ button['text'] }}</a>
 {% endmacro %}
 
 
