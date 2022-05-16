@@ -178,10 +178,12 @@
 
   {% if button['disabled'] %}
       {% set disabled='disabled' %}
-      {% set url='' %}
+      {% set href='' %}
+  {% else %}
+      {% set href='href="' ~ url ~ '"' %}
   {% endif %}
 
-  <a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" href="{{ url }}" {{ disabled }}>{{ button['text'] }}</a>
+  <a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" {{ href }} {{ disabled }}>{{ button['text'] }}</a>
 {% endmacro %}
 
 
