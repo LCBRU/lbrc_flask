@@ -164,8 +164,11 @@
   {% set url="" %}
 
   {% if button['add_form_fields'] %}
-    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("data") %}
+    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | rejectattr("type", "eq", "MonthField") | selectattr("data") %}
       {% if kwargs.update({f.name: f.data}) %} {% endif %}
+    {% endfor %}
+    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("type", "eq", "MonthField") | selectattr("data") %}
+      {% if kwargs.update({f.name: f.data | month_format }) %} {% endif %}
     {% endfor %}
   {% endif %}
 
@@ -190,8 +193,12 @@
 {% macro render_pagination(pagination, endpoint, form) %}
   {% if pagination.pages > 1 %}
 
-  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("data") %}
+  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | rejectattr("type", "eq", "MonthField") | selectattr("data") %}
     {% if kwargs.update({f.name: f.data}) %} {% endif %}
+  {% endfor %}
+
+  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("type", "eq", "MonthField") | selectattr("data") %}
+    {% if kwargs.update({f.name: f.data | month_format }) %} {% endif %}
   {% endfor %}
 
   <ul class="pagination">

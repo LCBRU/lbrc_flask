@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from flask import g, request, current_app
 from markdown import markdown
-from .formatters import format_currency, format_date, format_datetime, format_number, format_yesno, humanize_datetime, humanize_date
+from .formatters import format_currency, format_date, format_datetime, format_month, format_number, format_yesno, humanize_datetime, humanize_date
 from markupsafe import Markup
 
 
@@ -18,6 +18,10 @@ def init_template_filters(app):
     @app.template_filter("date_format")
     def date_format(value):
         return format_date(value)
+
+    @app.template_filter("month_format")
+    def month_format(value):
+        return format_month(value)
 
     @app.template_filter("datetime_humanize")
     def datetime_humanize(value):

@@ -47,6 +47,15 @@ def format_date(value):
         return value
 
 
+def format_month(value):
+    if value is None:
+        return ''
+    if value and (isinstance(value, date) or isinstance(value, datetime)):
+        return value.strftime("%Y-%m")
+    else:
+        return value
+
+
 def humanize_date(value):
     if value:
         return arrow.get(value).to('Europe/London').humanize(granularity="day")
