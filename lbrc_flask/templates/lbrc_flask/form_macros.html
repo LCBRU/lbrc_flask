@@ -143,10 +143,10 @@
 
   </div>
 
-  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") | list | length is ge(1) %}
+  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
-        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") %}
+        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
             <div>{{ field.label.text | nbsp}}</div>
             <div>{{ render_field_actual(field, **kwargs) |safe }}</div>

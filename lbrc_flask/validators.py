@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import datetime, date
 from dateutil.parser import parse
@@ -55,7 +56,6 @@ def parse_date(value):
         return value
 
     ansi_match = re.fullmatch(r'(?P<year>\d{4})[\\ -]?(?P<month>\d{2})[\\ -]?(?P<day>\d{2})(?:[ T]\d{2}:\d{2}:\d{2})?(?:\.\d+)?(?:[+-]\d{2}:\d{2})?', value)
-
     if ansi_match:
         return date(
             int(ansi_match.group('year')),
@@ -70,7 +70,7 @@ def parse_date(value):
 
 def parse_date_or_none(value):
     try:
-        return parse(value)
+        return parse_date(value)
     except:
         return None
 
