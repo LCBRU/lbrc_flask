@@ -461,7 +461,7 @@ a.fas, a.fas:link, a.fas:hover {
 }
 
 .search-filters select {
-  width: 100%;
+  max-width: 400px;
 }
 
 /** SPINNER CREATION **/
