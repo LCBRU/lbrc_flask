@@ -228,3 +228,12 @@
     </ul>
   {% endif %}
 {% endmacro %}
+
+
+{% macro pagination_summary(pagination, item_name) %}
+  {% set first=((pagination.page - 1) * pagination.per_page) + 1 %}
+  {% set last=(first + pagination.items | length) %}
+
+  <p class="text-muted">Displaying {{item_name}} {{ first | separated_number }} to {{ last | separated_number }} of {{publications.total | separated_number}} found</p>
+
+{% endmacro %}
