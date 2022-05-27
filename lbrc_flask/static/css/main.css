@@ -512,3 +512,7 @@ a.fas, a.fas:link, a.fas:hover {
 ul.radio li {
   list-style-type: none;
 }
+
+ul.form-control li {
+  list-style: none;
+}

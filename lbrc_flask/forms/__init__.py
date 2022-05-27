@@ -6,11 +6,12 @@ from wtforms import (
     StringField,
     HiddenField,
     Field,
+    SelectMultipleField,
 )
 from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
-from wtforms.widgets import FileInput as _FileInput
+from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput
 
 
 class DescriptionField(Field):
@@ -83,3 +84,14 @@ class Unique(object):
         check = self.model.query.filter(self.field == field.data).first()
         if check:
             raise ValidationError(self.message)
+
+
+class MultiCheckboxField(SelectMultipleField):
+    """
+    A multiple-select, except displays a list of checkboxes.
+
+    Iterating the field will produce subfields, allowing custom rendering of
+    the enclosed checkbox fields.
+    """
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
