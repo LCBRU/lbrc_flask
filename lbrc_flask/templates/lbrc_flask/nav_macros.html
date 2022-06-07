@@ -1,16 +1,22 @@
-{% macro render_nav_item(endpoint, name) %}
+{% macro render_nav_item(endpoint, name, icon='') %}
     <li class="nav-item">
-        {{ render_nav_link(endpoint, name) }}
+        {{ render_nav_link(endpoint, name, icon) }}
     </li>
 {% endmacro %}
 
 
-{% macro render_nav_link(endpoint, name) %}
+{% macro render_nav_link(endpoint, name, icon='') %}
     {% set active_class="" %}
 
     {% if endpoint == request.endpoint %}
         {% set active_class="active" %}
     {% endif %}
 
-    <a class="nav-link {{ active_class }}" href="{{ url_for(endpoint, **kwargs) }}">{{ name }}</a>
+    <a class="nav-link {{ active_class }}" href="{{ url_for(endpoint, **kwargs) }}">
+        {% if icon | length > 0 %}
+            <i class="{{ icon }}"></i>
+        {% endif %}
+    
+        {{ name }}
+    </a>
 {% endmacro %}
