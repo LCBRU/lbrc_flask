@@ -94,7 +94,23 @@
     <script type="text/javascript">
       $(document).ready(function() {
           // Fancy select
-          $("select.select2").select2();
+          $("select.select2").each(function(){
+            elem = $(this);
+
+            data_url = elem.data('data-href');
+
+            if (!!data_url) {
+              $(this).select2({
+                ajax: {
+                  url: data_url,
+                  dataType: 'json'
+                  // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+                }
+              });
+            } else {
+              $(this).select2();
+            }
+          });
 
           // Lock screen
           $('.lock_screen').click(function(){
