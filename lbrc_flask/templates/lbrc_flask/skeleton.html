@@ -97,12 +97,12 @@
           $("select.select2").each(function(){
             elem = $(this);
 
-            data_url = elem.data('data-href');
+            options_url = elem.data('options-href');
 
-            if (!!data_url) {
+            if (!!options_url) {
               $(this).select2({
                 ajax: {
-                  url: data_url,
+                  url: options_url,
                   dataType: 'json'
                   // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
                 }
