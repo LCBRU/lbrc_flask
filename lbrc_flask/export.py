@@ -55,11 +55,19 @@ def csv_download(title, headers, details):
 
 
 def pdf_download(template, title="report", **kwargs):
-    with NamedTemporaryFile(mode='w+', delete=True, encoding='utf-8') as tmp_html:
+    with NamedTemporaryFile(mode='w+', delete=True, encoding='utf-8') as tmp_html, NamedTemporaryFile(mode='w+', delete=True) as tmp_pdf:
         tmp_html.write(render_template(template, **kwargs))
         tmp_html.flush()
         tmp_html.seek(0)
 
-        resp = render_pdf(HTML(filename=tmp_html.name))
-        resp.headers['Content-Disposition'] = f'attachment;filename={title}_{datetime.utcnow():%Y%m%d_%H%M%S}.pdf'
-        return resp
+        weasy_html = HTML(filename=tmp_html.name)
+        weasy_html.write_pdf(tmp_pdf.name)
+
+        tmp_pdf.flush()
+        tmp_pdf.seek(0)
+
+        return send_file(
+            tmp_pdf.name,
+            as_attachment=True,
+            download_name=f'{title}_{datetime.utcnow():%Y%m%d_%H%M%S}.pdf',
+        )
