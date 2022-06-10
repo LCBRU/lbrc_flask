@@ -181,12 +181,18 @@
 
   {% if button['disabled'] %}
       {% set disabled='disabled' %}
-      {% set href='' %}
+      {% set href='#' %}
   {% else %}
-      {% set href='href=' ~ url %}
+      {% set href=url %}
   {% endif %}
 
-  <a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" {{ href }} {{ disabled }}>{{ button['text'] }}</a>
+  {% if button['title'] %}
+    {% set title=button['title'] %}
+  {% else %}
+    {% set title='' %}
+  {% endif %}
+
+  <a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" href="{{ href }}" title="{{ title }}" data-toggle="tooltip" {{ disabled }}>{{ button['text'] }}</a>
 {% endmacro %}
 
 

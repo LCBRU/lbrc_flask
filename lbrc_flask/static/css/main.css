@@ -183,6 +183,12 @@ section {
   border-color: #60C286;
 }
 
+.btn-primary:disabled, .btn-primary.disabled {
+  color: #fff;
+  background-color: #2D8F53;
+  border-color: #2D8F53;
+}
+
 .btn-primary:focus {
   box-shadow: 0 0 0 0.2rem rgba(70, 168, 108, 0.5);
 }
