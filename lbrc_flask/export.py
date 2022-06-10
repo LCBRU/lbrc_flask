@@ -55,7 +55,7 @@ def csv_download(title, headers, details):
 
 
 def pdf_download(template, title="report", **kwargs):
-    with NamedTemporaryFile(mode='w+', delete=True) as tmp_html:
+    with NamedTemporaryFile(mode='w+', delete=True, encoding='utf-8') as tmp_html:
         tmp_html.write(render_template(template, **kwargs))
         tmp_html.flush()
         tmp_html.seek(0)
