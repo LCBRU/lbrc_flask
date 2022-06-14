@@ -56,8 +56,6 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
             url = url_for(endpoint, _external=False, **kwargs)
 
     if url:
-        print(response.location)
-        print(url)
         assert response.location == url
 
 
@@ -68,6 +66,15 @@ def assert__requires_login(client, url, post=False):
         resp = client.get(url)
 
     assert__redirect(resp, 'security.login', next=url)
+
+
+def assert__requires_role(client, url, post=False):
+    if post:
+        resp = client.post(url)
+    else:
+        resp = client.get(url)
+
+    assert__redirect(resp, url='/')
 
 
 def assert__search_html(soup, clear_url):

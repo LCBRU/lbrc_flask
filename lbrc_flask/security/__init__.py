@@ -110,4 +110,3 @@ def must_be_admin():
         return decorated_function
 
     return decorator
-
