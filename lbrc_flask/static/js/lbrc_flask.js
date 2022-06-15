@@ -19,3 +19,30 @@ function standard_status_actions(response) {
 function parseJSON(response) {
     return response.json()
 }
+
+
+function enable_child_control_on_parent_value(parent_selector, child_selector, enabled_value) {
+    let parent = document.querySelector(parent_selector);
+    let child = document.querySelector(child_selector);
+
+    updater = function () {
+        if (parent.value == enabled_value) {
+            child.removeAttribute('disabled');
+        } else {
+            child.setAttribute('disabled', ' ');
+        }        
+    }
+
+    updater();
+    parent.onchange = updater;
+}
+
+function select2_remote(select_selector, url) {
+    $(select_selector).select2({
+        ajax: {
+            url: url,
+            dataType: 'json',
+            delay: 500,
+        }
+    });
+}
