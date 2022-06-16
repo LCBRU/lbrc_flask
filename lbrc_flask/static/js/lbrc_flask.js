@@ -46,3 +46,26 @@ function select2_remote(select_selector, url) {
         }
     });
 }
+
+
+function _render_modal_on_show(event){
+    var mod_elem = this;
+
+    [].forEach.call(event.relatedTarget.attributes, function(attr) {
+        if (/^data-/.test(attr.name)) {
+            var name = attr.name.substr(5);
+            var input_elem = mod_elem.querySelector(`#${name}`);
+            if (!!input_elem) {
+                if (typeof input_elem.value !='undefined'){
+                    input_elem.value = attr.value;
+                } else {
+                    input_elem.innerHTML = attr.value;
+                }
+            }
+        }
+    })
+}
+
+$(document).ready(function(){
+    $('.modal').on('show.bs.modal', _render_modal_on_show);
+});
