@@ -54,13 +54,13 @@ def csv_download(title, headers, details):
         )
 
 
-def pdf_download(template, title="report", **kwargs):
+def pdf_download(template, title="report", path=None, **kwargs):
     with NamedTemporaryFile(mode='w+', delete=True, encoding='utf-8') as tmp_html, NamedTemporaryFile(mode='w+', delete=True) as tmp_pdf:
         tmp_html.write(render_template(template, **kwargs))
         tmp_html.flush()
         tmp_html.seek(0)
 
-        weasy_html = HTML(filename=tmp_html.name)
+        weasy_html = HTML(filename=tmp_html.name, base_url=path)
         weasy_html.write_pdf(tmp_pdf.name)
 
         tmp_pdf.flush()
