@@ -35,7 +35,7 @@ class ElementDisplayField(Field):
 class DescriptionField(ElementDisplayField):
 
     def __init__(self, label=None, validators=None, description=None, **kwargs):
-        super().__init__('p', label, validators, **kwargs)
+        super().__init__('p', label, validators, description, **kwargs)
 
 
 class FlashingForm(FlaskForm):
