@@ -375,32 +375,32 @@ dd {
   font-size: 80%;
 }
 
-.summary_details h1 {
+.summary_details h1, .modal-body h1 {
   font-size: 20px;
   color: #23527c;
   font-weight: bold;
   margin: 0;
 }
 
-.summary_details h2 {
+.summary_details h2, .modal-body h2 {
   font-size: 14px;
   color: #666;
   margin: 0;
 }
 
-.summary_details h3 {
+.summary_details h3, .modal-body h3 {
   font-size: 16px;
   color: #23527c;
   font-weight: bold;
 }
 
-.summary_details h4 {
+.summary_details h4, .modal-body h4 {
   font-size: 14px;
   color: #666;
   font-weight: 100;
 }
 
-.summary_details h5 {
+.summary_details h5, .modal-body h5 {
   font-size: 12px;
   color: #666;
   font-weight: 100;
