@@ -14,20 +14,28 @@ from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput
 
 
-class DescriptionField(Field):
+class ElementDisplayField(Field):
 
-    def __init__(self, label=None, validators=None, description=None, **kwargs):
+    def __init__(self, element_type='p', label=None, validators=None, description=None, **kwargs):
         super().__init__(label, validators, **kwargs)
         if description is not None:
             self.description = description
+        
+        self._element_type = element_type
 
     def widget(self, field, **kwargs):
         field_id = kwargs.pop('id', field.id)
-        html = [u'<p {}>{}</p>'.format(html_params(id=field_id), markdown.markdown(field.description))]
+        html = [u'<{0} {1}>{2}</{0}>'.format(self._element_type, html_params(id=field_id), markdown.markdown(field.description))]
         return u''.join(html)
 
     def process_formdata(self, data):
         pass
+
+
+class DescriptionField(ElementDisplayField):
+
+    def __init__(self, label=None, validators=None, description=None, **kwargs):
+        super().__init__('p', label, validators, **kwargs)
 
 
 class FlashingForm(FlaskForm):

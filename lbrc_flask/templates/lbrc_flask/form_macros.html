@@ -13,7 +13,7 @@
 {% macro render_field_controls(field, label=None) %}
   {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
   {% else %}
-    {% if field.type != "DescriptionField" %}
+    {% if field.type not in ["DescriptionField", "ElementDisplayField"] %}
       {{ render_label(field, label) }}
     {% endif %}
     {{ render_field_actual(field, **kwargs) }}
