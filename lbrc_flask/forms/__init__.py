@@ -14,6 +14,18 @@ from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput
 
 
+class DataListField(Field):
+    choices = []
+
+    def widget(self, field, **kwargs):
+        field_id = kwargs.pop('id', field.id)
+        options = ' '.join([f'<option {html_params(value=c)}>' for c in self.choices])
+        return f'<datalist {html_params(id=field_id)}>{options}</datalist>'
+
+    def process_formdata(self, data):
+        pass
+
+
 class ElementDisplayField(Field):
 
     def __init__(self, element_type='p', label=None, validators=None, description=None, **kwargs):
