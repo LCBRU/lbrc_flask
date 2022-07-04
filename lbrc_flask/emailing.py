@@ -12,6 +12,7 @@ def init_mail(app):
 def email(subject, message, recipients, html_template=None, **kwargs):
     if len(recipients) < 1:
         current_app.logger.info('Skipping email with no recipients')
+        return
 
     if current_app.config["SMTP_SERVER"] is not None:
 
