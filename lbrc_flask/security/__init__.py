@@ -34,6 +34,10 @@ def get_user_from_username(username):
     return  _datastore.find_user(username=username)
 
 
+def get_users_for_role(role_name):
+    return  _datastore.user_model.query.join(User.roles).filter(Role.name == role_name).all()
+
+
 def get_admin_user():
     result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
 
