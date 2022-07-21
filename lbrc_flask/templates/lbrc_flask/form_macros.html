@@ -192,7 +192,7 @@
     {% set title='' %}
   {% endif %}
 
-  <a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" href="{{ href }}" title="{{ title }}" data-toggle="tooltip" {{ disabled }}>{{ button['text'] }}</a>
+<a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" {{ button | dict_data_fields | xmlattr }} href="{{ href }}" title="{{ title }}" data-toggle="tooltip" {{ disabled }}>{{ button['text'] }}</a>
 {% endmacro %}
 
 

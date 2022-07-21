@@ -86,6 +86,13 @@ def init_template_filters(app):
         else:
             return ""
 
+    @app.template_filter("dict_data_fields")
+    def dict_data_fields(value):
+        if value:
+            return {k: v for k, v in value.items() if k.startswith('data-')}
+        else:
+            return dict()
+
     @app.context_processor
     def inject_studd():
         if 'lbrc_flask_title' in g:
