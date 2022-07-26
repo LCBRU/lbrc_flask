@@ -64,6 +64,9 @@ class FlashingForm(FlaskForm):
                         "error",
                     )
         return result
+    
+    def has_value(self, field_name):
+        return field_name in self.data and self.data[field_name]
 
 
 class SearchForm(FlashingForm):
