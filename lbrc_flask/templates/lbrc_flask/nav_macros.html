@@ -5,10 +5,10 @@
 {% endmacro %}
 
 
-{% macro render_nav_link(endpoint, name, icon='', match_path=False) %}
+{% macro render_nav_link(endpoint, name, icon='', match_full_path=False) %}
     {% set active_class="" %}
 
-    {% if match_path %}
+    {% if match_full_path %}
         {% if url_for(endpoint, **kwargs) == request.path %}
             {% set active_class="active" %}
         {% endif %}
