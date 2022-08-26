@@ -5,11 +5,17 @@
 {% endmacro %}
 
 
-{% macro render_nav_link(endpoint, name, icon='') %}
+{% macro render_nav_link(endpoint, name, icon='', match_path=False) %}
     {% set active_class="" %}
 
-    {% if endpoint == request.endpoint %}
-        {% set active_class="active" %}
+    {% if match_path %}
+        {% if url_for(endpoint, **kwargs) == request.path %}
+            {% set active_class="active" %}
+        {% endif %}
+    {% else %}
+        {% if endpoint == request.endpoint %}
+            {% set active_class="active" %}
+        {% endif %}
     {% endif %}
 
     <a class="nav-link {{ active_class }}" href="{{ url_for(endpoint, **kwargs) }}">
