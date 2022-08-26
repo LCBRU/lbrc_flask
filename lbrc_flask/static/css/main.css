@@ -130,6 +130,10 @@ header.pageheader h1 {
   color: white;
 }
 
+.dropdown-menu.wide {
+  min-width:400px;
+}
+
 div.subsections {
   columns: 2;
 }
