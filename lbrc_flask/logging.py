@@ -1,7 +1,7 @@
 import traceback
 import logging
 from logging import FileHandler
-from flask import current_app
+from flask import current_app, g
 from lbrc_flask.emailing import email
 from pathlib import Path
 from rich.logging import RichHandler
@@ -40,7 +40,7 @@ def log_exception(e):
     print(traceback.format_exc())
     current_app.logger.error(traceback.format_exc())
     email(
-        subject=current_app.config["ERROR_EMAIL_SUBJECT"],
+        subject=f'ERROR: {g.get("lbrc_flask_title", "Application")}',
         message=traceback.format_exc(),
         recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
     )
