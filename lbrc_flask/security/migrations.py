@@ -81,3 +81,12 @@ def get_audit_mixin_columns():
         Column("created_date", DateTime, nullable=False),
         Column("created_by", NVARCHAR(500), nullable=False),
     ]
+
+def add_audit_mixin_columns(table):
+    for c in get_audit_mixin_columns():
+        c.nullable = True
+        c.create(table)
+
+def delete_audit_mixin_columns(table):
+    for c in get_audit_mixin_columns():
+        table.drop_column(c.name)
