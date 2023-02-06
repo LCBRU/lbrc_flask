@@ -72,7 +72,7 @@ class FlashingForm(FlaskForm):
         value = self.data[field_name]
 
         if not value:
-            retrun False
+            return False
 
         if value.is_integer() and int(value) == 0:
             return False
