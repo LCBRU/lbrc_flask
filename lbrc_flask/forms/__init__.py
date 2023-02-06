@@ -66,7 +66,18 @@ class FlashingForm(FlaskForm):
         return result
     
     def has_value(self, field_name):
-        return field_name in self.data and self.data[field_name]
+        if field_name not in self.data:
+            return False
+        
+        value = self.data[field_name]
+
+        if not value:
+            retrun False
+
+        if value.is_integer() and int(value) == 0:
+            return False
+            
+        return True
 
 
 class SearchForm(FlashingForm):
