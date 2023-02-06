@@ -74,7 +74,7 @@ class FlashingForm(FlaskForm):
         if not value:
             return False
 
-        if value.is_integer() and int(value) == 0:
+        if value.isdigit() and int(value) == 0:
             return False
             
         return True
