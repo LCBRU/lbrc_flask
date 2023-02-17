@@ -56,7 +56,13 @@ function _render_modal_on_show(event){
             var name = attr.name.substr(5);
             var input_elem = mod_elem.querySelector(`#${name}`);
             if (!!input_elem) {
-                if (typeof input_elem.value !='undefined'){
+                if (input_elem.getAttribute('type') =='checkbox') {
+                    if (String(attr.value).toLowerCase() === 'true') {
+                        input_elem.checked = 'checked';
+                    } else {
+                        input_elem.removeAttribute('checked');
+                    }
+                } else if (typeof input_elem.value !='undefined'){
                     input_elem.value = attr.value;
                 } else {
                     input_elem.innerHTML = attr.value;
