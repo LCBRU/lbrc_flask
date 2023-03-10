@@ -21,15 +21,40 @@ SYSTEM_USER_NAME = 'system'
 def get_system_user():
     return _datastore.find_user(username=SYSTEM_USER_NAME)
 
+
+def get_role_from_name(name):
+    return _datastore.find_or_create_role(name=name)
+
+
 def get_admin_role():
-    return _datastore.find_or_create_role(name=Role.ADMIN_ROLENAME)
+    return get_role_from_name(name=Role.ADMIN_ROLENAME)
+
+
+def get_user_from_username(username):
+    return  _datastore.find_user(username=username)
+
+
+def get_users_for_role(role_name):
+    return  _datastore.user_model.query.join(User.roles).filter(Role.name == role_name).all()
+
 
 def get_admin_user():
     result =  _datastore.find_user(email=current_app.config["ADMIN_EMAIL_ADDRESS"]) or _datastore.find_user(username=current_app.config["ADMIN_USERNAME"])
 
     return result
 
-def init_security(app, user_class, role_class):
+
+def add_user_to_role(user=None, role=None, username=None, role_name=None):
+    if user is None:
+        user = get_user_from_username(username)
+    
+    if role is None:
+        role = get_role_from_name(role_name)
+
+    _datastore.add_role_to_user(user, role)
+
+
+def init_security(app, user_class, role_class, roles=None):
     user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
     Security(
         app,
@@ -41,12 +66,15 @@ def init_security(app, user_class, role_class):
 
     @app.before_first_request
     def init_security():
-        init_roles()
+        init_roles(roles)
         init_users()
 
 
-def init_roles():
-    for r in [Role.ADMIN_ROLENAME] + current_app.config["ROLES"].split(';'):
+def init_roles(roles=None):
+    if roles is None:
+        roles = []
+
+    for r in [Role.ADMIN_ROLENAME] + current_app.config["ROLES"].split(';') + roles:
         if r:
             _datastore.find_or_create_role(
                 name=r, description=r
@@ -86,4 +114,3 @@ def must_be_admin():
         return decorated_function
 
     return decorator
-

@@ -57,8 +57,8 @@ class PasswordConfirmFormMixin:
 class LbrcForgotPasswordForm(ForgotPasswordForm):
     """The default forgot password form"""
 
-    def validate(self):
-        if not super().validate():
+    def validate(self, **kwargs):
+        if not super().validate(**kwargs):
             return False
 
         ldap = Ldap()
@@ -112,8 +112,8 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 
 class LbrcLoginForm(LoginForm):
-    def validate(self):
-        if not super(LoginForm, self).validate():
+    def validate(self, **kwargs):
+        if not super(LoginForm, self).validate(**kwargs):
             return False
 
         ldap = Ldap()

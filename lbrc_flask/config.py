@@ -82,6 +82,7 @@ class BaseTestConfig(BaseConfig):
 
     # Database
     SQLALCHEMY_DATABASE_URI = "sqlite://"
+    LDAP_URI = ''
 
     # Emails
     SMTP_SERVER = None

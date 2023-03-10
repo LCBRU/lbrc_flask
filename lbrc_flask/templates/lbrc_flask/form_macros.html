@@ -13,7 +13,7 @@
 {% macro render_field_controls(field, label=None) %}
   {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
   {% else %}
-    {% if field.type != "DescriptionField" %}
+    {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField"] %}
       {{ render_label(field, label) }}
     {% endif %}
     {{ render_field_actual(field, **kwargs) }}
@@ -143,10 +143,10 @@
 
   </div>
 
-  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") | list | length is ge(1) %}
+  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
-        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField") %}
+        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
             <div>{{ field.label.text | nbsp}}</div>
             <div>{{ render_field_actual(field, **kwargs) |safe }}</div>
@@ -164,8 +164,11 @@
   {% set url="" %}
 
   {% if button['add_form_fields'] %}
-    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("data") %}
+    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | rejectattr("type", "eq", "MonthField") | selectattr("data") %}
       {% if kwargs.update({f.name: f.data}) %} {% endif %}
+    {% endfor %}
+    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("type", "eq", "MonthField") | selectattr("data") %}
+      {% if kwargs.update({f.name: f.data | month_format }) %} {% endif %}
     {% endfor %}
   {% endif %}
 
@@ -176,15 +179,32 @@
       {% set url=button['url'] %}
   {% endif %}
 
-  <a class="btn btn-primary {{ button['class'] }}" id="{{ button['id'] }}" href="{{ url }}">{{ button['text'] }}</a>
+  {% if button['disabled'] %}
+      {% set disabled='disabled' %}
+      {% set href='#' %}
+  {% else %}
+      {% set href=url %}
+  {% endif %}
+
+  {% if button['title'] %}
+    {% set title=button['title'] %}
+  {% else %}
+    {% set title='' %}
+  {% endif %}
+
+<a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" {{ button | dict_data_fields | xmlattr }} href="{{ href }}" title="{{ title }}" data-toggle="tooltip" {{ disabled }}>{{ button['text'] }}</a>
 {% endmacro %}
 
 
 {% macro render_pagination(pagination, endpoint, form) %}
   {% if pagination.pages > 1 %}
 
-  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("data") %}
+  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | rejectattr("type", "eq", "MonthField") | selectattr("data") %}
     {% if kwargs.update({f.name: f.data}) %} {% endif %}
+  {% endfor %}
+
+  {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("type", "eq", "MonthField") | selectattr("data") %}
+    {% if kwargs.update({f.name: f.data | month_format }) %} {% endif %}
   {% endfor %}
 
   <ul class="pagination">
@@ -213,4 +233,17 @@
     {% endif %}
     </ul>
   {% endif %}
+{% endmacro %}
+
+
+{% macro pagination_summary(pagination, item_name) %}
+  {% set first=((pagination.page - 1) * pagination.per_page) + 1 %}
+  {% set last=(first + pagination.items | length - 1) %}
+
+  {% if pagination.total > 0 %}
+    <p class="text-muted text-right">Displaying {{item_name}} {{ first | separated_number }} to {{ last | separated_number }} of {{pagination.total | separated_number}} found</p>
+  {% else %}
+    <p class="text-muted text-center">No {{item_name}} found</p>
+  {% endif%}
+
 {% endmacro %}

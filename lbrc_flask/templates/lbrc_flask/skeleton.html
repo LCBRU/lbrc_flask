@@ -42,7 +42,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js" integrity="sha512-kaDP6dcDG3+X87m9SnhyJzwBMKrYnd2tLJjGdBrZ9yEL8Zcl2iJRsPwylLkbd2g3QC5S8efV3sgwI5r73U0HnA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Common Functions -->
-    <script src="{{ url_for('lbrc_flask.static', filename='js/lbrc_flask.js', ver=1) }}"></script>
+    <script src="{{ url_for('lbrc_flask.static', filename='js/lbrc_flask.js', ver=2) }}"></script>
 
     <!-- Forms -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -94,7 +94,23 @@
     <script type="text/javascript">
       $(document).ready(function() {
           // Fancy select
-          $("select.select2").select2();
+          $("select.select2").each(function(){
+            elem = $(this);
+
+            options_url = elem.data('options-href');
+
+            if (!!options_url) {
+              $(this).select2({
+                ajax: {
+                  url: options_url,
+                  dataType: 'json',
+                  // Additional AJAX parameters go here; see the end of this chapter for the full code of this example
+                }
+              });
+            } else {
+              $(this).select2();
+            }
+          });
 
           // Lock screen
           $('.lock_screen').click(function(){
@@ -112,9 +128,7 @@
               document.getElementById('help_modal__text').innerHTML = markdown.toHTML( button.data('text') );
           });
 
-          $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-          })
+          $('[data-toggle="tooltip"]').tooltip()
       });
 
       setTimeout(reload, 10000);

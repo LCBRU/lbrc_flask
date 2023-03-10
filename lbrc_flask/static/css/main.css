@@ -130,6 +130,10 @@ header.pageheader h1 {
   color: white;
 }
 
+.dropdown-menu.wide {
+  min-width:400px;
+}
+
 div.subsections {
   columns: 2;
 }
@@ -181,6 +185,12 @@ section {
   color: #fff;
   background-color: #60C286;
   border-color: #60C286;
+}
+
+.btn-primary:disabled, .btn-primary.disabled {
+  color: #fff;
+  background-color: #2D8F53;
+  border-color: #2D8F53;
 }
 
 .btn-primary:focus {
@@ -369,24 +379,36 @@ dd {
   font-size: 80%;
 }
 
-.summary_details h1 {
+.summary_details h1, .modal-body h1 {
   font-size: 20px;
   color: #23527c;
   font-weight: bold;
   margin: 0;
 }
 
-.summary_details h2 {
+.summary_details h2, .modal-body h2 {
   font-size: 14px;
   color: #666;
   margin: 0;
 }
 
-.summary_details h3 {
+.summary_details h3, .modal-body h3 {
   font-size: 16px;
   color: #23527c;
   font-weight: bold;
-  margin: 0;  
+}
+
+.summary_details h4, .modal-body h4 {
+  font-size: 14px;
+  color: #666;
+  font-weight: 100;
+}
+
+.summary_details h5, .modal-body h5 {
+  font-size: 12px;
+  color: #666;
+  font-weight: 100;
+  font-style: italic;
 }
 
 .login-form {
@@ -449,7 +471,7 @@ a.fas, a.fas:link, a.fas:hover {
 }
 
 .search-filters select {
-  width: 100%;
+  max-width: 400px;
 }
 
 /** SPINNER CREATION **/
@@ -499,4 +521,8 @@ a.fas, a.fas:link, a.fas:hover {
 /* Specific Styling */
 ul.radio li {
   list-style-type: none;
+}
+
+ul.form-control li {
+  list-style: none;
 }

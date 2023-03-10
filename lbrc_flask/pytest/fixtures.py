@@ -226,6 +226,7 @@ def initialised_app(request, app):
 
     yield app
 
+    db.session.close()
     context.pop()
 
 

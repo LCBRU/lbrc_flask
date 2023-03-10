@@ -4,6 +4,10 @@ from .emailing import init_mail
 from .standard_views import init_standard_views
 from .template_filters import init_template_filters
 from .logging import init_logging
+from rich.traceback import install
+
+
+install(show_locals=True)
 
 
 blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", static_folder='static', url_prefix='/lbrc_flask')

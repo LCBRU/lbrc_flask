@@ -11,7 +11,7 @@ class Ldap():
         self.ldap = None
 
     def is_enabled(self):
-        return len((current_app.config.get('LDAP_URI', None) or '').strip()) > 0
+        return len((current_app.config.get('LDAP_URI', None) or '').strip()) > 0 and current_app.config.get('TESTING', False) == False
 
     def login(self, username, password):
         if not (username or '').strip() or not (password or '').strip():
