@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 from flask import url_for
 from lbrc_flask.pytest.helpers import login
 from flask_api import status
@@ -63,11 +63,23 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
 
 def assert__requires_login(client, url, post=False):
     if post:
-        resp = client.post(url)
+        response = client.post(url)
     else:
-        resp = client.get(url)
+        response = client.get(url)
 
-    assert__redirect(resp, 'security.login', next=url)
+    # This should be a call to assert__redirect, but
+    # flask_login or flask_security is adding the
+    # endpoint parameters as querystring arguments as well
+    # as having them in the `next` parameter  
+    assert response.status_code == status.HTTP_302_FOUND
+
+    login_loc = urlparse(url_for('security.login', next=url))
+    resp_loc = urlparse(response.location)
+
+    print(f"{resp_loc.path=}, {login_loc.path=}")
+    assert resp_loc.path == login_loc.path
+    print(f"{parse_qs(resp_loc.query).get('next')=}, {parse_qs(login_loc.query).get('next')=}")
+    assert parse_qs(resp_loc.query).get('next') == parse_qs(login_loc.query).get('next')
 
 
 def assert__search_html(soup, clear_url):
