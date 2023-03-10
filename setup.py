@@ -30,5 +30,6 @@ setup(name='lbrc_flask',
             'chardet',
             'rich',
             'jsonschema',
+            'pytz',
       ],
 )
