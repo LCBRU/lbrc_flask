@@ -98,8 +98,8 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
     submit = SubmitField(get_form_field_label("change_password"))
 
-    def validate(self):
-        if not super(LbrcChangePasswordForm, self).validate():
+    def validate(self, **kwargs):
+        if not super(LbrcChangePasswordForm, self).validate(**kwargs):
             return False
 
         if not verify_and_update_password(self.password.data, current_user):

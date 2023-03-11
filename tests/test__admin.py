@@ -22,10 +22,11 @@ def test__admin__is_not_admin__is_not_accessible(client, faker):
     assert not out.is_accessible()
 
 
-def test__admin__init_admin__loads_views(app, faker):
+def test__admin__init_admin__loads_views(app):
     views = [
         AdminCustomView(User, db.session),
         AdminCustomView(Role, db.session),
     ]
 
-    init_admin(app, 'Test', views)
+    with app.app_context():
+        init_admin(app, 'Test', views)

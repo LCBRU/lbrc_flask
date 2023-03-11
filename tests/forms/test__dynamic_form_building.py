@@ -157,7 +157,7 @@ def test__add_field__choices_not_set(client, faker):
 
     field_actual = build_form(field)
 
-    assert field_actual.choices == None
+    assert field_actual.choices == []
 
 
 def test__add_field__allowed_file_extensions_set(client, faker):

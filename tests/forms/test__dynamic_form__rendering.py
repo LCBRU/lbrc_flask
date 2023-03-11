@@ -3,6 +3,7 @@ from lbrc_flask.pytest.helpers import login
 import pytest
 from lbrc_flask.forms.dynamic import FieldType
 from flask_api import status
+from rich import print
 
 
 @pytest.mark.parametrize(

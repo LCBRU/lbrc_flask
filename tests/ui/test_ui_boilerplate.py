@@ -43,4 +43,4 @@ def test__boilerplate__pages(client, faker, item_count):
 
     the_fields = [faker.get_test_field() for _ in range(item_count)]
 
-    assert__page_navigation(client, url_for('pages_of_fields', _external=False), item_count)
+    assert__page_navigation(client, 'pages_of_fields', {}, item_count)

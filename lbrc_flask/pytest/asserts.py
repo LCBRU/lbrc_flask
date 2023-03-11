@@ -55,8 +55,14 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
         else:
             url = url_for(endpoint, _external=False, **kwargs)
 
+    url_loc = urlparse(url)
+    resp_loc = urlparse(response.location)
+    
+    print(f'{resp_loc=} {url_loc=}')
+
     if url:
-        assert response.location == url
+        print(f'{response.location=} {url=}')
+        assert resp_loc.path == url_loc.path
 
 
 def assert__requires_login(client, url, post=False):

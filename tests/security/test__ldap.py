@@ -12,6 +12,7 @@ def test__ldap__is_enable__nouri(client, faker, ldap_initialize):
 
 def test__ldap__is_enable__withuri(client, faker, ldap_initialize):
     current_app.config['LDAP_URI'] = faker.pystr(min_chars=5, max_chars=10)
+    current_app.config['TESTING'] = False
 
     ldap = Ldap()
     assert ldap.is_enabled()

@@ -28,10 +28,11 @@ class FieldType(db.Model):
 
     def format_value(self, value):
         if self.name == FieldType.INTEGER:
-            if value is None or not value.isnumeric():
+            strval = str(value)
+            if value is None or not strval.isnumeric():
                 return ''
             else:
-                return format_number(int(value))
+                return format_number(int(strval))
         elif self.name == FieldType.BOOLEAN:
             return format_yesno(value)
         else:
@@ -61,7 +62,7 @@ class FieldType(db.Model):
         if self.name == FieldType.BOOLEAN:
             return 'checkbox'
         elif self.name == FieldType.INTEGER:
-            return 'text'
+            return 'number'
         elif self.name == FieldType.STRING:
             return 'text'
         elif self.name == FieldType.FILE:
