@@ -1,6 +1,11 @@
 from datetime import datetime, timedelta
 import functools
 
+# This is called with the values for lru_cache and timedelta.  For example:
+# @timed_cache(maxsize=10, type=True, days=3)
+#
+# lru_cache parameters: maxsize, type
+# timedelta parameters: days - or seconds, microseconds, milliseconds, minutes, hours, weeks
 
 def timed_cache(**timedelta_kwargs):
 
@@ -9,6 +14,7 @@ def timed_cache(**timedelta_kwargs):
         typed = timedelta_kwargs.pop('typed', False)
         update_delta = timedelta(**timedelta_kwargs)
         next_update = datetime.utcnow() - update_delta
+
         # Apply @lru_cache to f
         f = functools.lru_cache(maxsize=maxsize, typed=typed)(f)
 

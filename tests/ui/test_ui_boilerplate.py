@@ -31,6 +31,7 @@ def test__boilerplate__forms_csrf_token(client, faker, path, requires_login):
 def test__boilerplate__search(client, faker):
     user = login(client, faker)
     resp = get_and_assert_standards(client, url_for('search'), user, has_form=True)
+    print(resp.soup)
     assert__search_html(resp.soup, clear_url=url_for('search'))
 
 
