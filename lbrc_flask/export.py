@@ -29,8 +29,8 @@ def excel_download(title, headers, details):
         return send_file(
             tmp.name,
             as_attachment=True,
-            attachment_filename='{}_{}.xlsx'.format(title, datetime.utcnow().strftime("%Y%m%d_%H%M%S")),
-            cache_timeout=0,
+            download_name='{}_{}.xlsx'.format(title, datetime.utcnow().strftime("%Y%m%d_%H%M%S")),
+            max_age=0,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
 

@@ -29,7 +29,7 @@ from lbrc_flask.data_conversions import (
         ('11111111111', True, ''),
     ],
 )
-def test__convert_dob__parsing(client, value, is_error, expected):
+def test__convert_nhs__parsing(client, value, is_error, expected):
     error, actual = convert_nhs_number(value)
 
     assert (error is None) != is_error
@@ -148,6 +148,8 @@ def test__convert_name(client, value, is_error, expected):
         (datetime.datetime(1996, 2, 29), False, '19960229'),
         ('19/12/1944', False, '19441219'),
         ('19440103', False, '19440103'),
+        ('10000103', True, ''),
+        (None, False, ''),
     ],
 )
 def test__convert_dob__parsing(client, value, is_error, expected):

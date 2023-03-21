@@ -7,9 +7,11 @@ from flask import Flask, Blueprint, render_template_string, url_for, redirect, r
 from flask_login import login_required
 from lbrc_flask.config import BaseTestConfig
 from lbrc_flask import init_lbrc_flask
+from lbrc_flask.database import db
 from lbrc_flask.security import current_user_id, init_security, User, Role
 from wtforms import StringField
 from lbrc_flask.pytest.fixtures import *
+from lbrc_flask.export import excel_download
 
 
 class TestForm(FlashingForm):
@@ -55,7 +57,7 @@ def app():
     @app.route('/form/<int:field_group_id>', methods=["GET", "POST"])
     def form(field_group_id):
 
-        fg = FieldGroup.query.get(field_group_id)
+        fg = db.get_or_404(FieldGroup, field_group_id)
         fb = FormBuilder(field_group=fg)
 
         form = fb.get_form()()
@@ -227,5 +229,17 @@ def app():
     @app.route('/post_without_login', methods=["POST"])
     def post_without_login():
         return redirect(url_for("ui.index"))
+
+    @app.route('/excel', methods=["GET"])
+    def get_excel():
+        return excel_download(
+            'ExcelTest',
+            ['fred','mary','ed'],
+            [{
+                'fred': 'soup',
+                'mary': 'fish',
+                'ed': '2000-01-02',
+            }],
+        )
 
     return app
