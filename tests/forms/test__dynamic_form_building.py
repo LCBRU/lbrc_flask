@@ -48,7 +48,7 @@ def test__add_field__field_added(client, faker, x):
 def test__add_field_group__field_added(client, faker, x):
     out = FormBuilder()
 
-    fg = FieldGroup()
+    fg = faker.get_test_field_group()
 
     fg.fields = [faker.get_test_field() for _ in range(x)]
 

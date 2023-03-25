@@ -40,7 +40,7 @@ def test__unique_validator__is_unique(client, faker):
     resp = client.post(url_for("test_form"), data={'last_name': faker.email()})
     assert resp.status_code == status.HTTP_200_OK
 
-    assert resp.soup.find('h1', id="valid", text="True") is not None
+    assert resp.soup.find('h1', id="valid", string="True") is not None
 
 
 def test__unique_validator__is_not_unique(client, faker):
@@ -49,4 +49,4 @@ def test__unique_validator__is_not_unique(client, faker):
     resp = client.post(url_for("test_form"), data={'last_name': user.last_name})
     assert resp.status_code == status.HTTP_200_OK
 
-    assert resp.soup.find('h1', id="valid", text="False") is not None
+    assert resp.soup.find('h1', id="valid", string="False") is not None
