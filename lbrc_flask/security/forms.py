@@ -18,6 +18,10 @@ from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
 
 
+def fix_kwargs(kwargs):
+    # TODO: Remove this when flask_security is upgraded
+    return {k: v for k, v in kwargs.items() if k != 'extra_validators'}
+
 class PasswordPolicy(ValidatorMixin):
     def __init__(
         self,
@@ -58,7 +62,8 @@ class LbrcForgotPasswordForm(ForgotPasswordForm):
     """The default forgot password form"""
 
     def validate(self, **kwargs):
-        if not super().validate(**kwargs):
+        
+        if not super().validate(**fix_kwargs(kwargs)):
             return False
 
         ldap = Ldap()
@@ -99,7 +104,7 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
     submit = SubmitField(get_form_field_label("change_password"))
 
     def validate(self, **kwargs):
-        if not super(LbrcChangePasswordForm, self).validate(**kwargs):
+        if not super(LbrcChangePasswordForm, self).validate(**fix_kwargs(kwargs)):
             return False
 
         if not verify_and_update_password(self.password.data, current_user):
@@ -113,7 +118,7 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 class LbrcLoginForm(LoginForm):
     def validate(self, **kwargs):
-        if not super(LoginForm, self).validate(**kwargs):
+        if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
             return False
 
         ldap = Ldap()
