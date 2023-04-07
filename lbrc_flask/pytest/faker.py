@@ -16,21 +16,38 @@ class LbrcFlaskFakerProvider(BaseProvider):
         u = User(
             first_name=self.generator.first_name(),
             last_name=self.generator.last_name(),
+            username=self.generator.pystr(min_chars=5, max_chars=10),
             email=self.generator.email(),
             active=True,
         )
         return u
 
-    def get_test_user(self, is_admin=False):
+    def get_test_user(self, is_admin=False, rolename=None):
         user = self.user_details()
 
         if is_admin:
             user.roles.append(Role.get_admin())
+        
+        if rolename:
+            user.roles.append(Role.query.filter(Role.name == rolename).one())
 
         db.session.add(user)
         db.session.commit()
 
         return user
+
+    def role_details(self):
+        return Role(
+            name=self.generator.first_name(),
+        )
+
+    def get_test_role(self):
+        role = self.role_details()
+
+        db.session.add(role)
+        db.session.commit()
+
+        return role
 
     def nhs_number(self):
         while True:  

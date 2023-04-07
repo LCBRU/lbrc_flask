@@ -8,10 +8,11 @@ from flask_login import login_required
 from lbrc_flask.config import BaseTestConfig
 from lbrc_flask import init_lbrc_flask
 from lbrc_flask.database import db
-from lbrc_flask.security import current_user_id, init_security, User, Role
+from lbrc_flask.security import current_user_id, init_security, User, Role, system_user_id, get_user_from_username, get_admin_user, get_users_for_role, add_user_to_role, must_be_admin
 from wtforms import StringField
 from lbrc_flask.pytest.fixtures import *
-from lbrc_flask.export import excel_download
+from lbrc_flask.export import excel_download, csv_download, pdf_download
+from lbrc_flask.json import validate_json
 
 
 class TestForm(FlashingForm):
@@ -165,6 +166,16 @@ def app():
 
     @app.route('/json', methods=["GET", "POST"])
     @login_required
+    @validate_json({
+        'type': 'object',
+        'properties': {
+            'string': {'type': 'string'},
+            'integer': {'type': 'integer'},
+            'datetime': {'type': 'string', 'format': 'date-time'},
+            'date': {'type': 'string', 'format': 'date'},
+        },
+        "required": ["string", "integer"]
+    })
     def json():
         print('*******    HELLO        ****')
         return {'result': request.get_json()['integer']}
@@ -178,6 +189,32 @@ def app():
     @login_required
     def user_id():
         return {'result': current_user_id()}
+
+    @app.route('/system_user_id', methods=["GET", "POST"])
+    def get_system_user_id():
+        return {'result': system_user_id()}
+
+    @app.route('/user_id_for_username/<string:username>', methods=["GET", "POST"])
+    def user_id_for_username(username):
+        return {'result': get_user_from_username(username).id}
+
+    @app.route('/admin_user_id', methods=["GET", "POST"])
+    def admin_user_id():
+        return {'result': get_admin_user().id}
+
+    @app.route('/users_for_role/<string:rolename>', methods=["GET", "POST"])
+    def users_for_role(rolename):
+        return {'result': ','.join([str(u.id) for u in get_users_for_role(rolename)])}
+
+    @app.route('/add_username_to_rolename/<string:rolename>/<string:username>', methods=["GET", "POST"])
+    def add_username_to_rolename(rolename, username):
+        add_user_to_role(username=username, role_name=rolename)
+        return {'result': ''}
+
+    @app.route('/must_be_an_admin', methods=["GET", "POST"])
+    @must_be_admin()
+    def must_be_an_admin():
+        return {'result': ''}
 
     @app.route('/give_me_error/<int:error_code>', methods=["GET", "POST"])
     @login_required
@@ -241,5 +278,21 @@ def app():
                 'ed': '2000-01-02',
             }],
         )
+
+    @app.route('/csv', methods=["GET"])
+    def get_csv():
+        return csv_download(
+            'CsvTest',
+            ['fred','mary','ed'],
+            [{
+                'fred': 'soup',
+                'mary': 'fish',
+                'ed': '2000-01-02',
+            }],
+        )
+
+    @app.route('/pdf', methods=["GET"])
+    def get_pdf():
+        return pdf_download('lbrc_flask/404.html', title=f'PDF Test')
 
     return app

@@ -56,7 +56,7 @@ def test__flashing_form__has_numeric_value(client, faker):
 
 def test__flashing_form__has_zero_value(client, faker):
     user = login(client, faker)
-    resp = client.post(url_for("test_form"), data={'name': '123'})
+    resp = client.post(url_for("test_form"), data={'name': '0'})
 
-    assert resp.soup.find('h1', id="has_a_name", string="True") is not None
+    assert resp.soup.find('h1', id="has_a_name", string="False") is not None
     assert resp.soup.find('h1', id="not_exists", string="False") is not None

@@ -101,9 +101,13 @@ def assert__search_html(soup, clear_url):
     assert soup.find('button', type="submit", string="Search") is not None
 
 
-def assert__select(soup, id, options):
+def assert__select(soup, id, options, multiselect=False):
     select = soup.find('select', id=id)
     assert select is not None
+    if multiselect:
+        assert 'multiple' in select.attrs
+    else:
+        assert 'multiple' not in select.attrs
 
     for o in options:
         assert select.find('option', value=o[0], string=o[1])

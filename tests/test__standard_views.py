@@ -5,7 +5,7 @@ from lbrc_flask.pytest.helpers import login
 
 
 @pytest.mark.parametrize(
-    "error_code", [404, 403, 500],
+    "error_code", [404, 403, 500, 400, 401],
 )
 def test__standard_views(client, faker, error_code):
     user = login(client, faker)

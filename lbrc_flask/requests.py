@@ -13,9 +13,15 @@ def get_value_from_all_arguments(name):
 
 def add_parameters_to_url(url, parameters):
     url_parts = urllib.parse.urlparse(url)
-    q = urllib.parse.parse_qs(url_parts.query)
-    q.update(parameters)
-    url_parts = url_parts._replace(query = urllib.parse.urlencode(q))
+
+    newq = []
+    if len(url_parts.query) > 0:
+        newq.append(url_parts.query)
+    
+    if len(parameters) > 0:
+        newq.append(urllib.parse.urlencode(parameters))
+    
+    url_parts = url_parts._replace(query = '&'.join(newq))
 
     return urllib.parse.urlunparse(url_parts)
 
