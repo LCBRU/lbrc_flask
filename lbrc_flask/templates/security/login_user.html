@@ -8,50 +8,46 @@
 {% endblock %}
 
 {% block content %}
+<div class="form">  
+	<p>Please enter your username and password to login</p>
+	<p>Use the following link if you have <a href="{{ url_for_security('forgot_password') }}">forgotten your password</a></p>
+	<p>If this is your first time here, use this link to <a href="{{ url_for_security('forgot_password') }}">register a password</a></p>
 
-<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-	{{ login_user_form.hidden_tag() }}
+	<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
+		{{ login_user_form.hidden_tag() }}
 
-	<div class="form-group input-group">
-		<span class="input-group-prepend">
-			<span class="input-group-text">
-				<span class="fas fa-user"></span>
+		<div class="form-group input-group">
+			<span class="input-group-prepend">
+				<span class="input-group-text">
+					<span class="fas fa-user"></span>
+				</span>
 			</span>
-		</span>
-		{{ login_user_form.email(class="form-control", placeholder="Username") }}
-	</div>
+			{{ login_user_form.email(class="form-control", placeholder="Username") }}
+		</div>
 
-	<div class="form-group input-group">
-		<span class="input-group-prepend">
-			<span class="input-group-text">
-				<span class="fas fa-lock"></span>
+		<div class="form-group input-group">
+			<span class="input-group-prepend">
+				<span class="input-group-text">
+					<span class="fas fa-lock"></span>
+				</span>
 			</span>
-		</span>
-		{{ login_user_form.password(class="form-control", placeholder="Password") }}
-	</div>
+			{{ login_user_form.password(class="form-control", placeholder="Password") }}
+		</div>
 
-	<div class="checkbox">
-		<label>
-			{{ login_user_form.remember }} Remember me on this computer
-		</label>
-	</div>
+		<div class="checkbox">
+			<label>
+				{{ login_user_form.remember }} Remember me on this computer
+			</label>
+		</div>
 
-	<div class="text-right">
-		{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
-			<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
-			<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
-		{% endif %}
-		<button type="submit" class="btn btn-primary">Login</button>
-	</div>
-</form>
-
-{% if config['LBRC_FLASK_LOGIN_FORM_DESCRIPTION'] %}
-
-	{% set message=config['LBRC_FLASK_LOGIN_FORM_DESCRIPTION'] %}
-
-	<div class="description">
-		{{ message | markdown }}
-	</div>
-{% endif %}
+		<div class="text-right">
+			{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
+				<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
+				<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
+			{% endif %}
+			<button type="submit" class="btn btn-primary">Login</button>
+		</div>
+	</form>
+</div>
 
 {% endblock %}

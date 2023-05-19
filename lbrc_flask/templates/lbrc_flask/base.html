@@ -2,9 +2,9 @@
 
 {% block title %}{{ organisation_name }} {{ application_title }}{% endblock %}
 
-{% block base_css %}
-  <link href="{{ url_for('lbrc_flask.static', filename='css/main.css', ver=17) }}" rel="stylesheet">
-  {% block css %}{% endblock %}
+{% block skeleton_css %}
+  <link href="{{ url_for('lbrc_flask.static', filename='css/main.css', ver=18) }}" rel="stylesheet">
+  {% block base_css %}{% endblock %}
 {% endblock %}
 
 {% block icons %}
@@ -13,3 +13,28 @@
   <link rel="apple-touch-icon-precomposed" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-180x180.png', ver=1) }}" />
   <meta name="msapplication-TileImage" content="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-270x270.png', ver=1) }}" />
 {% endblock %}
+
+{% block skeleton_content %}
+<div id="main-wrapper">
+
+  <header class="pageheader">
+    <a href="">
+      <div class="container">
+        <h1>{{ application_title }}</h1>
+      </div>
+    </a>
+  </header>
+
+  <div id="content" class="container">
+    {% block base_content %}{% endblock %}
+  </div>
+
+  <footer>
+    <div class="container">
+        Copyright &copy; {{ current_year }} {{ organisation_name }}
+    </div>
+  </footer>
+
+</div>
+{% endblock %}
+

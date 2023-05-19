@@ -3,6 +3,8 @@
 
 {% block base_content %}
 
+{% block intro %}{% endblock %}
+
 <div class="row justify-content-center">
   <div class="errors">
     {{ errors.render_errors(get_flashed_messages(with_categories=true)) }}
@@ -10,19 +12,7 @@
   </div>
 </div>
 
-<div class="row justify-content-center">
-  <div class="login-form">  
-    <div class="card">
-      <div class="card-header">
-          <div>{{ organisation_name }} {{ application_title }}: {% block formname %}{% endblock %}</div>
-      </div>
-
-      <div class="card-body">
-        {% block content %}{% endblock %}
-      </div>
-    </div>
-  </div>
-
-</div>  
+  {% block content %}{% endblock %}
+</div>
 
 {% endblock %}
