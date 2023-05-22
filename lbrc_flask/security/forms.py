@@ -1,7 +1,6 @@
 from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user, standardize_username
 import string
 from flask import current_app
-from flask
 from flask_security.forms import (
     EqualTo,
     password_required,
