@@ -21,6 +21,7 @@ def fix_kwargs(kwargs):
     # TODO: Remove this when flask_security is upgraded
     return {k: v for k, v in kwargs.items() if k != 'extra_validators'}
 
+
 class PasswordPolicy(ValidatorMixin):
     def __init__(
         self,

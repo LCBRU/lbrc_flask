@@ -28,7 +28,7 @@ class AuditMixin(object):
     @declared_attr
     def last_update_by(cls):
         return db.Column(
-            db.String,
+            db.String(200),
             nullable=False,
             default=AuditMixin.current_user_email,
             onupdate=AuditMixin.current_user_email,
@@ -44,7 +44,7 @@ class AuditMixin(object):
     @declared_attr
     def created_by(cls):
         return db.Column(
-            db.String,
+            db.String(200),
             nullable=False,
             default=AuditMixin.current_user_email,
         )

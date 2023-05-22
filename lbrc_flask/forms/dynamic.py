@@ -23,7 +23,7 @@ class FieldType(db.Model):
     MULTISELECT = 'SelectMultipleField'
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(100))
     is_file = db.Column(db.Boolean)
 
     def format_value(self, value):
@@ -169,7 +169,7 @@ class FieldTypeSetup():
 
 class FieldGroup(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(200))
 
     def __str__(self):
         return self.name
@@ -186,16 +186,16 @@ class Field(db.Model):
     order = db.Column(db.Integer())
     field_type_id = db.Column(db.Integer(), db.ForeignKey(FieldType.id))
     field_type = db.relationship(FieldType, lazy="joined")
-    field_name = db.Column(db.String)
-    label = db.Column(db.String)
+    field_name = db.Column(db.String(100))
+    label = db.Column(db.String(500))
     required = db.Column(db.Boolean, default=0)
     reportable = db.Column(db.Boolean, default=0)
     max_length = db.Column(db.Integer(), default=0)
-    default = db.Column(db.String, default="")
-    choices = db.Column(db.String, default="")
-    allowed_file_extensions = db.Column(db.String, default="")
-    download_filename_format = db.Column(db.String, default="")
-    validation_regex = db.Column(db.String, default="")
+    default = db.Column(db.String(100), default="")
+    choices = db.Column(db.String(1000), default="")
+    allowed_file_extensions = db.Column(db.String(200), default="")
+    download_filename_format = db.Column(db.String(200), default="")
+    validation_regex = db.Column(db.String(200), default="")
     description = db.Column(db.UnicodeText, default="")
 
     def format_value(self, value):
@@ -306,12 +306,12 @@ class FormBuilder:
 # Initialisation
 
 def init_dynamic_forms(app):
-    
-    @app.before_first_request
-    def init_data():
-        FieldTypeSetup().setup()
+    pass
 
-        db.session.commit()
+def create_field_types():
+    FieldTypeSetup().setup()
+
+    db.session.commit()
 
 
 # Admin Forms

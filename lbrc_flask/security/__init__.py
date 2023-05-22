@@ -54,20 +54,15 @@ def add_user_to_role(user=None, role=None, username=None, role_name=None):
     _datastore.add_role_to_user(user, role)
 
 
-def init_security(app, user_class, role_class, roles=None):
+def init_security(app, user_class, role_class):
     user_datastore = SQLAlchemyUserDatastore(db, user_class, role_class)
     Security(
         app,
         user_datastore,
-        forgot_password_form=LbrcForgotPasswordForm,
-        change_password_form=LbrcChangePasswordForm,
-        login_form=LbrcLoginForm,
+        # forgot_password_form=LbrcForgotPasswordForm,
+        # change_password_form=LbrcChangePasswordForm,
+        # login_form=LbrcLoginForm,
     )
-
-    @app.before_first_request
-    def init_security():
-        init_roles(roles)
-        init_users()
 
 
 def init_roles(roles=None):
