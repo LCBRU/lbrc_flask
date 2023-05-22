@@ -1,9 +1,9 @@
 from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user, standardize_username
 import string
 from flask import current_app
+from flask
 from flask_security.forms import (
     EqualTo,
-    password_length,
     password_required,
     get_form_field_label,
     ValidatorMixin,
@@ -44,7 +44,7 @@ class PasswordPolicy(ValidatorMixin):
 class NewPasswordFormMixin:
     password = PasswordField(
         get_form_field_label("password"),
-        validators=[password_required, password_length, PasswordPolicy()],
+        validators=[password_required, PasswordPolicy()],
     )
 
 
@@ -90,7 +90,7 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
     new_password = PasswordField(
         get_form_field_label("new_password"),
-        validators=[password_required, password_length, PasswordPolicy()],
+        validators=[password_required, PasswordPolicy()],
     )
 
     new_password_confirm = PasswordField(
