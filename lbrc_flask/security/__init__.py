@@ -59,9 +59,9 @@ def init_security(app, user_class, role_class):
     Security(
         app,
         user_datastore,
-        # forgot_password_form=LbrcForgotPasswordForm,
-        # change_password_form=LbrcChangePasswordForm,
-        # login_form=LbrcLoginForm,
+        forgot_password_form=LbrcForgotPasswordForm,
+        change_password_form=LbrcChangePasswordForm,
+        login_form=LbrcLoginForm,
     )
 
 

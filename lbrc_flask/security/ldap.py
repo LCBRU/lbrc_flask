@@ -148,7 +148,7 @@ def get_or_create_ldap_user(username):
             db.session.add(user)
             db.session.commit()
 
-            return _datastore.get_user(ldap_user['email'])
+            return _datastore.find_user(email=ldap_user['email'])
 
 
 def standardize_username(username):
