@@ -133,6 +133,7 @@ class LbrcLoginForm(LoginForm):
 
             if ldap_user is not None:
                 if ldap.login(username, self.password.data):
+                    print('Success')
                     self.user = ldap_user
 
                     return True
