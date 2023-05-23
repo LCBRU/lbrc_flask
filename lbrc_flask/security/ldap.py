@@ -17,6 +17,9 @@ class Ldap():
         if not (username or '').strip() or not (password or '').strip():
             return False
 
+        print('A'*100)
+        print(username)
+
         username = (username or '').strip()
         password = (password or '').strip()
 
@@ -147,6 +150,9 @@ def get_or_create_ldap_user(username):
             
             db.session.add(user)
             db.session.commit()
+
+            print(ldap_user['email'])
+            print(username)
 
             return _datastore.find_user(email=ldap_user['email'])
 
