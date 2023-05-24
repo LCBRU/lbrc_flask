@@ -1,5 +1,6 @@
 import random
 import string
+import uuid
 from datetime import datetime
 from flask_security.core import RoleMixin, UserMixin
 from flask_security.utils import verify_and_update_password
@@ -61,6 +62,10 @@ def random_password():
     )
 
 
+def random_fs_uniquifier():
+    return uuid.uuid4().hex
+
+
 class Role(db.Model, RoleMixin, CommonMixin):
     ADMIN_ROLENAME = "admin"
 
@@ -100,7 +105,7 @@ class User(db.Model, CommonMixin, UserMixin):
     login_count = db.Column(db.Integer())
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     ldap_user = db.Column(db.Boolean())
-    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
+    fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=random_fs_uniquifier)
     roles = db.relationship(
         "Role",
         lazy="joined",
