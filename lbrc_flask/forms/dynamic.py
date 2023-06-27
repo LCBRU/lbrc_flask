@@ -197,6 +197,7 @@ class Field(db.Model):
     download_filename_format = db.Column(db.String(200), default="")
     validation_regex = db.Column(db.String(200), default="")
     description = db.Column(db.UnicodeText, default="")
+    do_not_show = db.Column(db.Boolean, default=False)
 
     def format_value(self, value):
         return self.field_type.format_value(value)
@@ -254,7 +255,7 @@ class FormBuilder:
         return DynamicForm
     
     def add_field_group(self, field_group):
-        for f in sorted(field_group.fields, key=lambda x: x.order):
+        for f in (f for f in sorted(field_group.fields, key=lambda x: x.order) if not f.do_not_show):
             self.add_field(f)
 
     def add_field(self, field):
