@@ -5,9 +5,10 @@ from flask import current_app
 from lbrc_flask.database import db
 from flask_security.utils import _datastore
 
-
+print('Help')
 class Ldap():
     def __init__(self):
+        print('What the')
         self.ldap = None
 
     def is_enabled(self):

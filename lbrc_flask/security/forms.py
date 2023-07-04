@@ -118,7 +118,6 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 class LbrcLoginForm(LoginForm):
     def validate(self, **kwargs):
-        print('iuhiuhhihuiuhiuh')
         if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
             return False
 
