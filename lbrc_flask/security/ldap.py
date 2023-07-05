@@ -40,6 +40,8 @@ class Ldap():
 
             self.ldap.simple_bind_s(who, password)
 
+            print('LDAP login Success for {}'.format(username))
+
             current_app.logger.info('LDAP login Success for {}'.format(username))
 
             return True
