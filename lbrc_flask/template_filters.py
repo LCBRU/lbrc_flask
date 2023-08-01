@@ -79,6 +79,13 @@ def init_template_filters(app):
         else:
             return ""
 
+    @app.template_filter("paragraphs")
+    def br(value):
+        if value:
+            return Markup('\n'.join([f'<p>{p}</p>' for p in value.splitlines()]))
+        else:
+            return ""
+
     @app.template_filter("jsonify")
     def br(value):
         if value:

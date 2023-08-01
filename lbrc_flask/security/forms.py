@@ -121,46 +121,27 @@ class LbrcLoginForm(LoginForm):
         if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
             return False
 
-        print('A')
-
         ldap = Ldap()
 
-        print('B')
-
         if ldap.is_enabled():
-            print('C')
             username = standardize_username(self.email.data)
-
-            print('D')
 
             ldap.login_nonpriv()
 
-            print('B')
-
             ldap_user = get_or_create_ldap_user(username)
 
-            print('E')
-    
             if ldap_user is not None:
-
-                print('F')
-
                 if ldap.login(username, self.password.data):
                     print('Success')
                     self.user = ldap_user
 
-                    print('G')
-
                     return True
                 else:
-                    print('H')
                     self.password.errors.append(
                         'Invalid password - use the username and password that you use to log into your {} PC'.format(
                             current_app.config.get('LDAP_NETWORK_NAME', None)
                         )
                     )
-                    print('I')
                     return False
 
-        print('J')
         return super().validate()
