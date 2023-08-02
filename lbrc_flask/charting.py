@@ -13,6 +13,7 @@ from pygal.style import Style
 class BarChartItem:
     series: str
     bucket: str
+    count: int = 1
 
 
 class BarChart:
@@ -32,7 +33,7 @@ class BarChart:
         max_y_label = 0
 
         for series_name, series_items in groupby(self.items, lambda i: i.series):
-            count = Counter([i.bucket for i in series_items])
+            count = Counter({i.bucket: i.count for i in series_items})
             values = {b: count.get(b, 0) for b in self.buckets}
 
             max_y_label = max([max_y_label] + list(values.values()))
