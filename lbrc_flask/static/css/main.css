@@ -359,7 +359,7 @@ dd {
   padding: 10px;
 }
 
-:is(.list-group-item:nth-child(even)) {
+:where(.list-group-item:nth-child(even)) {
   background-color: var(--color-alternate-row);
 }
 
