@@ -24,7 +24,7 @@ class BarChart:
         self.series: list[str] = sorted({i.series for i in self.items})
 
     def get_chart(self):
-        chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1000)
+        chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1100)
         chart.show_minor_y_labels = False
         chart.style = Style(font_family='Lato')
         chart.title = self.title
