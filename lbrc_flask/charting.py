@@ -22,6 +22,7 @@ class BarChart:
         self.items: list[BarChartItem] = sorted(items, key=lambda i: i.series)
         self.buckets: list[str] = buckets or sorted({i.bucket for i in self.items})
         self.series: list[str] = sorted({i.series for i in self.items})
+        self.value_formatter : function = None
 
     def get_chart(self):
         chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1100, print_values=True)
@@ -38,7 +39,7 @@ class BarChart:
 
             max_y_label = max([max_y_label] + list(values.values()))
 
-            chart.add(series_name, values.values())
+            chart.add(series_name, values.values(), formatter=self.value_formatter)
 
         if max_y_label > 0:
             chart.y_labels_major_count = max_y_label + 1
