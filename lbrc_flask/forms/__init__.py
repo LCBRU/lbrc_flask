@@ -81,7 +81,16 @@ class FlashingForm(FlaskForm):
             pass
             
         return True
+    
+    def as_dict(self):
+        result = {}
+        strip_keys = ['page', 'csrf_token']
 
+        for f in self:
+            if f.data and f.name not in strip_keys:
+                result[f.name] = f.raw_data
+        
+        return result
 
 class SearchForm(FlashingForm):
     search = StringField("Search", validators=[Length(max=20)])
