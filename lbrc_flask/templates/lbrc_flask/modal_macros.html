@@ -49,3 +49,16 @@
         </form>
     {% endcall %}
 {% endmacro %}
+
+
+{% macro render_confirmation_modal(id, title, url, form, message) %}
+    {% call render_modal(id, title) %}
+        <p id="modal_description">{{message}} '<span id="name"></span>'.</p>
+        <form action="{{ url }}" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                {{ form.hidden_tag() }}
+                {{ render_button_bar(cancel_url=request.full_path, submit_label=title) }}
+            </fieldset>
+        </form>
+    {% endcall %}
+{% endmacro %}
