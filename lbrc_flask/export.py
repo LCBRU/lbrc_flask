@@ -50,7 +50,7 @@ def csv_download(title, headers, details):
         return send_file(
             tmp.name,
             as_attachment=True,
-            download_name=f'{title}.csv',
+            download_name=f'{title}_{datetime.utcnow():%Y%m%d_%H%M%S}.csv',
         )
 
 
