@@ -44,3 +44,8 @@ def log_exception(e):
         message=traceback.format_exc(),
         recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
     )
+
+
+def log_form(form):
+    for k, v in form.data.items():
+        logging.info(f'{k}: {v}')
