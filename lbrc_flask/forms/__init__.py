@@ -7,11 +7,16 @@ from wtforms import (
     HiddenField,
     Field,
     SelectMultipleField,
+    BooleanField,
 )
 from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
-from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput
+from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
+
+
+class HiddenBooleanField(BooleanField):
+    widget = HiddenInput()
 
 
 class DataListField(Field):
