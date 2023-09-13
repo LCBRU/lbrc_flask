@@ -87,7 +87,7 @@ class FlashingForm(FlaskForm):
             
         return True
     
-    def as_dict(self):
+    def raw_data_as_dict(self):
         result = {}
         strip_keys = ['page', 'csrf_token']
 
