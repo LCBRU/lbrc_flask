@@ -27,7 +27,7 @@ class BarChart:
         self.show_total = show_total
 
     def get_chart(self):
-        chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1100, print_values=True, **self.kwargs)
+        chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1100, height=400, print_values=True, **self.kwargs)
         chart.show_minor_y_labels = False
         chart.style = Style(font_family='Lato')
         chart.x_labels = self.buckets
