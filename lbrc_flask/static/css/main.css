@@ -545,3 +545,8 @@ ul.form-control li {
 header a, header a:hover, header a:active, header a:visited {
   color: var(--color-blue);
 }
+
+img.loading {
+  background: transparent url(../img/loading.gif) no-repeat scroll center center;
+  background-size: 100px;
+}
