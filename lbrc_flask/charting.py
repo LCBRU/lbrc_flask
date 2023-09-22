@@ -24,7 +24,6 @@ class BarChart:
         self.series: list[str] = sorted({i.series for i in self.items})
         self.value_formatter : function = None
         self.kwargs = kwargs
-        self.show_total = show_total
 
     def get_chart(self):
         chart: pygal.Bar = pygal.Bar(legend_at_bottom=True, width=1100, height=400, print_values=True, **self.kwargs)
@@ -49,9 +48,6 @@ class BarChart:
 
         if max_y_label > 0:
             chart.y_labels_major_count = max_y_label + 1
-
-        if self.show_total:
-            chart.title += f' (Total = {total})'
 
         return chart
 

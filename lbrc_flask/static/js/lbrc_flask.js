@@ -15,7 +15,6 @@ function standard_status_actions(response) {
     }
 }
 
-
 function parseJSON(response) {
     return response.json()
 }
@@ -72,6 +71,24 @@ function _render_modal_on_show(event){
     })
 }
 
+function _render_url_modal_on_show(event){
+    var modal = this;
+    var button = event.relatedTarget;
+    var content_url = button.getAttribute('data-modal-content-url');
+
+    if (button.hasAttribute('data-title')) {
+        modal.querySelector('.modal-title').innerHTML = button.getAttribute('data-title');
+    }
+
+    modal.querySelector('.modal-body').innerHTML = '<div class="loading" ></div>';
+
+    fetch(content_url)
+        .then(standard_status_actions)
+        .then((response) => response.text())
+        .then((text) => modal.querySelector('.modal-body').innerHTML = text);
+}
+
 $(document).ready(function(){
     $('.modal').on('show.bs.modal', _render_modal_on_show);
+    $('.url_modal').on('show.bs.modal', _render_url_modal_on_show);
 });
