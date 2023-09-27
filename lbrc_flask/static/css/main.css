@@ -381,20 +381,20 @@ dd {
   padding-bottom: 20px;
 }
 
-.list-group-item h1 {
+.list-group-item h1, .list_item_header h1 {
   font-size: 20px;
   color: var(--color-main-header);
   font-weight: bold;
   margin: 0;
 }
 
-.list-group-item h2 {
+.list-group-item h2, .list_item_header h2 {
   font-size: 14px;
   color: var(--color-subheader);
   margin: 0;
 }
 
-.list-group-item .badge {
+.list-group-item .badge, .list_item_header .badge {
   margin-left: 10px;
   margin-bottom: 10px;
   font-size: 80%;
@@ -555,4 +555,29 @@ header a, header a:hover, header a:active, header a:visited {
 div.loading {
   height: 100px;
   width: 100%;
+}
+
+.accordion [data-toggle="collapse"] {
+  cursor: pointer;
+}
+
+.accordion [data-toggle="collapse"] {
+  cursor: pointer;
+}
+
+.accordion [data-toggle="collapse"] h1::before {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: "\f0d8";
+}
+
+.accordion [data-toggle="collapse"].collapsed h1::before {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  content: "\f0d7";
+}
+
+dl.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
