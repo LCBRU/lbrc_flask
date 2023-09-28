@@ -559,10 +559,11 @@ div.loading {
 
 .accordion [data-toggle="collapse"] {
   cursor: pointer;
+  padding-left: 1em;
 }
 
-.accordion [data-toggle="collapse"] {
-  cursor: pointer;
+.accordion [data-toggle="collapse"] h1 {
+  text-indent: -1em;
 }
 
 .accordion [data-toggle="collapse"] h1::before {
