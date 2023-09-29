@@ -582,3 +582,8 @@ dl.cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
+.card-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
