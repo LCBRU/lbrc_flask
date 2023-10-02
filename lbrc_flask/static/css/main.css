@@ -433,7 +433,7 @@ dd {
 }
 
 .form {
-  margin: auto;
+  margin: auto; 
   padding: 1em;
   width: 600px;
   padding: 2em;
@@ -591,3 +591,11 @@ dl.cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
+.modal .form {
+  margin: 0;
+  padding: 0;
+  width: auto;
+  border: none;
+}
+

@@ -50,6 +50,10 @@ function select2_remote(select_selector, url) {
 function _render_modal_on_show(event){
     var mod_elem = this;
 
+    if (event.relatedTarget === undefined) {
+        return;
+    }
+
     [].forEach.call(event.relatedTarget.attributes, function(attr) {
         if (/^data-/.test(attr.name)) {
             var name = attr.name.substr(5);
