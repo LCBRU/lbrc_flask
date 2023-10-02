@@ -566,6 +566,10 @@ div.loading {
   text-indent: -1em;
 }
 
+.accordion [data-toggle="collapse"] h1 * {
+  text-indent: 0;
+}
+
 .accordion [data-toggle="collapse"] h1::before {
   font-family: 'Font Awesome 5 Free';
   font-weight: 900;
