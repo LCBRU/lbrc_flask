@@ -108,7 +108,6 @@ class User(db.Model, CommonMixin, UserMixin):
     fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=random_fs_uniquifier)
     roles = db.relationship(
         "Role",
-        lazy="joined",
         enable_typechecks=False,    # Required to allow specific applications
                                     # to override the Role class
         secondary=roles_users,
