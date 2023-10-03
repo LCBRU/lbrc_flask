@@ -19,7 +19,7 @@ class BarChartItem:
 class BarChart:
     def __init__(self, title: str, items: list[BarChartItem], buckets: list[str]=None, show_total: bool=False, **kwargs) -> None:
         self.title: str = title
-        self.items: list[BarChartItem] = sorted(items, key=lambda i: i.series)
+        self.items: list[BarChartItem] = sorted(items, key=lambda i: (i.series, i.bucket))
         self.buckets: list[str] = buckets or sorted({i.bucket for i in self.items})
         self.series: list[str] = sorted({i.series for i in self.items})
         self.value_formatter : function = None
@@ -41,7 +41,7 @@ class BarChart:
             values = {bucket: sum([l.count or 1 for l in lines]) for bucket, lines in groupby(series_items, lambda i: i.bucket)}
 
             print(values)
-            
+
             all_values = {b: values.get(b, 0) for b in self.buckets}
 
             max_y_label = max([max_y_label] + list(all_values.values()))
