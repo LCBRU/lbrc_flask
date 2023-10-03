@@ -40,16 +40,12 @@ class BarChart:
 
             values = {bucket: sum([l.count or 1 for l in lines]) for bucket, lines in groupby(series_items, lambda i: i.bucket)}
 
-            print(dict(values))
-
             all_values = {b: values.get(b, 0) for b in self.buckets}
-
-            print(dict(all_values))
 
             max_y_label = max([max_y_label] + list(all_values.values()))
             total += sum(values.values())
 
-            chart.add(series_name, values.values(), formatter=self.value_formatter)
+            chart.add(series_name, all_values.values(), formatter=self.value_formatter)
 
         if max_y_label > 0:
             chart.y_labels_major_count = max_y_label + 1
