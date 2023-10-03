@@ -36,13 +36,14 @@ class BarChart:
         total = 0
 
         for series_name, series_items in groupby(self.items, lambda i: i.series):
-            count = Counter({i.bucket: i.count for i in series_items})
-            values = {b: count.get(b, 0) for b in self.buckets}
+            series_items = list(series_items)
 
-            max_y_label = max([max_y_label] + list(values.values()))
+            values = {bucket: sum([l.count or 1 for l in lines]) for bucket, lines in groupby(series_items, lambda i: i.bucket)}
+
+            all_values = {b: values.get(b, 0) for b in self.buckets}
+
+            max_y_label = max([max_y_label] + list(all_values.values()))
             total += sum(values.values())
-
-            print(total)
 
             chart.add(series_name, values.values(), formatter=self.value_formatter)
 
