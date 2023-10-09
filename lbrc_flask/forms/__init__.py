@@ -98,7 +98,7 @@ class FlashingForm(FlaskForm):
         return result
 
 class SearchForm(FlashingForm):
-    search = StringField("Search", validators=[Length(max=20)])
+    search = StringField("Search", validators=[Length(max=100)])
     page = IntegerField("Page", default=1)
 
 
