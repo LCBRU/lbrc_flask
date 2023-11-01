@@ -28,6 +28,12 @@ html, body {
   padding: 0;
 }
 
+address {
+  color: var(--color-outline);
+  font-size: 0.8em;
+  margin-bottom: 0;
+}
+
 a {
   color: var(--color-green);
 }
