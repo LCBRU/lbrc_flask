@@ -26,3 +26,9 @@
         {{ name }}
     </a>
 {% endmacro %}
+
+{% macro render_dropdown_item(endpoint, name, icon='') %}
+    <a class="dropdown-item" href="{{url_for(endpoint, **kwargs)}}"><i class="{{ icon }}"></i> {{ name }}</a>
+{% endmacro %}
+
+
