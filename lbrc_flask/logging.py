@@ -32,6 +32,16 @@ def init_logging(app):
 
     app.logger.addHandler(error_handler)
 
+    query_logger = logging.getLogger('query')
+
+    query_handler = FileHandler(str(log_directory / 'query.log'))
+    query_handler.setLevel(logging.INFO)
+    query_handler.setFormatter(logging.Formatter('%(message)s\n--------------------------------\n'))
+
+    query_logger.addHandler(query_handler)
+
+    query_logger.info('Q U E R Y   L O G')
+
     app.logger.info('Flask app created')
 
 
