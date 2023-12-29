@@ -66,6 +66,19 @@ class BarChart:
                 mimetype='image/png',
             )
 
+    def send(self):
+        chart = self.get_chart()
+
+        with NamedTemporaryFile() as tmp:
+            chart.render_to_png(tmp.name)
+
+            return send_file(
+                tmp.name,
+                download_name=f'{self.title}_{datetime.utcnow():%Y%m%d_%H%M%S}.png',
+                max_age=0,
+                mimetype='image/png',
+            )
+
 
 def grouped_bar_chart(title, details, buckets=None):
 
