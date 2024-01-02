@@ -3,6 +3,7 @@ import uuid
 from lbrc_flask.database import db, GUID
 from flask import request, abort
 
+
 def get_api_key():
     if not request.args.get('api_key'):
         return None
