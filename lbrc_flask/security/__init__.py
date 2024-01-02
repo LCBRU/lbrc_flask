@@ -85,12 +85,14 @@ def init_users():
 
     admin_email = current_app.config["ADMIN_EMAIL_ADDRESS"]
     admin_username = current_app.config["ADMIN_USERNAME"]
+    admin_password = current_app.config["ADMIN_PASSWORD"]
 
     if not _datastore.find_user(email=admin_email) and not _datastore.find_user(username=admin_username):
         print('Creating administrator "{}"'.format(admin_email))
         user = _datastore.create_user(
             email=admin_email,
             username=admin_username,
+            password=admin_password,
         )
         _datastore.add_role_to_user(user, get_admin_role())
 

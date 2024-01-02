@@ -45,6 +45,7 @@ class BaseConfig:
     # Users
     ADMIN_EMAIL_ADDRESS = os.getenv("ADMIN_EMAIL_ADDRESS", '')
     ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", '')
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", None)
     ROLES = os.getenv("ROLES", '')
 
     # Forms
