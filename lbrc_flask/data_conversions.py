@@ -1,4 +1,3 @@
-from typing import Mapping
 from lbrc_flask.validators import (
     is_invalid_nhs_number,
     standardise_nhs_number,
@@ -87,6 +86,10 @@ def convert_postcode(postcode):
 
 
 def ensure_list(data):
-    if isinstance(data, Mapping):
-        data = [data]
+    if data is None:
+        return []
+
+    if not isinstance(data, list):
+        return [data]
+
     return data

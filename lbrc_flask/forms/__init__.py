@@ -99,6 +99,10 @@ class FlashingForm(FlaskForm):
 
 
 class SearchForm(FlashingForm):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, meta={'csrf': False})
+
     search = StringField("Search", validators=[Length(max=100)])
     page = IntegerField("Page", default=1)
 
