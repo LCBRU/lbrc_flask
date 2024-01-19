@@ -1,4 +1,5 @@
 import json
+import calendar
 from datetime import datetime
 from flask import g, request, current_app
 from markdown import markdown
@@ -14,6 +15,10 @@ def init_template_filters(app):
     @app.template_filter("datetime_format")
     def datetime_format(value):
         return format_datetime(value)
+
+    @app.template_filter("month_name")
+    def month_name(value):
+        return calendar.month_name[value]
 
     @app.template_filter("date_format")
     def date_format(value):
