@@ -32,18 +32,16 @@ def init_logging(app):
 
     app.logger.addHandler(error_handler)
 
-    query_logger = logging.getLogger('query')
-
     query_handler = FileHandler(str(log_directory / 'query.log'))
     query_handler.setLevel(logging.INFO)
     query_handler.setFormatter(logging.Formatter('%(message)s\n--------------------------------\n'))
 
-    query_logger.addHandler(query_handler)
-
-    query_logger.info('Q U E R Y   L O G')
+    if app.config['QUERY_LOG']:
+        logging.getLogger('sqlalchemy.engine').propagate = False
+        logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
+        logging.getLogger('sqlalchemy.engine').addHandler(query_handler)
 
     app.logger.info('Flask app created')
-
 
 
 def log_exception(e):

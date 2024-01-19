@@ -10,7 +10,7 @@ class BaseConfig:
     # Environment
     TESTING = False
     DEBUG = os.getenv("DEBUG", "False") == 'True'
-    LOG_LEVEL = os.getenv("LOG_LEVEL", "WARNING")
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_DIRECTORY = os.getenv("LOG_DIRECTORY", ".")
 
     # Mail
@@ -25,6 +25,7 @@ class BaseConfig:
     SQLALCHEMY_ECHO = os.getenv("SQLALCHEMY_ECHO", "False") == 'True'
     SQLALCHEMY_DATABASE_URI = os.environ["SQLALCHEMY_DATABASE_URI"]
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    QUERY_LOG = os.getenv("QUERY_LOG", "False") == 'True'
 
     # Security
     SECRET_KEY = os.environ["SECRET_KEY"]
