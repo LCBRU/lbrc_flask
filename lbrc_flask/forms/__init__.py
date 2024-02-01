@@ -76,7 +76,10 @@ class FlashingForm(FlaskForm):
         
         value = self.data[field_name]
 
-        if not value:
+        if isinstance(value, list) and len(value) == 0:
+            return False
+    
+        if value is None or len(str(value)) == 0:
             return False
 
         try:
@@ -151,3 +154,14 @@ class MultiCheckboxField(SelectMultipleField):
     """
     widget = ListWidget(prefix_label=False)
     option_widget = CheckboxInput()
+
+
+def boolean_coerce(value):
+    value = str(value).lower()
+
+    if value in ('true', 'yes'):
+        return True
+    elif value in ('false', 'no'):
+        return False
+    else:
+        return ''
