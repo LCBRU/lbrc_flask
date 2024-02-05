@@ -85,6 +85,11 @@ def convert_postcode(postcode):
         return 'Invalid format', ''
 
 
+def convert_int_nullable(value):
+    if value:
+        return int(value)
+
+
 def ensure_list(data):
     if data is None:
         return []
