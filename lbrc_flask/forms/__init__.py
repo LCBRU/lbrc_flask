@@ -90,15 +90,22 @@ class FlashingForm(FlaskForm):
             
         return True
     
-    def raw_data_as_dict(self):
-        result = {}
+    def data_with_values(self):
+        result = []
         strip_keys = ['page', 'csrf_token']
 
         for f in self:
-            if f.data and f.name not in strip_keys:
-                result[f.name] = f.raw_data
+            print(f.name, f.data)
+            if f.name not in strip_keys and self.has_value(f.name):
+                result.append(f)
         
         return result
+
+    def raw_data_as_dict(self):
+        return {f.name: f.raw_data for f in self.data_with_values()}
+
+    def values_as_dict(self):
+        return {f.name: f.data for f in self.data_with_values()}
 
 
 class SearchForm(FlashingForm):
