@@ -19,6 +19,7 @@
   --color-spinner: rgba(0, 0, 0, .3);
   --color-outline: #AAA;
   --transition-time: 250ms;
+  --border-radius: .25rem;
 }
 
 html, body {
