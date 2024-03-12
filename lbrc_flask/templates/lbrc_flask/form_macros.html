@@ -99,7 +99,13 @@
 {% endmacro %}
 
 
-{% macro render_search(searchForm, searchview, placeholder='enter search text', buttons={}, checkboxes={}) %}
+{% macro render_search(
+  searchForm,
+  searchview,
+  placeholder='enter search text',
+  buttons={},
+  checkboxes_on_searchbar=True
+  ) %}
 <form method="GET" class="form-horizontal search-form" action="{{ url_for(searchview, **kwargs) }}">
 
   <div class="row">
@@ -109,16 +115,18 @@
     
         {{ searchForm.search(class="form-control", placeholder=placeholder) | safe }}
 
-        {% for field in searchForm %}
-          {% if field.type == "BooleanField" %}
-            <div class="input-group-append">
-              <div class="input-group-text">
-                {{ field(class="checkbox", **kwargs)|safe }}
-                {{ field.label.text }}
+        {% if checkboxes_on_searchbar %}
+          {% for field in searchForm %}
+            {% if field.type == "BooleanField" %}
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  {{ field(class="checkbox", **kwargs)|safe }}
+                  {{ field.label.text }}
+                </div>
               </div>
-            </div>
-            {% endif %}
-        {% endfor %}
+              {% endif %}
+          {% endfor %}
+        {% endif %}
     
         <div class="input-group-append">
           <span class="input-group-text">
@@ -143,12 +151,18 @@
 
   </div>
 
-  {% if searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") | list | length is ge(1) %}
+  {% set filter = "SelectField,SelectMultipleField,DateField,MonthField" %}
+
+  {% if not checkboxes_on_searchbar %}
+    {% set filter = filter + ',BooleanField' %}
+  {% endif %}
+
+  {% if searchForm | selectattr("type", "in", filter) | list | length is ge(1) %}
     <div class="search-filters">
       <div class="row">
-        {% for field in searchForm | selectattr("type", "in", "SelectField,SelectMultipleField,DateField,MonthField") %}
+        {% for field in searchForm | selectattr("type", "in", filter) %}
           <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
-            <div>{{ field.label.text | nbsp}}</div>
+            <div>{{ field.label.text | nbsp | br }}</div>
             <div>{{ render_field_actual(field, **kwargs) |safe }}</div>
           </div>
         {% endfor %}
