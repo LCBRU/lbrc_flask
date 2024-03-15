@@ -95,7 +95,6 @@ class FlashingForm(FlaskForm):
         strip_keys = ['page', 'csrf_token']
 
         for f in self:
-            print(f.name, f.data)
             if f.name not in strip_keys and self.has_value(f.name):
                 result.append(f)
         
@@ -105,7 +104,19 @@ class FlashingForm(FlaskForm):
         return {f.name: f.raw_data for f in self.data_with_values()}
 
     def values_as_dict(self):
-        return {f.name: f.data for f in self.data_with_values()}
+        result = {}
+
+        for f in self.data_with_values():
+            if f.type in ['MonthField']:
+                result[f.name] =  f.data.strftime("%Y-%m")
+                val = f.data.strftime("%Y-%m")
+            elif f.type in ['BooleanField']:
+                if f.data:
+                    result[f.name] = f.data
+            else:
+                result[f.name] = f.data
+    
+        return result
 
 
 class SearchForm(FlashingForm):
