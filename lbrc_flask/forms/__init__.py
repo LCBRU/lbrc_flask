@@ -75,14 +75,13 @@ class FlashingForm(FlaskForm):
     def has_value(self, field_name):
 
         if field_name not in self or field_name not in self.data:
-            print('&'*100)
             return False
 
         field = self[field_name]
         value = self.data[field_name]
 
-        if isinstance(value, list) and len(value) == 0:
-            return False
+        if isinstance(value, list):
+            return len(value) > 0
     
         if value is None:
             return False
@@ -90,11 +89,12 @@ class FlashingForm(FlaskForm):
         if field.type in ['BooleanField']:
             return value
 
-        if is_number(value):
-            return (int(value) != 0)
+        if type(value) == str:
+            if is_number(value):
+                return (int(value) != 0)
 
-        if len(str(value)) == 0:
-            return False
+            if len(str(value)) == 0:
+                return False
 
         return True
     
