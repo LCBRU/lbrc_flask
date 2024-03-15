@@ -14,6 +14,8 @@ from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
 
+from lbrc_flask.validators import is_number
+
 
 class HiddenBooleanField(BooleanField):
     widget = HiddenInput()
@@ -71,25 +73,32 @@ class FlashingForm(FlaskForm):
         return result
     
     def has_value(self, field_name):
-        if field_name not in self.data:
+
+        if field_name not in self or field_name not in self.data:
+            print('&'*100)
             return False
-        
+
+        field = self[field_name]
         value = self.data[field_name]
 
         if isinstance(value, list) and len(value) == 0:
             return False
     
-        if value is None or len(str(value)) == 0:
+        if value is None:
             return False
 
-        try:
-            if value.isdigit() and int(value) == 0:
-                return False
-        except:
-            pass
-            
+        if field.type in ['BooleanField']:
+            return value
+
+        if is_number(value):
+            return (int(value) != 0)
+
+        if len(str(value)) == 0:
+            return False
+
         return True
     
+
     def data_with_values(self):
         result = []
         strip_keys = ['page', 'csrf_token']

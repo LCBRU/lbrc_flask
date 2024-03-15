@@ -1,4 +1,3 @@
-import logging
 import re
 from datetime import datetime, date
 from dateutil.parser import parse
@@ -101,6 +100,13 @@ def is_invalid_postcode(postcode):
         return True
 
     return False
+
+
+def is_number(s):
+    """ Returns True if string is a number. """
+    if re.match("^\d+?\.\d+?$", s) is None:
+        return s.isdigit()
+    return True
 
 
 def is_integer(n):
