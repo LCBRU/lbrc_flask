@@ -5,7 +5,7 @@ from flask import current_app, abort
 from flask_security.utils import _datastore
 from functools import wraps
 from ..database import db
-from .model import User, Role, AuditMixin, random_password
+from .model import User, Role
 
 
 def current_user_id():
@@ -76,7 +76,7 @@ def init_roles(roles=None):
             )
 
 
-def init_users():
+def init_users(admin_roles=None):
     if not get_system_user():
         user = _datastore.create_user(
             email='hal@discovery_one.uss',
@@ -95,6 +95,9 @@ def init_users():
             password=admin_password,
         )
         _datastore.add_role_to_user(user, get_admin_role())
+
+        for role in admin_roles or []:
+            _datastore.add_role_to_user(user, get_role_from_name(role))
 
     db.session.commit()
 
