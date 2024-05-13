@@ -202,6 +202,9 @@ section {
   color: var(--color-white);
   background-color: var(--color-green);
   border-color: var(--color-green);
+
+  --_forground_color: color-mix(in srgb, var(--color-green) 20%, white);
+  --_background_color: var(--color-green);
 }
 
 .btn-primary:hover {
@@ -232,6 +235,9 @@ section {
   color: var(--color-green);
   background-color: var(--color-white);
   border-color: var(--color-green);
+
+  --_background_color: color-mix(in srgb, var(--color-green) 20%, white);
+  --_forground_color: var(--color-green);
 }
 
 .btn-outline-primary:hover {
@@ -255,6 +261,9 @@ section {
   color: var(--color-white);
   background-color: var(--color-green);
   border-color: var(--color-green);
+
+  --_forground_color: color-mix(in srgb, var(--color-green) 20%, white);
+  --_background_color: var(--color-green);
 }
 
 .btn-success:hover {
@@ -278,6 +287,9 @@ section {
   background-color: var(--color-white);
   color: var(--color-green);
   border-color: var(--color-green);
+
+  --_background_color: color-mix(in srgb, var(--color-green) 20%, white);
+  --_forground_color: var(--color-green);
 }
 
 .btn-outline-success:hover {
@@ -301,6 +313,9 @@ section {
   color: var(--color-white);
   background-color: var(--color-red);
   border-color: var(--color-red);
+
+  --_forground_color: color-mix(in srgb, var(--color-red) 20%, white);
+  --_background_color: var(--color-red);
 }
 
 .btn-danger:hover {
@@ -324,6 +339,9 @@ section {
   background-color: var(--color-white);
   color: var(--color-red);
   border-color: var(--color-red);
+
+  --_background_color: color-mix(in srgb, var(--color-red) 20%, white);
+  --_forground_color: var(--color-red);
 }
 
 .btn-outline-danger:hover {
