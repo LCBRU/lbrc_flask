@@ -126,7 +126,7 @@ def is_float(n):
         return False
 
 
-def is_valid_doi(doi):
+def is_invalid_doi(doi):
     if not doi:
         return False
 
