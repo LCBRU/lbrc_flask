@@ -124,3 +124,15 @@ def is_float(n):
         return True
     except ValueError:
         return False
+
+
+def is_valid_doi(doi):
+    if not doi:
+        return False
+
+    if not re.search(r'^(10[.][0-9]{4,}(?:[.][0-9]+)*/(?:(?!["&\'])\S)+)$', doi):
+        return True
+
+    return False
+
+
