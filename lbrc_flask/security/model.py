@@ -132,7 +132,7 @@ class User(db.Model, CommonMixin, UserMixin):
     def full_name(self):
         full_name = " ".join(filter(None, [self.first_name, self.last_name]))
 
-        return full_name or self.email or ''
+        return full_name or self.email or self.username or ''
 
     def __str__(self):
         return self.full_name
