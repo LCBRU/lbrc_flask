@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- meta -->
+    <meta name="description" content="">
+    <meta name="author" content="Richard Bramley">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <!-- Fonts -->
+    <link rel='stylesheet' id='megamenu-google-fonts-css' href='//fonts.googleapis.com/css?family=Lato%3A400%2C700&#038;ver=5.2.4' type='text/css' media='all' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" crossorigin="anonymous">
+    
+    <link rel="preload" href="https://leicesterbrc.nihr.ac.uk/wp-content/fonts/lato/S6u8w4BMUTPHjxsAXC-q.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="https://leicesterbrc.nihr.ac.uk/wp-content/fonts/lato/S6uyw4BMUTPHjx4wXg.woff2" as="font" type="font/woff2" crossorigin />
+    
+    {% block base_css %}{% endblock %}
+    {% block base_icons %}{% endblock %}
+  </head>
+
+  <body>
+    {% block base_content %}{% endblock %}
+    {% block base_js %}{% endblock %}
+  </body>
+</html>

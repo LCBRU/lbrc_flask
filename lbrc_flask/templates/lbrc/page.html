@@ -1,0 +1,33 @@
+{% extends "lbrc/base.html" %}
+
+{% block title %}{{ organisation_name }} {{ application_title }}{% endblock %}
+
+{% block base_css %}
+  <link href="{{ url_for('lbrc_flask.static', filename='css/lbrc.css', ver=1) }}" rel="stylesheet">
+  {% block page_css %}{% endblock %}
+{% endblock %}
+
+{% block base_icons %}
+  <link rel="icon" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-32x32.png', ver=1) }}" sizes="32x32" />
+  <link rel="icon" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-192x192.png', ver=1) }}" sizes="192x192" />
+  <link rel="apple-touch-icon-precomposed" href="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-180x180.png', ver=1) }}" />
+  <meta name="msapplication-TileImage" content="{{ url_for('lbrc_flask.static', filename='img/cropped-favicon-270x270.png', ver=1) }}" />
+{% endblock %}
+
+{% block base_content %}
+    <header>
+        <a class="container" href="{{url_for('ui.index')}}">
+          <h1>{{ application_title }}</h1>
+        </a>
+    </header>
+  
+    <main>
+        {% block page_content %}{% endblock %}
+    </main>
+  
+    <footer>
+      <div class="container">Copyright &copy; {{ current_year }} {{ organisation_name }}</div>
+    </footer>
+  </div>
+{% endblock %}
+
