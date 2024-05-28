@@ -287,6 +287,10 @@ td, th {
     padding: var(--body-spacing);
 }
 
+th {
+    font-weight: var(--body-font-weight-bold);
+}
+
 /* Table End */
 
 a {
