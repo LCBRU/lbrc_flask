@@ -20,19 +20,15 @@
 
     --color-black:#111111;
     --color-white:#ffffff;
-    --color-white-alt:#f8f8f8;
+    --color-white-alt: #f8f9fC;
     --color-blue:#193e72;
-    --color-blue-light:#205092;
-    --color-blue-dark:#102747;
-    --color-blue-grey:#474f6b;
+    --color-light-blue: #E0EEEF;
+    --color-blue-green: #4DA5AE;
     --color-red:#ea5c4e;
-
-    --color-body:var(--color-blue);
-    --color-heading:var(--color-blue);
-    --color-link:var(--color-blue);
-    --color-link-light:var(--color-blue-light);
-    --color-link-dark:var(--color-blue-dark);
-    --color-background:#var(--color-white);
+    --color-light-red: #FBE3D9;
+    --color-orange: #E7973F;
+    --color-light-orange: #FFF8E8;
+    --color-grey: #F0F1F5;
 
     --border-radius: 5px;
     --viewport-width: 80rem;
@@ -53,11 +49,11 @@
 
     ::selection {
         color: var(--color-white);
-        background: var(--color-blue-dark);
+        background: var(--color-blue);
     }
 
     ::placeholder{
-        color: var(--color-blue-grey);
+        color: var(--color-blue);
     }
 
     html {
@@ -66,7 +62,7 @@
 
     body {
         min-height: 100svh;
-        color: var(--color-body);
+        color: var(--color-blue);
         font-weight: var(--body-font-weight);
         font-size: var(--body-font-size);
         font-family: var(--body-font-family);
@@ -104,7 +100,7 @@ main {
 }
 
 .container {
-    max-width: var(--viewport-width);
+    max-width: min(var(--viewport-width), 90%);
     margin: auto;
 }
 
@@ -146,7 +142,7 @@ footer {
 /* Menu Start */
 
 nav {
-    background-color: var(--color-custom-1);
+    background-color: var(--color-grey);
     margin-bottom: var(--body-paragraph-double-spacing);
 }
 
@@ -268,11 +264,30 @@ button[type="submit"] {
     gap: var(--body-spacing);
 }
 
-/* .field {
-    display: grid;
-} */
-
 /* Form End */
+
+/* Table Start */
+
+table {
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+tr {
+    border-top: 1px solid var(--color-grey);
+}
+
+tr:nth-child(even){
+    background-color: var(--color-white-alt);
+}
+
+td, th {
+    padding: var(--body-spacing);
+}
+
+/* Table End */
 
 a {
     text-decoration: none;
