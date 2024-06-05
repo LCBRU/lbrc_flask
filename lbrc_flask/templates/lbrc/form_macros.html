@@ -1,68 +1,55 @@
-{% macro render_field(field, label=None) %}
-{% if field.render_kw %}
-  {% if kwargs.update(field.render_kw) %} {% endif %}
-{% endif %}
-<div>
-    <div class="form-group{% if field.errors %} has-error{%endif%}">
-      {{ render_field_controls(field, **kwargs) }}
-    </div>
+{% macro render_form_fields(form) %}
+  {{ form.hidden_tag() }}
+
+  {% for f in form %}
+      {{ render_field(f) }}
+  {% endfor %}
+{% endmacro %}
+
+
+{% macro render_field(field) %}
+  {% if field.render_kw %}
+    {% if kwargs.update(field.render_kw) %} {% endif %}
+  {% endif %}
+  <div class="field {% if field.errors %}error{%endif%}">
+    {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
+    <!-- Do not render -->
+    {% else %}
+      {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField"] %}
+        {{ render_label(field) }}
+      {% endif %}
+
+      {% if field.type == "SelectMultipleField" %}
+        {{ field( class="form-control select2", **kwargs)|safe }}
+      {{ render_field_control(field, **kwargs) }}
+      {% else %}
+        {{ field(**kwargs)|safe }}
+      {% endif %}
+    {% endif %}
   </div>
 {% endmacro %}
 
 
-{% macro render_field_controls(field, label=None) %}
-  {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
-  {% else %}
-    {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField"] %}
-      {{ render_label(field, label) }}
-    {% endif %}
-    {{ render_field_actual(field, **kwargs) }}
-  {% endif %}
-{% endmacro %}
+{% macro render_label(field) %}
+  {% set class="" %}
 
-
-{% macro render_field_actual(field) %}
-  {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
-  {% else %}
-    {% if field.type == "BooleanField" %}
-      {{ render_checkbox_field_control(field, **kwargs) }}
-    {% elif field.type == "RadioField" %}
-      {{ render_radio_field_control(field, **kwargs) }}
-    {% elif field.type == "SelectMultipleField" %}
-      {{ render_field_control(field, class="form-control select2", **kwargs) }}
-    {% else %}
-      {{ render_field_control(field, **kwargs) }}
-    {% endif %}
-  {% endif %}
-{% endmacro %}
-
-
-{% macro render_label(field, label) %}
-  {{ field.label(class="control-label", text=label) }}
   {% if field.flags.required %}
-    <small data-toggle="tooltip" title="{{ field.label.text }} is a mandatory field">
-      <small class="fas fa-asterisk text-danger"></small>
-    </small>
+    {% set class='mandatory' %}
   {% endif %}
+
+  {{ field.label(class=class) }}
+
   {% if field.description %}
-    <a href="#" data-toggle="modal" data-target="#help_modal" data-title="{{ field.name }}" data-text="{{ field.description }}">
-      <span class="fas fa-question-circle"></span>
-    </a>
+    <a href="#"><span class="fas fa-question-circle"></span></a>
   {% endif %}
-{% endmacro %}
 
-{% macro render_checkbox_field_control(field) %}
-    {{ field(class="checkbox", **kwargs)|safe }}
-{% endmacro %}
-
-
-{% macro render_radio_field_control(field) %}
-    {{ field(class="radio", **kwargs)|safe }}
-{% endmacro %}
-
-
-{% macro render_field_control(field) %}
-    {{ field(class="form-control", **kwargs)|safe }}
+  {% if field.errors %}
+    <ul class="errors">
+    {% for error in field.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
 {% endmacro %}
 
 
@@ -75,145 +62,17 @@
 {% endmacro %}
 
 
-{% macro render_button_bar(cancelview, submit_label="Save", cancelviewparams={}, cancel_url='') %}
-      <div class="form-group text-right">
-          <div>
-              {% if cancelview %}
-                <a href="{{ url_for(cancelview, **cancelviewparams) }}" class="btn btn-default" role="button">Cancel</a>
-              {% endif %}
-              {% if cancel_url | length > 0 %}
-                <a href="{{ cancel_url }}" class="btn btn-default" role="button">Cancel</a>
-              {% endif %}
-              <button type="submit" class="btn btn-primary">{{ submit_label }}</button>
-          </div>
-      </div>
-{% endmacro %}
-
-
-{% macro render_form_errors(form) %}
-    {% for field in form %}
-      {% if field.errors %}
-        <div class="alert alert-dismissible alert-danger">
-            <button type="button" class="close" data-dismiss="alert">×</button>
-            <p>{{ field.label }} has the following errors:</p>
-            <ul>
-            {% for error in field.errors%}
-                <li>{{ error }}</li>
-            {% endfor %}
-            </ul>
-          </div>
-      {% endif %}
-    {% endfor %}
-
-{% endmacro %}
-
-
-{% macro render_search(
-  searchForm,
-  searchview,
-  placeholder='enter search text',
-  buttons={},
-  checkboxes_on_searchbar=True
-  ) %}
-<form method="GET" class="form-horizontal search-form" action="{{ url_for(searchview, **kwargs) }}">
-
-  <div class="row">
-    <div class="col">
-      <div class="input-group">
-        {{ searchForm.hidden_tag() }}
-    
-        {{ searchForm.search(class="form-control", placeholder=placeholder) | safe }}
-
-        {% if checkboxes_on_searchbar %}
-          {% for field in searchForm %}
-            {% if field.type == "BooleanField" %}
-              <div class="input-group-append">
-                <div class="input-group-text">
-                  {{ field(class="checkbox", **kwargs)|safe }}
-                  {{ field.label.text }}
-                </div>
-              </div>
-              {% endif %}
-          {% endfor %}
-        {% endif %}
-    
-        <div class="input-group-append">
-          <span class="input-group-text">
-              <a href="{{ url_for(searchview, **kwargs) }}">Clear Search</a>
-          </span>
-        </div>
-    
-        <div class="input-group-append">
-          <button type="submit" class="btn btn-primary">Search</button>
-        </div>
-
-      </div>
-    </div>
-
-    {% if buttons | length > 0 %}
-      <div class="col-auto">
-        {% for b in buttons %}
-          {{ _render_search_button(b, searchForm, **kwargs) }}
-        {% endfor %}
-      </div>
-    {% endif %}
-
+{% macro render_button_bar(cancel_url, submit_label="Save") %}
+  <div class="button_bar">
+    <button type="submit">{{ submit_label }}</button>
+    <a href="{{ cancel_url }}" role="button">Cancel</a>
   </div>
-
-  {% set filter = "SelectField,SelectMultipleField,DateField,MonthField" %}
-
-  {% if not checkboxes_on_searchbar %}
-    {% set filter = filter + ',BooleanField' %}
-  {% endif %}
-
-  {% if searchForm | selectattr("type", "in", filter) | list | length is ge(1) %}
-    <div class="search-filters">
-      <div class="row">
-        {% for field in searchForm | selectattr("type", "in", filter) %}
-          <div class="form-group{% if field.errors %} has-error{%endif%} col-auto">
-            <div>{{ field.label.text | nbsp | br }}</div>
-            <div>{{ render_field_actual(field, **kwargs) |safe }}</div>
-          </div>
-        {% endfor %}
-      </div>
-    </div>
-  {% endif %}
-
-</form>
 {% endmacro %}
 
 
-{% macro _render_search_button(button, form) %}
-  {% set url="" %}
-
-  {% if button['add_form_fields'] %}
-    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | rejectattr("type", "eq", "MonthField") | selectattr("data") %}
-      {% if kwargs.update({f.name: f.data}) %} {% endif %}
-    {% endfor %}
-    {% for f in form | rejectattr("name", "eq", "page") | rejectattr("name", "eq", "csrf_token") | selectattr("type", "eq", "MonthField") | selectattr("data") %}
-      {% if kwargs.update({f.name: f.data | month_format }) %} {% endif %}
-    {% endfor %}
-  {% endif %}
-
-  {% if button['endpoint'] | length > 0 %}
-      {% set url=url_for(button['endpoint'], **kwargs) %}
-  {% endif %}
-  {% if button['url'] | length > 0 %}
-      {% set url=button['url'] %}
-  {% endif %}
-
-  {% if button['disabled'] %}
-      {% set disabled='disabled' %}
-      {% set href='#' %}
-  {% else %}
-      {% set href=url %}
-  {% endif %}
-
-  {% if button['title'] %}
-    {% set title=button['title'] %}
-  {% else %}
-    {% set title='' %}
-  {% endif %}
-
-<a class="btn btn-primary {{ button['class'] }} {{ disabled }}" id="{{ button['id'] }}" {{ button | dict_data_fields | xmlattr }} href="{{ href }}" title="{{ title }}" data-toggle="tooltip" {{ disabled }}>{{ button['text'] }}</a>
+{% macro render_modal_button_bar(submit_label="Save") %}
+  <div class="button_bar">
+    <button type="submit">{{ submit_label }}</button>
+    <a href="#" _="on click trigger closeModal" role="button">Cancel</a>
+  </div>
 {% endmacro %}

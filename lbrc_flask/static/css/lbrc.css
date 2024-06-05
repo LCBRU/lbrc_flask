@@ -31,9 +31,12 @@
     --color-grey: #ced4da;
     --color-dark-grey: #6c757d;
     --color-green: #46a86c;
+    --color-shadow: rgba(0, 0, 0, 0.3);
 
     --border-radius: 5px;
     --viewport-width: 80rem;
+
+    --animation-duration: 150ms;
 }
 
 /* Reset Start*/
@@ -105,6 +108,15 @@ main {
     margin: auto;
 }
 
+.with_sidebar {
+    display: grid;
+    gap: var(--body-paragraph-spacing);
+
+    @media (min-width: 760px) {
+        grid-template-columns: 1fr 300px;
+    }
+}
+
 /* Layout End */
 
 /* Header Starter */
@@ -126,15 +138,6 @@ body > header > a > h1 {
 }
 
 /* Header End */
-
-/* Main Start */
-
-main > header {
-    background-color: var(--color-light-grey);
-    padding-block: var(--body-paragraph-spacing);
-}
-
-/* Main End */
 
 /* Footer Start */
 
@@ -179,7 +182,7 @@ nav.main_menu > div {
         display: none;
         position: absolute;
         background-color: var(--color-white);
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
+        box-shadow: 0px 8px 16px 0px var(--color-shadow);
         max-width: var(--submenu-max-width);
         border-radius: var(--border-radius);
     }
@@ -196,13 +199,13 @@ nav.main_menu > div {
         padding: var(--body-paragraph-spacing);
         display: block;
         font-weight: var(--bold-font-weight);
+        color: var(--color-blue);
         
         &:hover {
             background-color: var(--color-grey);
         }
     }
 }
-
 /* Main Menu End */
 
 /* Side Menu Start */
@@ -211,9 +214,90 @@ aside {
     background-color: var(--color-light-grey);
     padding: var(--body-paragraph-spacing);
     border-radius: var(--border-radius);
+
+    &:empty {
+        display: none;
+    }
 }
 
 /* Side Menu End */
+
+/* Modal Start */
+#modal {
+	/* Underlay covers entire screen. */
+	position: fixed;
+    inset: 0;
+	background-color:var(--color-shadow);
+	z-index: 1000;
+
+    display: flex;
+    flex-direction:column;
+	align-items:center;
+
+	/* Animate when opening */
+	animation-name: fadeIn;
+	animation-duration: var(--animation-duration);
+	animation-timing-function: ease;
+}
+
+#modal > .modal-underlay {
+	/* underlay takes up the entire viewport. This is only
+	required if you want to click to dismiss the popup */
+	position: absolute;
+	z-index: -1;
+    inset: 0;
+}
+
+#modal > .modal-content {
+	/* Display properties for visible dialog*/
+    border: 1px solid var(--color-grey);
+	box-shadow: 0px 8px 16px 0px var(--color-shadow);
+	background-color: var(--color-white);
+
+    padding: var(--body-paragraph-spacing);
+    border-radius: var(--border-radius);
+
+	/* Animate when opening */
+	animation-name: zoomIn;
+	animation-duration: var(--animation-duration);
+	animation-timing-function: ease;
+}
+
+#modal.closing {
+	/* Animate when closing */
+	animation-name: fadeOut;
+	animation-duration: var(--animation-duration);
+	animation-timing-function: ease;
+}
+
+#modal.closing > .modal-content {
+	/* Animate when closing */
+	animation-name: zoomOut;
+	animation-duration: var(--animation-duration);
+	animation-timing-function: ease;
+}
+
+@keyframes fadeIn {
+	0% {opacity: 0;}
+	100% {opacity: 1;}
+} 
+
+@keyframes fadeOut {
+	0% {opacity: 1;}
+	100% {opacity: 0;}
+} 
+
+@keyframes zoomIn {
+	0% {transform: scale(0.9);}
+	100% {transform: scale(1);}
+} 
+
+@keyframes zoomOut {
+	0% {transform: scale(1);}
+	100% {transform: scale(0.9);}
+} 
+
+/* Modal End */
 
 /* Form Start */
 
@@ -282,6 +366,7 @@ select[multiple]:focus option:checked {
     background: var(--color-red) linear-gradient(0deg, var(--color-red) 0%, var(--color-red) 100%);
 }
 
+a[role=button],
 input[type="button"],
 input[type="reset"],
 input[type="submit"],
@@ -295,6 +380,7 @@ button[type="submit"] {
     border: 1px solid var(--color-green);
     cursor: pointer;
     border-radius: var(--border-radius);
+    display: block;
 }
 
 .button_bar {
@@ -413,8 +499,78 @@ th {
 }
 
 /* Pagination End */
-  
+
+/* Data List Start */
+dt {
+    font-weight: var(--body-font-weight-bold);
+}
+
+dl.concatenated {
+    display: flex;
+    flex-wrap: wrap;
+    color: var(--color-dark-grey);
+
+    & > * {
+        padding-right: var(--body-paragraph-spacing);
+    }
+
+    & dt::after {
+        content: ': ';
+    }
+
+    & a {
+        color: var(--color-dark-grey);
+    }
+}
+/* Data List End */
+
+/* Icon Buttons Start */
+.icon_button {
+    &::after {
+        font-size: 1rem;
+        font-family: 'Font Awesome 5 Free';
+        content: "\f35d";
+        font-weight: 900;
+        font-size: 0.8em;
+    }
+}
+
+/* Icon Button End */
+
+/* Link List Start */
+.link_list {
+    display: flex;
+    gap: var(--body-spacing);
+    justify-content: space-evenly;
+}
+
+/* Link List End */
+
 a {
     text-decoration: none;
-    color: var(--color-blue);
+    color: var(--color-green);
+}
+
+a[href^="http"]::after {
+    padding-left: var(--body-spacing);
+    font-family: 'Font Awesome 5 Free';
+    content: "\f35d";
+    font-weight: 900;
+    font-size: 0.8em;
+}
+
+section {
+    margin-block: var(--body-spacing);
+}
+
+h2, h3, h4, h5 {
+    font-weight: var(--body-font-weight-bold);
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+h2 .fas {
+    font-size: 0.7em;
 }

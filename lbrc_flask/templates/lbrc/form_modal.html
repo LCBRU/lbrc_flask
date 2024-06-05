@@ -1,0 +1,14 @@
+{% extends "lbrc/modal.html" %}
+{% from "lbrc/form_macros.html" import render_form_fields, render_modal_button_bar %}
+
+
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    <form action="{{ url }}" hx-post="{{ url }}" method="POST" enctype="multipart/form-data">
+        <fieldset>
+            {{render_form_fields(form)}}
+            {{render_modal_button_bar(submit_label=submit_label)}}
+        </fieldset>
+    </form>
+{% endblock %}
