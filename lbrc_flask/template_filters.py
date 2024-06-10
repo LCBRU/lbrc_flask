@@ -46,7 +46,7 @@ def init_template_filters(app):
 
     @app.template_filter("title_case")
     def title_case(value):
-        return value.title()
+        return (value or "").title()
 
     @app.template_filter("blank_if_none")
     def blank_if_none(value):
