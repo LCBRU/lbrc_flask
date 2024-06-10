@@ -11,22 +11,23 @@
   {% if field.render_kw %}
     {% if kwargs.update(field.render_kw) %} {% endif %}
   {% endif %}
-  <div class="field {% if field.errors %}error{%endif%}">
-    {% if field.type == "HiddenField" or field.type == "CSRFTokenField" %}
-    <!-- Do not render -->
+    {% if field.type == "HiddenField" or field.type == "CSRFTokenField" or field.name == "page" %}
+      <!-- Do not render -->
     {% else %}
-      {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField"] %}
-        {{ render_label(field) }}
-      {% endif %}
+      <div class="field {% if field.errors %}error{%endif%} {{field.type}}">
+        {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField", "SearchField"] %}
+          {{ render_label(field) }}
+        {% endif %}
 
-      {% if field.type == "SelectMultipleField" %}
-        {{ field( class="form-control select2", **kwargs)|safe }}
-      {{ render_field_control(field, **kwargs) }}
-      {% else %}
-        {{ field(**kwargs)|safe }}
-      {% endif %}
+        {% if field.type == "SelectMultipleField" %}
+          {{ field( class="form-control select2", **kwargs)|safe }}
+        {% elif field.type == "SearchField" %}
+          {{ render_search_field(field) }}
+        {% else %}
+          {{ field(**kwargs)|safe }}
+        {% endif %}
+      </div>
     {% endif %}
-  </div>
 {% endmacro %}
 
 
@@ -54,10 +55,18 @@
 
 
 {% macro render_search_field(field) %}
-  <div class="search-field">
+  <div class="field_with_buttons">
     {{ field(**kwargs) }}
     <a href="?">Clear Search</a>
     <button type="submit">Search</button>
+  </div>
+{% endmacro %}
+
+
+{% macro render_field_and_submit(field, submit_label="Save") %}
+  <div class="field_with_buttons">
+    {{ field(**kwargs) }}
+    <button type="submit">{{ submit_label }}</button>
   </div>
 {% endmacro %}
 
@@ -71,8 +80,19 @@
 
 
 {% macro render_modal_button_bar(submit_label="Save") %}
+  {% if submit_label | length == 0 %}
+    {% set submit_label='Save' %}
+  {% endif %}
+
   <div class="button_bar">
     <button type="submit">{{ submit_label }}</button>
+    <a href="#" _="on click trigger closeModal" role="button">Cancel</a>
+  </div>
+{% endmacro %}
+
+
+{% macro render_modal_cancel_bar() %}
+  <div class="button_bar">
     <a href="#" _="on click trigger closeModal" role="button">Cancel</a>
   </div>
 {% endmacro %}

@@ -8,6 +8,7 @@ from wtforms import (
     Field,
     SelectMultipleField,
     BooleanField,
+    SearchField,
 )
 from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
@@ -133,7 +134,7 @@ class SearchForm(FlashingForm):
     def __init__(self, **kwargs):
         super().__init__(**kwargs, meta={'csrf': False})
 
-    search = StringField("Search", validators=[Length(max=100)])
+    search = SearchField("Search", validators=[Length(max=100)])
     page = IntegerField("Page", default=1)
 
 

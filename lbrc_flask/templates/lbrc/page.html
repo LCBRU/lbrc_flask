@@ -1,4 +1,5 @@
 {% extends "lbrc/base.html" %}
+{% from "lbrc/errors.html" import render_errors %}
 
 {% block title %}{{ organisation_name }} {{ application_title }}{% endblock %}
 
@@ -22,7 +23,9 @@
     </header>
   
     <main>
-        {% block page_content %}{% endblock %}
+      {{ render_errors(get_flashed_messages(with_categories=true)) }}
+ 
+      {% block page_content %}{% endblock %}
     </main>
   
     <footer>
@@ -30,4 +33,3 @@
     </footer>
   </div>
 {% endblock %}
-
