@@ -92,10 +92,6 @@
         margin-bottom: var(--body-paragraph-spacing);
     }
 
-    li {
-        margin-left: var(--body-paragraph-spacing);
-    }
-
 /* Reset End */
 
 /* Layout Start */
@@ -310,6 +306,7 @@ fieldset {
     border: none;
     display: grid;
     gap: var(--body-spacing);
+    align-items: last baseline;
     grid-template-columns: [start] repeat( auto-fit, minmax(min(300px, 100%), 1fr) ) [end];
     margin-block: var(--body-paragraph-spacing);
 }
@@ -327,7 +324,12 @@ label {
     padding: var(--body-spacing);
 }
 
-input, textarea, select {
+input,
+textarea,
+select,
+.select2-selection.select2-selection--multiple,
+.select2-container--default.select2-container--focus .select2-selection--multiple
+ {
     accent-color: var(--color-red);
     border: 1px solid var(--color-grey);
 }
