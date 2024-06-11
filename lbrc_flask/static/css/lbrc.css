@@ -315,6 +315,11 @@ fieldset p {
     grid-column: start / end;
 }
 
+fieldset ul {
+    grid-column: start / end;
+    margin-left: var(--body-paragraph-spacing);
+}
+
 .field {
     display: grid;
 }
@@ -438,6 +443,23 @@ button[type="submit"] {
 
 .field.SearchField {
     grid-column: start / end;
+}
+
+.field.icon {
+    display: flex;
+    grid-column: start / end;
+    gap: var(--body-spacing);
+    flex-direction: row-reverse;
+
+    &::after {
+        width: 1.5em;
+        line-height: 1.5em;
+        font-size: 1.5em;
+    }
+
+    & > *:first-child {
+        flex-grow: 1;
+    }
 }
 
 /* Form End */
@@ -624,18 +646,21 @@ nav.link_list {
     }
 }
 
-/* Link List End */
-
 /* Icon Buttons Start */
 .icon::after {
     font-size: 1rem;
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     padding-left: var(--body-spacing);
+    content: "\f55a";
 }
 
 .icon.clear::after {
     content: "\f55a";
+}
+
+.icon.confirm::after {
+    content: "\f560";
 }
 
 .icon.delete::after {
@@ -650,8 +675,16 @@ nav.link_list {
     content: "\f044";
 }
 
+.icon.email::after {
+    content: "\f0e0";
+}
+
 .icon.error::after {
     content: "\f188";
+}
+
+.icon.lock::after {
+    content: "\f023";
 }
 
 .icon.pause::after {
@@ -660,6 +693,10 @@ nav.link_list {
 
 .icon.play::after {
     content: "\f04b";
+}
+
+.icon.unlock::after {
+    content: "\f09c";
 }
 
 .icon.upload::after {
