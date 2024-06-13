@@ -623,16 +623,6 @@ ul.panel_list li {
         & > *:last-child {
             flex-shrink: 1;
         }
-
-        & h2 {
-            font-size: 1.3em;
-        }
-        & h3 {
-            font-size: 1.1em;
-            color: var(--color-dark-grey);
-            font-style: italic;
-            font-weight: var(--body-font-weight);
-        }
     }
 
     & > *:last-child {
@@ -789,28 +779,34 @@ h2, h3, h4, h5 {
     font-weight: var(--body-font-weight-bold);
 }
 
-h2 {
-    font-size: 1.6em;
-}
-
 h2 .fas {
     font-size: 0.7em;
 }
 
-h3 {
+h2 {
     font-size: 1.5em;
 }
 
-h4 {
+h3 {
     font-size: 1.4em;
+    color: var(--color-green);
+}
+
+h4 {
+    font-size: 1.2em;
+    color: var(--color-dark-grey);
 }
 
 h5 {
-    font-size: 1.3em;
+    font-size: 1.1em;
+    color: var(--color-dark-grey);
+    font-style: italic;
+    font-weight: var(--body-font-weight);
 }
 
 h6 {
-    font-size: 1.2em;
+    font-size: 1.1em;
+    color: var(--color-red);
 }
 
 .pill {
