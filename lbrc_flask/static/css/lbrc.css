@@ -815,4 +815,8 @@ h6 {
     padding: var(--body-spacing);
     border-radius: 2em;
     white-space: nowrap;
+
+    & a {
+        color: var(--color-white);
+    }
 }
