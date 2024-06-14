@@ -118,6 +118,26 @@ main {
     }
 }
 
+.three_big_middle {
+    display: flex;
+    gap: var(--body-spacing);
+
+    & > *:nth-child(2) {
+        flex-grow: 1;
+    }
+}
+
+.two_big_left {
+    & > *:first-child {
+        flex-grow: 1;
+    }
+
+    & > *:last-child {
+        flex-shrink: 1;
+    }
+
+}
+
 /* Layout End */
 
 /* Header Starter */
@@ -612,22 +632,10 @@ ul.panel_list li {
         border-bottom-right-radius: var(--border-radius);
     }
 
-    &:nth-child(even) {
-        background-color: var(--color-white-alt);
-    }
-
     & header {
         display: flex;
         background-color: var(--color-light-grey);
         padding: var(--body-paragraph-spacing);
-
-        & > *:first-child {
-            flex-grow: 1;
-        }
-
-        & > *:last-child {
-            flex-shrink: 1;
-        }
     }
 
     & > * {
