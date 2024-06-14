@@ -201,7 +201,8 @@ nav.main_menu > div {
     }
     
     & a {
-        padding: var(--body-paragraph-spacing);
+        padding-block: var(--body-paragraph-spacing);
+        padding-inline: var(--body-spacing);
         display: block;
         font-weight: var(--bold-font-weight);
         color: var(--color-blue);
