@@ -598,9 +598,9 @@ dl.columns {
 ul.panel_list li {
     list-style: none;
     margin-left: 0;
+    padding-bottom: var(--body-paragraph-spacing);
 
     border: 1px solid var(--color-light-grey);
-    padding: var(--body-paragraph-spacing);
 
     &:first-child {
         border-top-left-radius: var(--border-radius);
@@ -618,6 +618,8 @@ ul.panel_list li {
 
     & header {
         display: flex;
+        background-color: var(--color-light-grey);
+        padding: var(--body-paragraph-spacing);
 
         & > *:first-child {
             flex-grow: 1;
@@ -626,6 +628,10 @@ ul.panel_list li {
         & > *:last-child {
             flex-shrink: 1;
         }
+    }
+
+    & > * {
+        padding-inline: var(--body-paragraph-spacing);
     }
 
     & > *:last-child {
