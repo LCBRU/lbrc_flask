@@ -118,7 +118,7 @@ main {
     }
 }
 
-.three_big_middle {
+.flex_three_middle_grow {
     display: flex;
     gap: var(--body-spacing);
 
@@ -127,7 +127,7 @@ main {
     }
 }
 
-.two_big_left {
+.flex_two_left_grow {
     & > *:first-child {
         flex-grow: 1;
     }
