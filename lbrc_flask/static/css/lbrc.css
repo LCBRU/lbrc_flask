@@ -128,6 +128,8 @@ main {
 }
 
 .flex_two_left_grow {
+    display: flex;
+
     & > *:first-child {
         flex-grow: 1;
     }
@@ -135,7 +137,11 @@ main {
     & > *:last-child {
         flex-shrink: 1;
     }
+}
 
+.grid_stacked_center {
+    display: grid;
+    justify-items: center;
 }
 
 /* Layout End */
@@ -425,7 +431,8 @@ button[type="submit"] {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row-reverse;
-    grid-column: start / end;
+    -ms-grid-column-span: 2;
+    grid-column-end: end;
     gap: var(--body-spacing);
 }
 
@@ -615,7 +622,7 @@ dl.columns {
 
 /* Panel List Start */
 
-ul.panel_list li {
+ul.panel_list > li {
     list-style: none;
     margin-left: 0;
     padding-bottom: var(--body-paragraph-spacing);
