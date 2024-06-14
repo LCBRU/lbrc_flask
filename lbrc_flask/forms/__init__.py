@@ -131,8 +131,11 @@ class FlashingForm(FlaskForm):
 
 class SearchForm(FlashingForm):
 
-    def __init__(self, **kwargs):
+    def __init__(self, search_placeholder=None, **kwargs):
         super().__init__(**kwargs, meta={'csrf': False})
+
+        if search_placeholder:
+            self.search.render_kw = {"placeholder": search_placeholder}
 
     search = SearchField("Search", validators=[Length(max=100)])
     page = IntegerField("Page", default=1)
