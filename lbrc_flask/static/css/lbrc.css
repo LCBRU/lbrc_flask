@@ -494,6 +494,56 @@ button[type="submit"] {
 
 /* Form End */
 
+/* Dropdown Button Start */
+.dropdown {
+    background-color: var(--color-green);
+    color: var(--color-white);
+    border: 1px solid var(--color-green);
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    position: relative;
+
+    & > span {
+        padding: var(--body-spacing);
+        display: block;
+    }
+
+    & > span::after {
+        content: '\f0d7';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        font-size: 0.8em;
+        margin-left: var(--body-spacing);
+    }
+
+    & > ul {
+        position: absolute;
+        background-color: var(--color-white);
+        display: none;
+        margin: 0;
+        padding: var(--body-spacing);
+        z-index: 1000;
+        list-style: none;
+        background-color: var(--color-white);
+        box-shadow: 0px 8px 16px 0px var(--color-shadow);
+    }
+    
+    & > ul > li {
+        margin-left: 0;
+    }
+
+    & > ul a {
+        display: block;
+        padding: var(--body-spacing);
+    }
+
+    &:hover > ul {
+        display: block;
+    }
+}
+
+/* Dropdown Button End */
+
 /* Table Start */
 
 table {
