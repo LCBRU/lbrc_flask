@@ -5,6 +5,7 @@
     --body-line-height: 1.625;
     --body-font-style: normal;
     --body-font-size: 1rem;
+    --body-font-large-size: 1.5rem;
     --body-small-spacing: 0.2rem;
     --body-spacing: 0.5rem;
     --body-paragraph-spacing: 1rem;
@@ -34,6 +35,11 @@
     --color-green: #46a86c;
     --color-light-green: #e8f6ed;
     --color-shadow: rgba(0, 0, 0, 0.3);
+    --color-yellow: #fdcb14;
+
+    --_button_background_color: var(--color-green);
+    --_button_forground_color: var(--color-white);
+
 
     --border-radius: 5px;
     --viewport-width: 80rem;
@@ -419,12 +425,28 @@ button[type="button"],
 button[type="reset"],
 button[type="submit"] {
     padding: var(--body-spacing);
-    background-color: var(--color-green);
-    color: var(--color-white);
-    border: 1px solid var(--color-green);
+    background-color: var(--_button_background_color);
+    color: var(--_button_forground_color);
+    border: 1px solid var(--_button_background_color);
     cursor: pointer;
     border-radius: var(--border-radius);
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: var(--body-spacing);
+
+    &.muted {
+        --_button_background_color: var(--color-dark-grey);
+    }
+    &.warning {
+        --_button_background_color: var(--color-orange);
+    }
+    &.error {
+        --_button_background_color: var(--color-red);
+    }
+    & .pill {
+        color: var(--_button_background_color);
+        background-color: var(--_button_forground_color);
+    }
 }
 
 .button_bar {
@@ -495,18 +517,7 @@ button[type="submit"] {
 
 /* Dropdown Button Start */
 .dropdown {
-    background-color: var(--color-green);
-    color: var(--color-white);
-    border: 1px solid var(--color-green);
-    cursor: pointer;
-    border-radius: var(--border-radius);
     position: relative;
-
-    & > a {
-        padding: var(--body-spacing);
-        display: block;
-        color: var(--color-white);
-    }
 
     & > a::after {
         content: '\f0d7';
@@ -709,6 +720,68 @@ ul.panel_list > li {
 
 /* Panel List End */
 
+/* Tabbed Display Start */
+
+.tabbed_display {
+    margin-block: var(--body-paragraph-spacing);
+}
+
+.tabbed_display_content {
+    padding: var(--body-spacing);
+    border: 1px solid var(--color-light-grey);
+}
+
+.tabbed_display_tabs {
+    display: flex;
+    gap: var(--body-spacing);
+}
+
+.tabbed_display_tabs span:last-child {
+    flex-grow: 1;
+    text-align: right;
+}
+
+.tabbed_display_tabs a {
+    margin-bottom: -1px;
+    z-index: 1;
+    padding-block: var(--body-small-spacing);
+    padding-inline: var(--body-paragraph-spacing);
+    background-color: var(--color-light-grey);
+    border: 1px solid var(--color-light-grey);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    color: var(--color-blue);
+}
+
+.tabbed_display_tabs a.selected {
+    background-color: var(--color-blue);
+    border-bottom-color: var(--color-white);
+    color: var(--color-white);
+    font-weight: bold;
+}
+
+.tabbed_display_tabs a.htmx-request {
+    animation: spinner 2s;
+    color: transparent;
+    background-image: url('data:image/svg+xml;utf8,<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_S1WN{animation:spinner_MGfb .8s linear infinite;animation-delay:-.8s}.spinner_Km9P{animation-delay:-.65s}.spinner_JApP{animation-delay:-.5s}@keyframes spinner_MGfb{93.75%,100%{opacity:.2}}</style><circle class="spinner_S1WN" cx="4" cy="12" r="3"/><circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3"/><circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+@keyframes spinner {
+    from {
+        color: currentColor;
+        background-image: none;
+    }
+
+    to {
+        color: transparent;
+        background-image: url('data:image/svg+xml;utf8,<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_S1WN{animation:spinner_MGfb .8s linear infinite;animation-delay:-.8s}.spinner_Km9P{animation-delay:-.65s}.spinner_JApP{animation-delay:-.5s}@keyframes spinner_MGfb{93.75%,100%{opacity:.2}}</style><circle class="spinner_S1WN" cx="4" cy="12" r="3"/><circle class="spinner_S1WN spinner_Km9P" cx="12" cy="12" r="3"/><circle class="spinner_S1WN spinner_JApP" cx="20" cy="12" r="3"/></svg>');
+    }
+}
+
+/* Tabbed Display End */
+
 /* Error Start */
 
 ul.errors {
@@ -725,6 +798,7 @@ ul.errors {
 
 nav.link_list {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
     gap: var(--body-spacing);
     margin-block: var(--body-paragraph-spacing);
