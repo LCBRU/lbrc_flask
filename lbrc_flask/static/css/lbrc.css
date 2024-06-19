@@ -79,7 +79,6 @@
 
     img,
     picture,
-    svg,
     video {
         display: block;
         max-width: 100%;
@@ -335,7 +334,7 @@ aside {
 fieldset {
     border: none;
     display: grid;
-    gap: var(--body-spacing);
+    gap: var(--body-paragraph-spacing);
     align-items: last baseline;
     grid-template-columns: [start] repeat( auto-fit, minmax(min(300px, 100%), 1fr) ) [end];
     margin-block: var(--body-paragraph-spacing);
@@ -366,9 +365,10 @@ select,
  {
     accent-color: var(--color-red);
     border: 1px solid var(--color-grey);
+    max-width: 100%;
 }
 
-input[type="checkbox"], input[type="radio"] {
+ input[type="checkbox"], input[type="radio"] {
     display: block;
     transform: scale(1.5);
 }
@@ -431,8 +431,7 @@ button[type="submit"] {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row-reverse;
-    -ms-grid-column-span: 2;
-    grid-column-end: end;
+    grid-column: start / end;
     gap: var(--body-spacing);
 }
 
@@ -567,6 +566,7 @@ tr:nth-child(even){
 
 td, th {
     padding: var(--body-spacing);
+    vertical-align: top;
 }
 
 th {
@@ -694,7 +694,6 @@ ul.panel_list > li {
     }
 
     & header {
-        display: flex;
         background-color: var(--color-light-grey);
         padding: var(--body-paragraph-spacing);
     }
@@ -788,12 +787,24 @@ nav.link_list {
     content: "\f04b";
 }
 
+.icon.redo::after {
+    content: "\f01e";
+}
+
 .icon.unlock::after {
     content: "\f09c";
 }
 
 .icon.upload::after {
     content: "\f093";
+}
+
+.icon.user_cog::after {
+    content: "\f4fe";
+}
+
+.icon.user_add::after {
+    content: "\f234";
 }
 
 /* Icon Button End */
@@ -917,4 +928,8 @@ h6 {
 
 .pill.small {
     padding: var(--body-small-spacing);
+}
+
+.text-danger {
+    color: var(--color-red);
 }

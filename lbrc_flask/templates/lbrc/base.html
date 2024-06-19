@@ -44,6 +44,7 @@
 
             if (!!options_url) {
               $(this).select2({
+                width: '100%',
                 ajax: {
                   url: options_url,
                   dataType: 'json',
@@ -51,7 +52,9 @@
                 }
               });
             } else {
-              $(this).select2();
+              $(this).select2({
+                width: '100%',                
+              });
             }
           });
       }
