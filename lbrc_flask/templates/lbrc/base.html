@@ -34,7 +34,8 @@
     <script>htmx.logAll();</script>
 
     <script type="text/javascript">
-      $(document).ready(function() {
+
+      var select2_init = function() {
           // Fancy select
           $("select.select2").each(function(){
             elem = $(this);
@@ -53,7 +54,11 @@
               $(this).select2();
             }
           });
-      });
+      }
+
+      $(document).ready(select2_init());
+      htmx.on('htmx:afterSettle', select2_init);
+
     </script>
 
     {% block base_js %}{% endblock %}

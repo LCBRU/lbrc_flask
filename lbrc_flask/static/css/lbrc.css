@@ -503,12 +503,13 @@ button[type="submit"] {
     border-radius: var(--border-radius);
     position: relative;
 
-    & > span {
+    & > a {
         padding: var(--body-spacing);
         display: block;
+        color: var(--color-white);
     }
 
-    & > span::after {
+    & > a::after {
         content: '\f0d7';
         font-family: 'Font Awesome 5 Free';
         font-weight: 900;
@@ -521,7 +522,6 @@ button[type="submit"] {
         background-color: var(--color-white);
         display: none;
         margin: 0;
-        padding: var(--body-spacing);
         z-index: 1000;
         list-style: none;
         background-color: var(--color-white);
@@ -534,10 +534,14 @@ button[type="submit"] {
 
     & > ul a {
         display: block;
-        padding: var(--body-spacing);
+        padding: var(--body-paragraph-spacing);
     }
 
-    &:hover > ul {
+    & > ul a:hover {
+        background-color: var(--color-grey);
+    }
+
+    &:focus, &:focus-within > ul {
         display: block;
     }
 }
