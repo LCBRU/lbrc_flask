@@ -43,9 +43,9 @@
   {% set last=(first + pagination.items | length - 1) %}
 
   {% if pagination.total > 0 %}
-    <p class="pagination_summary">Displaying {{item_name}} {{ first | separated_number }} to {{ last | separated_number }} of {{pagination.total | separated_number}} found</p>
+    <div class="pagination_summary">Displaying {{item_name}} {{ first | separated_number }} to {{ last | separated_number }} of {{pagination.total | separated_number}} found</div>
   {% else %}
-    <p class="pagination_summary">No {{item_name}} found</p>
+    <div class="pagination_summary">No {{item_name}} found</div>
   {% endif%}
 
 {% endmacro %}
