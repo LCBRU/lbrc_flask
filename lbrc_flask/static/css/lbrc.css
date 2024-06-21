@@ -944,6 +944,29 @@ nav.link_list {
 
 /* Flash Message End */
 
+/* Chart Start */
+
+.chart {
+    position: relative;
+    margin-top: var(--body-paragraph-double-spacing);
+
+    &:hover nav.link_list {
+        display: block;
+    }
+    
+    & nav.link_list {
+        position: absolute;
+        display: none;
+        right: var(--body-paragraph-double-spacing);
+        top: var(--body-paragraph-spacing);
+    }    
+}
+
+
+
+
+/* Chart End */
+
 a {
     text-decoration: none;
     color: var(--color-green);
