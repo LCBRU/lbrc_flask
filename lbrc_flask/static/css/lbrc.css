@@ -817,88 +817,123 @@ nav.link_list {
 }
 
 /* Icon Buttons Start */
-.icon::after {
+menu a.icon::before {
+    --_font_weight: 900;
     font-size: 1rem;
     font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    padding-left: var(--body-spacing);
-    content: "\f55a";
+    font-weight: var(--_font_weight);
+    padding-right: var(--body-spacing);
+    content: var(--_content);
+}
+a[role=button],
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+input[type="image"],
+button[type="button"],
+button[type="reset"],
+button[type="submit"],
+.pill,
+.link_list a {
+    &.icon::after {
+        --_font_weight: 900;
+        font-size: 1rem;
+        font-family: 'Font Awesome 5 Free';
+        font-weight: var(--_font_weight);
+        padding-left: var(--body-spacing);
+        content: var(--_content);
+    }
 }
 
-.icon.add::after {
-    content: "\f067";
+.icon.regular {
+    --_font_weight: 400;
 }
-
-.icon.clear::after {
-    content: "\f55a";
+.icon.academic {
+    --_content: "\f501";
 }
-
-.icon.confirm::after {
-    content: "\f560";
+.icon.add {
+    --_content: "\f067";
 }
-
-.icon.delete::after {
-    content: "\f1f8";
+.icon.book {
+    --_content: "\f02d";
 }
-
-.icon.download::after {
-    content: "\f019";
+.icon.check_circle {
+    --_content: "\f058";
 }
-
-.icon.edit::after {
-    content: "\f044";
+.icon.check_list {
+    --_content: "\f0ae";
 }
-
-.icon.email::after {
-    content: "\f0e0";
+.icon.clear {
+    --_content: "\f55a";
 }
-
-.icon.error::after {
-    content: "\f188";
+.icon.confirm {
+    --_content: "\f560";
 }
-
-.icon.folder::after {
-    content: "\f07b";
+.icon.delete {
+    --_content: "\f1f8";
 }
-
-.icon.folder_add::after {
-    content: "\f65e";
+.icon.download {
+    --_content: "\f019";
 }
-
-.icon.lock::after {
-    content: "\f023";
+.icon.edit {
+    --_content: "\f044";
 }
-
-.icon.pause::after {
-    content: "\f04c";
+.icon.email {
+    --_content: "\f0e0";
 }
-
-.icon.play::after {
-    content: "\f04b";
+.icon.error {
+    --_content: "\f188";
 }
-
-.icon.redo::after {
-    content: "\f01e";
+.icon.file {
+    --_content: "\f15b";
 }
-
-.icon.unlock::after {
-    content: "\f09c";
+.icon.fish {
+    --_content: "\f578";
 }
-
-.icon.upload::after {
-    content: "\f093";
+.icon.folder {
+    --_content: "\f07b";
 }
-
-.icon.user::after {
-    content: "\f007";
+.icon.folder_add {
+    --_content: "\f65e";
 }
-
-.icon.user_cog::after {
-    content: "\f4fe";
+.icon.lock {
+    --_content: "\f023";
 }
-
-.icon.user_add::after {
-    content: "\f234";
+.icon.pause {
+    --_content: "\f04c";
+}
+.icon.pdf {
+    --_content: "\f1c1";
+}
+.icon.play {
+    --_content: "\f04b";
+}
+.icon.publication {
+    --_content: "\f1ea";
+}
+.icon.redo {
+    --_content: "\f01e";
+}
+.icon.refresh {
+    --_content: "\f1b8";
+}
+.icon.report {
+    --_content: "\f71e";
+}
+.icon.unlock {
+    --_content: "\f09c";
+}
+.icon.upload {
+    --_content: "\f093";
+}
+.icon.user {
+    --_content: "\f007";
+}
+.icon.user_cog {
+    --_content: "\f4fe";
+}
+.icon.user_add {
+    --_content: "\f234";
 }
 
 /* Icon Button End */
