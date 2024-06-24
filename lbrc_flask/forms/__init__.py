@@ -15,7 +15,7 @@ from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
 
-from lbrc_flask.validators import is_number
+from lbrc_flask.validators import is_integer
 
 
 class HiddenBooleanField(BooleanField):
@@ -91,7 +91,7 @@ class FlashingForm(FlaskForm):
             return value
 
         if type(value) == str:
-            if is_number(value):
+            if is_integer(value):
                 return (int(value) != 0)
 
             if len(str(value)) == 0:
