@@ -79,13 +79,16 @@
 {% endmacro %}
 
 
-{% macro render_modal_button_bar(submit_label="Save") %}
+{% macro render_modal_button_bar(delete_link=None, submit_label="Save") %}
   {% if submit_label | length == 0 %}
     {% set submit_label='Save' %}
   {% endif %}
 
   <div class="button_bar">
     <button type="submit">{{ submit_label }}</button>
+    {% if delete_link %}
+      <a href="javascript:;" hx-post="{{delete_link}}" hx-confirm="Are you sure you wish to delete?" role="button">Delete</a>
+    {% endif %}
     <a href="javascript:;" _="on click trigger closeModal" role="button">Cancel</a>
   </div>
 {% endmacro %}

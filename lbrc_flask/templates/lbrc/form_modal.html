@@ -8,7 +8,7 @@
     <form action="{{ url }}" hx-post="{{ url }}" method="POST" enctype="multipart/form-data">
         <fieldset>
             {{render_form_fields(form)}}
-            {{render_modal_button_bar(submit_label=submit_label)}}
+            {{render_modal_button_bar(submit_label=submit_label, delete_link=delete_link)}}
         </fieldset>
     </form>
 {% endblock %}
