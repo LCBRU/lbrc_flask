@@ -101,6 +101,13 @@ class FieldType(db.Model):
             FieldType.MULTISELECT,
         ]
 
+    @staticmethod
+    def all_field_types():
+        return [
+            FieldType._get_field_type(n)
+            for n in FieldType.all_field_type_name()
+        ]
+
     @classmethod
     def _get_field_type(cls, name):
         return FieldType.query.filter_by(name=name).one()
