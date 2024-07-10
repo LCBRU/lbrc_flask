@@ -3,6 +3,7 @@ from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
 from wtforms import fields, validators
 from wtforms.validators import Length, DataRequired, Optional, Regexp
+from lbrc_flask.validators import parse_date
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
 from . import DescriptionField, FlashingForm
@@ -21,6 +22,7 @@ class FieldType(db.Model):
     DESCRIPTION = 'DescriptionField'
     SELECT = 'SelectField'
     MULTISELECT = 'SelectMultipleField'
+    DATE = 'DateField'
 
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100))
@@ -41,6 +43,8 @@ class FieldType(db.Model):
     def data_value(self, value):
         if self.name == FieldType.BOOLEAN:
             return format_boolean(value)
+        elif self.name == FieldType.DATE:
+            return parse_date(value)
         else:
             return value
 
@@ -99,6 +103,7 @@ class FieldType(db.Model):
             FieldType.TEXTAREA,
             FieldType.SELECT,
             FieldType.MULTISELECT,
+            FieldType.DATE,
         ]
 
     @staticmethod
@@ -152,6 +157,10 @@ class FieldType(db.Model):
     def get_multiselect(cls):
         return cls._get_field_type(FieldType.MULTISELECT)
 
+    @classmethod
+    def get_date(cls):
+        return cls._get_field_type(FieldType.DATE)
+
     def __str__(self):
         return self.name
 
@@ -168,6 +177,7 @@ class FieldTypeSetup():
         self._add_field_type(FieldType(name=FieldType.DESCRIPTION))
         self._add_field_type(FieldType(name=FieldType.SELECT))
         self._add_field_type(FieldType(name=FieldType.MULTISELECT))
+        self._add_field_type(FieldType(name=FieldType.DATE))
 
     def _add_field_type(self, field_type):
         if FieldType.query.filter_by(name=field_type.name).count() == 0:
