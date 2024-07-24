@@ -817,7 +817,7 @@ nav.link_list {
 }
 
 /* Icon Buttons Start */
-menu a.icon::before {
+a:not([role=button]).icon::before {
     --_font_weight: 900;
     font-size: 1rem;
     font-family: 'Font Awesome 5 Free';
@@ -895,6 +895,9 @@ button[type="submit"],
 }
 .icon.folder_add {
     --_content: "\f65e";
+}
+.icon.list {
+    --_content: "\f03a";
 }
 .icon.lock {
     --_content: "\f023";
