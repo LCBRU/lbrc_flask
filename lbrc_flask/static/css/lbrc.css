@@ -682,7 +682,7 @@ dl.columns {
     display: grid;
     gap: var(--body-spacing);
     align-items: last baseline;
-    grid-template-columns: [start] repeat( auto-fit, 200px minmax(min(200px, 100%), 1fr) ) [end];
+    grid-template-columns: [start] 1fr 1fr [end];
 
     & dt {
         grid-column: 1;
