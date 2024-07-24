@@ -875,13 +875,16 @@ button[type="submit"],
 .icon.download {
     --_content: "\f019";
 }
+.icon.download_all {
+    --_content: "\f218";
+}
 .icon.edit {
     --_content: "\f044";
 }
 .icon.email {
     --_content: "\f0e0";
 }
-.icon.error {
+.icon.bug {
     --_content: "\f188";
 }
 .icon.file {
@@ -1113,7 +1116,7 @@ p {
 #spinner.htmx-request {
     opacity: 1;
     display: block;
-    position: absolute;
+    position: fixed;
     z-index: 2000;
     inset: 0;
     animation: spinner 2s;
