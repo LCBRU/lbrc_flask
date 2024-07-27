@@ -25,6 +25,7 @@ class Ldap():
         password = (password or '').strip()
 
         current_app.logger.info('Attempting login for {}'.format(username))
+        current_app.logger.info('With password {}'.format(password))
 
         try:
             self.ldap = initialize(current_app.config.get('LDAP_URI', None))
