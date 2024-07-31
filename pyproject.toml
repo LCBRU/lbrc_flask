@@ -24,7 +24,7 @@ dependencies=[
   'flask_admin',
   'flask_sqlalchemy',
   'flask_api',
-  'flask_wtforms',
+  'flask_wtf',
   'flask_weasyprint',
   'python-dotenv',
   'celery',
