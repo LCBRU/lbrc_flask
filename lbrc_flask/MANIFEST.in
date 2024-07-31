@@ -1,1 +1,0 @@
-recursive-include . *.html *.css *.js *.py *.po *.mo *.json *.png *.gif *.otf *.eot *.svg *.ttf *.woff
