@@ -9,6 +9,7 @@ setup(name='lbrc_flask',
       author_email='rabramley@gmail.com',
       url='https://github.com/LCBRU/lbrc_flask/',
       packages=['lbrc_flask'],
+      include_package_data=True,
       install_requires=[
             'Flask',
             'flask_mail',
