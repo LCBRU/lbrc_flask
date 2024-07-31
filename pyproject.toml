@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lbrc_flask"
+version = "1.1.0"
+authors = [
+  {name="Richard Bramley", email="rabramley@gmail.com" },
+]
+description = "NIHR Leicester BRC Flask Components and Theme"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies=[
+  'hatchling',
+  'Flask',
+  'flask_mail',
+  'flask_admin',
+  'flask_sqlalchemy',
+  'flask_api',
+  'flask_weasyprint',
+  'python-dotenv',
+  'email_validator',
+  'markdown',
+  'arrow',
+  'python-ldap',
+  'bcrypt',
+  'markdown',
+  'openpyxl',
+  'pygal',
+  'xlrd',
+  'chardet',
+  'rich',
+  'jsonschema',
+  'pytz',
+]
+
+[project.urls]
+Homepage = "https://github.com/LCBRU/lbrc_flask"
+Issues = "https://github.com/LCBRU/lbrc_flask/issues"
