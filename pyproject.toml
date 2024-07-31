@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.1.0"
+version = "1.1.1"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -17,14 +17,18 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies=[
+  'alembic',
   'hatchling',
   'Flask',
   'flask_mail',
   'flask_admin',
   'flask_sqlalchemy',
   'flask_api',
+  'flask_wtforms',
   'flask_weasyprint',
   'python-dotenv',
+  'celery',
+  'flask-security-too[fsqla,common]',
   'email_validator',
   'markdown',
   'arrow',
