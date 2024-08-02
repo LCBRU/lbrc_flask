@@ -917,6 +917,9 @@ button[type="submit"],
 .icon.publication {
     --_content: "\f1ea";
 }
+.icon.random {
+    --_content: "\f074";
+}
 .icon.redo {
     --_content: "\f01e";
 }
