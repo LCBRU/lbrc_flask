@@ -884,6 +884,9 @@ button[type="submit"],
 .icon.email {
     --_content: "\f0e0";
 }
+.icon.export {
+    --_content: "\f56e";
+}
 .icon.bug {
     --_content: "\f188";
 }
@@ -928,6 +931,12 @@ button[type="submit"],
 }
 .icon.report {
     --_content: "\f71e";
+}
+.icon.signpost {
+    --_content: "\f277";
+}
+.icon.times {
+    --_content: "\f00d";
 }
 .icon.unlock {
     --_content: "\f09c";
