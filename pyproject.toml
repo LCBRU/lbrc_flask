@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.1.4"
+version = "1.1.5"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -18,30 +18,32 @@ classifiers = [
 ]
 dependencies=[
   'alembic',
-  'hatchling',
+  'arrow',
+  'bcrypt',
+  'cairosvg',
+  'celery',
+  'chardet',
+  'email_validator',
   'Flask',
   'flask_mail',
   'flask_admin',
+  'flask-security-too[fsqla,common]',
   'flask_sqlalchemy',
   'flask_api',
   'flask_wtf',
   'flask_weasyprint',
-  'python-dotenv',
-  'celery',
-  'flask-security-too[fsqla,common]',
-  'email_validator',
-  'markdown',
-  'arrow',
-  'python-ldap',
-  'bcrypt',
+  'hatchling',
+  'jsonschema',
   'markdown',
   'openpyxl',
   'pygal',
-  'xlrd',
-  'chardet',
-  'rich',
-  'jsonschema',
+  'python-dateutil',
+  'python-dotenv',
+  'python-ldap',
   'pytz',
+  'rich',
+  'WTForms',
+  'xlrd',
 ]
 
 [project.urls]
