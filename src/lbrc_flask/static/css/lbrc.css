@@ -830,13 +830,15 @@ nav.link_list {
 }
 
 /* Icon Buttons Start */
-a:not([role=button]).icon::before {
-    --_font_weight: 900;
-    font-size: 1rem;
-    font-family: 'Font Awesome 5 Free';
-    font-weight: var(--_font_weight);
-    padding-right: var(--body-spacing);
-    content: var(--_content);
+a:not([role=button]).icon, .pill {
+    &::before {
+        --_font_weight: 900;
+        font-size: 1rem;
+        font-family: 'Font Awesome 5 Free';
+        font-weight: var(--_font_weight);
+        padding-right: var(--body-spacing);
+        content: var(--_content);    
+    }
 }
 a[role=button],
 input[type="button"],
@@ -846,7 +848,6 @@ input[type="image"],
 button[type="button"],
 button[type="reset"],
 button[type="submit"],
-.pill,
 .link_list a {
     &.icon::after {
         --_font_weight: 900;
