@@ -897,6 +897,9 @@ button[type="submit"],
 .icon.email {
     --_content: "\f0e0";
 }
+.icon.exclamation {
+    --_content: "\f06a";
+}
 .icon.export {
     --_content: "\f56e";
 }
