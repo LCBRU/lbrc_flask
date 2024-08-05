@@ -102,7 +102,7 @@ class FieldType(db.Model):
             FieldType.STRING,
             FieldType.TEXTAREA,
             FieldType.SELECT,
-            FieldType.MULTISELECT,
+            # FieldType.MULTISELECT,
             FieldType.DATE,
         ]
 
