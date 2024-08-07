@@ -875,6 +875,9 @@ button[type="submit"],
 .icon.add {
     --_content: "\f067";
 }
+.icon.back {
+    --_content: "\f2ea";
+}
 .icon.book {
     --_content: "\f02d";
 }
@@ -925,6 +928,9 @@ button[type="submit"],
 }
 .icon.folder_add {
     --_content: "\f65e";
+}
+.icon.home {
+    --_content: "\f015";
 }
 .icon.list {
     --_content: "\f03a";
