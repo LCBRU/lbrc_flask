@@ -1,0 +1,12 @@
+{% extends "lbrc/modal.html" %}
+
+
+{% block content %}
+    <h2>{{ title }}</h2>
+
+    <ul>
+        {% for i in list %}
+            <li>{{i}}</li>
+        {% endif %}
+    </ul>
+{% endblock %}

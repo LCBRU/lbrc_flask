@@ -983,6 +983,9 @@ button[type="submit"],
 .icon.user_add {
     --_content: "\f234";
 }
+.icon.view {
+    --_content: "\f06e";
+}
 
 /* Icon Button End */
 
