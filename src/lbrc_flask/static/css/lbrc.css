@@ -749,6 +749,12 @@ ul.panel_list > li {
 
 /* Panel List End */
 
+/* Simple List Start */
+ul.simple_list {
+    margin: var(--body-spacing);
+}
+/* Simple List End */
+
 /* Tabbed Display Start */
 
 .tabbed_display {
