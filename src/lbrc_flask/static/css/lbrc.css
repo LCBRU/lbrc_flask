@@ -129,6 +129,7 @@ main {
 .flex_header {
     display: flex;
     gap: var(--body-spacing);
+	align-items:center;
 }
 
 .flex_three_middle_grow {
