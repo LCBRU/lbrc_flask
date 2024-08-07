@@ -126,6 +126,11 @@ main {
     }
 }
 
+.flex_header {
+    display: flex;
+    gap: var(--body-spacing);
+}
+
 .flex_three_middle_grow {
     display: flex;
     gap: var(--body-spacing);
