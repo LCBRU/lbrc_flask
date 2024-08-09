@@ -151,7 +151,6 @@ main {
 
     & > *:last-child {
         flex-shrink: 1;
-        max-width: 50%;
     }
 }
 
@@ -382,7 +381,7 @@ select,
  {
     accent-color: var(--color-red);
     border: 1px solid var(--color-grey);
-    max-width: 100%;
+    max-width: min(100%, var(--column-min-width));
 }
 
  input[type="checkbox"], input[type="radio"] {
