@@ -373,7 +373,7 @@ label {
     text-transform: capitalize;
 }
 
-input,
+input:not([type="search"]),
 textarea,
 select,
 .select2-selection.select2-selection--multiple,
@@ -385,7 +385,7 @@ select,
     max-width: min(100%, var(--column-min-width));
 }
 
- input[type="checkbox"], input[type="radio"] {
+input[type="checkbox"], input[type="radio"] {
     display: block;
     transform: scale(1.5);
 }
