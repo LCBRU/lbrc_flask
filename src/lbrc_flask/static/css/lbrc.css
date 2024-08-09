@@ -373,7 +373,7 @@ label {
     text-transform: capitalize;
 }
 
-input:not([type="search"]),
+input,
 textarea,
 select,
 .select2-selection.select2-selection--multiple,
@@ -382,6 +382,15 @@ select,
  {
     accent-color: var(--color-red);
     border: 1px solid var(--color-grey);
+}
+
+input:not([type="search"]),
+textarea,
+select,
+.select2-selection.select2-selection--multiple,
+.select2-container--default.select2-container--focus .select2-selection--multiple,
+.select2-container--default
+ {
     max-width: min(100%, var(--column-min-width));
 }
 
