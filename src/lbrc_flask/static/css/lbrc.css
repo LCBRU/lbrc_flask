@@ -882,7 +882,7 @@ button[type="submit"]
         content: var(--_content);
     }
 
-    &.icon::after:empty {
+    &.icon:empty::after {
         padding-left: None;
     }
 }
