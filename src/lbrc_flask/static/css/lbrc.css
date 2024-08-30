@@ -1139,7 +1139,7 @@ p {
 .pill {
     background-color: var(--_pill_background_color);
     color: var(--_pill_forground_color);
-    padding: var(--body-spacing);
+    padding: var(--body-paragraph-spacing);
     border-radius: 2em;
     white-space: nowrap;
 
