@@ -1139,7 +1139,7 @@ p {
 .pill {
     background-color: var(--_pill_background_color);
     color: var(--_pill_forground_color);
-    padding: var(--body-paragraph-spacing);
+    padding: var(--body-spacing);
     border-radius: 2em;
     white-space: nowrap;
 
@@ -1159,10 +1159,6 @@ p {
     &.error {
         --_pill_background_color: var(--color-red);
     }
-}
-
-.pill.small {
-    padding: var(--body-small-spacing);
 }
 
 .text-danger {
