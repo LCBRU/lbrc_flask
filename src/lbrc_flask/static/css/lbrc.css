@@ -870,8 +870,9 @@ input[type="submit"],
 input[type="image"],
 button[type="button"],
 button[type="reset"],
-button[type="submit"]
-/* , .link_list a { removed as this causes double icons */
+button[type="submit"] 
+/* , .link_list a removed as this causes double icons */
+{
     &.icon::after {
         --_font_weight: 900;
         font-size: 1rem;
