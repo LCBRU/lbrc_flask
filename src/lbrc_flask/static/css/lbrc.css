@@ -883,7 +883,7 @@ button[type="submit"]
     }
 
     &.icon:empty::after {
-        padding-left: None;
+        padding-left: 0;
     }
 }
 
