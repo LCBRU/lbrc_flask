@@ -6,7 +6,7 @@
     --body-font-style: normal;
     --body-font-size: 1rem;
     --body-font-large-size: 1.5rem;
-    --body-small-spacing: 0.25rem;
+    --body-small-spacing: 2px;
     --body-spacing: 0.5rem;
     --body-paragraph-spacing: 1rem;
     --body-paragraph-double-spacing: calc(var(--body-paragraph-spacing) * 2);
