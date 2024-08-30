@@ -1049,6 +1049,13 @@ button[type="submit"]
         content: "\f00c";
     }    
 }
+.flash.message {
+    background-color: var(--color-blue-green);
+
+    &::before {
+        content: "\f277";
+    }    
+}
 
 /* Flash Message End */
 
