@@ -881,6 +881,10 @@ button[type="submit"]
         padding-left: var(--body-spacing);
         content: var(--_content);
     }
+
+    &.icon::after:empty {
+        padding-left: None;
+    }
 }
 
 .icon.regular {
