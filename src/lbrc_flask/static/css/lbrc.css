@@ -1051,6 +1051,7 @@ button[type="submit"]
 }
 .flash.message {
     background-color: var(--color-blue-green);
+    color: var(--color-white);
 
     &::before {
         content: "\f277";
