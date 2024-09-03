@@ -32,7 +32,6 @@ class AsyncJob(db.Model):
         try:
             self._run_actual()
 
-            self.scheduled = None
             self.error = ''
 
             db.session.add(self)
