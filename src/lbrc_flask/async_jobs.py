@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 import logging
 from lbrc_flask.celery import celery
 from lbrc_flask.database import db
-from sqlalchemy import Boolean, DateTime, Integer, String, UnicodeText, UniqueConstraint, select
+from sqlalchemy import Boolean, DateTime, Integer, String, UnicodeText, UniqueConstraint, select, func
 from sqlalchemy.orm import Mapped, mapped_column
 from lbrc_flask.logging import log_exception
 
@@ -73,7 +73,7 @@ class AsyncJob(db.Model):
 class AsyncJobs:
     @staticmethod
     def due_count():
-        return db.session.execute(select(AsyncJob).where(AsyncJob.scheduled < datetime.now(timezone.utc))).count()
+        return db.session.execute(select(func.count(AsyncJob.id)).where(AsyncJob.scheduled < datetime.now(timezone.utc))).scalar()
 
     @staticmethod
     def due():
