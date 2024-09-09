@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import logging
-from lbrc_flask import celery
+from lbrc_flask.celery import celery
 from lbrc_flask.database import db
 from sqlalchemy import Boolean, DateTime, Integer, String, UnicodeText, UniqueConstraint, select
 from sqlalchemy.orm import Mapped, mapped_column
