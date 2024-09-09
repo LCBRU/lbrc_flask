@@ -91,7 +91,7 @@ class AsyncJobs:
             .where(AsyncJob.job_type == job.job_type)
             .where(AsyncJob.entity_id == job.entity_id)
             .where(AsyncJob.entity_id_string == job.entity_id_string)
-        ).scalar_or_none()
+        ).scalar_one_or_none()
     
         if existing:
             existing.scheduled = job.scheduled
