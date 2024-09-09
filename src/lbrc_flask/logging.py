@@ -59,7 +59,7 @@ def log_exception(e):
         print("Error emailing in Exception processing")
         print('*-'*40)
         print(traceback.format_exc())
-        current_app.logger.error(("Error emailing in Exception processing")
+        current_app.logger.error("Error emailing in Exception processing")
         current_app.logger.error(traceback.format_exc())
 
 
