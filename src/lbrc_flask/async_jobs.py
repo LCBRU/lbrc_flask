@@ -113,6 +113,7 @@ def run_jobs_asynch():
 def _run_jobs():
     logging.debug('started')
 
-    AsyncJobs.run_due()
+    while AsyncJobs.due_count():
+        AsyncJobs.run_due()
 
     logging.debug('Ended')
