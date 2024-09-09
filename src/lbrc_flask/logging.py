@@ -47,11 +47,20 @@ def init_logging(app):
 def log_exception(e):
     print(traceback.format_exc())
     current_app.logger.error(traceback.format_exc())
-    email(
-        subject=f'ERROR: {g.get("lbrc_flask_title", "Application")}',
-        message=traceback.format_exc(),
-        recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
-    )
+
+    try:
+        email(
+            subject=f'ERROR: {g.get("lbrc_flask_title", "Application")}',
+            message=traceback.format_exc(),
+            recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
+        )
+    except Exception as e:
+        print('*-'*40)
+        print("Error emailing in Exception processing")
+        print('*-'*40)
+        print(traceback.format_exc())
+        current_app.logger.error(("Error emailing in Exception processing")
+        current_app.logger.error(traceback.format_exc())
 
 
 def log_form(form):
