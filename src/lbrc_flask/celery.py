@@ -1,4 +1,9 @@
+import logging
+from pathlib import Path
 from celery import Celery
+from celery.signals import after_setup_logger
+from flask import current_app
+
 
 celery = Celery()
 
@@ -25,3 +30,15 @@ def init_celery(app, title):
                 return self.run(*args, **kwargs)
 
     celery.Task = ContextTask
+
+
+@after_setup_logger.connect
+def setup_loggers(logger, *args, **kwargs):
+    formatter = logging.Formatter('%(asctime)s (%(levelname)s) %(module)s::%(funcName)s(%(lineno)d): %(message)s')
+
+    # add filehandler
+    fh = logging.FileHandler(str(Path(current_app.config["CELERY_LOG_DIRECTORY"]) / 'service.log'))
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+    logger.propagate = False
