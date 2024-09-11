@@ -41,7 +41,7 @@ class AsyncJob(db.Model):
         except Exception as e:
             logging.error(f'Error processing {self._name()}')
             log_exception(e)
-            logging.warn('Rolling back transaction')
+            logging.warning('Rolling back transaction')
             db.session.rollback()
 
             self.error = str(e)
@@ -82,10 +82,13 @@ class AsyncJobs:
     @staticmethod
     def run_due():
         for j in AsyncJobs.due():
+            logging.info(f'Running job: {j.job_type}')
             j.run()
 
     @staticmethod
     def schedule(job: AsyncJob):
+        logging.info(f'Scheduling job: {job.job_type}')
+
         existing: AsyncJob = db.session.execute(
             select(AsyncJob)
             .where(AsyncJob.job_type == job.job_type)
