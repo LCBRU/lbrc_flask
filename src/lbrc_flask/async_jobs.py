@@ -43,7 +43,7 @@ class AsyncJob(db.Model):
             db.session.commit()
 
         except Exception as e:
-            logging.error(f'Error processing {self._name()}')
+            logging.error(f'Error processing {self}')
             log_exception(e)
             logging.warning('Rolling back transaction')
             db.session.rollback()
