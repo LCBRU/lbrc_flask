@@ -23,7 +23,8 @@ class AsyncJob(db.Model):
     job_type: Mapped[String] = mapped_column(String(100), nullable=False)
     entity_id: Mapped[Integer] = mapped_column(Integer, nullable=True)
     entity_id_string: Mapped[String] = mapped_column(String(255), nullable=True)
-    scheduled: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    scheduled: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
+    last_executed: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
     error: Mapped[UnicodeText] = mapped_column(UnicodeText, nullable=True)
     retry: Mapped[Boolean] = mapped_column(Boolean, nullable=False, default=False)
     retry_timedelta_period: Mapped[String] = mapped_column(String(10), nullable=True)
@@ -34,6 +35,9 @@ class AsyncJob(db.Model):
             self._run_actual()
 
             self.error = ''
+
+            self.last_executed = datetime.now(timezone.utc)
+            self.scheduled = None
 
             db.session.add(self)
             db.session.commit()
@@ -49,6 +53,7 @@ class AsyncJob(db.Model):
             if self.retry and self.retry_timedelta_period and self.retry_timedelta_size:
                 self.scheduled = datetime.now(timezone.utc) + self.__retry_timedelta()
 
+            self.last_executed = datetime.now(timezone.utc)
             db.session.add(self)
             db.session.commit()
 
