@@ -68,6 +68,15 @@ class AsyncJob(db.Model):
 
     def _name(self):
         return f'{self.job_type}: {self.entity_id} - {self.entity_id_string}'
+    
+    def __str__(self):
+        result = []
+        result.append(f'ID = {self.id}')
+        result.append(f'job_type = {self.job_type}')
+        result.append(f'entity_id = {self.entity_id}')
+        result.append(f'entity_id_string = {self.entity_id_string}')
+        result.append(f'scheduled = {self.scheduled}')
+        return '{' + '; '.join(result) + '}'
 
 
 class AsyncJobs:
@@ -82,12 +91,12 @@ class AsyncJobs:
     @staticmethod
     def run_due():
         for j in AsyncJobs.due():
-            logging.info(f'Running job: {j.job_type}')
+            logging.info(f'Running job: {j}')
             j.run()
 
     @staticmethod
     def schedule(job: AsyncJob):
-        logging.info(f'Scheduling job: {job.job_type}')
+        logging.info(f'Scheduling job: {job}')
 
         existing: AsyncJob = db.session.execute(
             select(AsyncJob)
