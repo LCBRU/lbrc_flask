@@ -1005,6 +1005,9 @@ button[type="submit"]
 .icon.user_add {
     --_content: "\f234";
 }
+.icon.users {
+    --_content: "\f0c0";
+}
 .icon.view {
     --_content: "\f06e";
 }
