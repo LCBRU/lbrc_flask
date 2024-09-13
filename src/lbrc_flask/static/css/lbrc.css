@@ -143,6 +143,7 @@ main {
 
 .flex_two_left_grow {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--body-spacing);
 
     & > *:first-child {
