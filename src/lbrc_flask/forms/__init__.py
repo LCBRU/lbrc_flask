@@ -120,7 +120,6 @@ class FlashingForm(FlaskForm):
         for f in self.data_with_values():
             if f.type in ['MonthField']:
                 result[f.name] =  f.data.strftime("%Y-%m")
-                val = f.data.strftime("%Y-%m")
             elif f.type in ['BooleanField']:
                 if f.data:
                     result[f.name] = f.data
@@ -138,9 +137,15 @@ class FlashingForm(FlaskForm):
                 if hasattr(f, 'choices'):
                     choices = {str(k):v for k, v in dict(f.choices).items()}
                     datas.append(str(choices.get(str(d), str(d))))
+                elif f.type in ['MonthField']:
+                    datas.append(d.strftime("%Y-%m"))
+                elif f.type in ['BooleanField']:
+                    if f.data:
+                        datas.append(d)
                 else:
                     datas.append(str(d))
-                result[name] = ', '.join(datas)
+
+            result[name] = ', '.join(datas)
 
         return result
 
