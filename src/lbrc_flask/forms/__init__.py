@@ -137,7 +137,8 @@ class FlashingForm(FlaskForm):
             for d in ensure_list(f.data):
                 print(f.choices)
                 if f.choices:
-                    datas.append(str(dict(f.choices).get(int(d), d)))
+                    choices = {str(k):v for k, v in dict(f.choices)}
+                    datas.append(str(choices.get(str(d), str(d))))
                 else:
                     datas.append(str(d))
                 result[name] = ', '.join(datas)
