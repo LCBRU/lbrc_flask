@@ -15,6 +15,7 @@ from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
 
+from lbrc_flask.data_conversions import ensure_list
 from lbrc_flask.validators import is_integer
 
 
@@ -126,6 +127,21 @@ class FlashingForm(FlaskForm):
             else:
                 result[f.name] = f.data
     
+        return result
+    
+    def values_description(self):
+        result = {}
+        for f in self.data_with_values():
+            name = f.label.text
+            datas = []
+            for d in ensure_list(f.data):
+                print(f.choices)
+                if f.choices:
+                    datas.append(str(dict(f.choices).get(int(d), d)))
+                else:
+                    datas.append(str(d))
+                result[name] = ', '.join(datas)
+
         return result
 
 
