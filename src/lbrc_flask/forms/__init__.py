@@ -135,7 +135,7 @@ class FlashingForm(FlaskForm):
             name = f.label.text
             datas = []
             for d in ensure_list(f.data):
-                if f.choices:
+                if hasattr(f, 'choices'):
                     choices = {str(k):v for k, v in dict(f.choices).items()}
                     datas.append(str(choices.get(str(d), str(d))))
                 else:
