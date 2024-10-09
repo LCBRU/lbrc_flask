@@ -158,6 +158,13 @@ main {
 .grid_stacked_center {
     display: grid;
     justify-items: center;
+    gap: var(--body-spacing);
+}
+
+.grid_stacked_left {
+    display: grid;
+    justify-items: left;
+    gap: var(--body-spacing);
 }
 
 /* Layout End */
