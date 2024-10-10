@@ -587,7 +587,7 @@ button[type="submit"] {
         display: block;
         padding: var(--body-paragraph-spacing);
         min-width: 100%;
-        max-width: 100%;
+        white-space: nowrap;
     }
 
     & > ul a:hover, & > ul button[type="menu"]:hover {
