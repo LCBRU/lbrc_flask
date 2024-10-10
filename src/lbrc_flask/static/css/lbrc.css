@@ -863,7 +863,7 @@ nav.link_list {
 }
 
 /* Icon Buttons Start */
-a:not([role=button]).icon, .pill {
+a:not([role=button]).icon, .pill, button[type="menu"] {
     &::before {
         --_font_weight: 900;
         font-size: 1rem;
