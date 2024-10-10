@@ -997,6 +997,9 @@ button[type="submit"]
 .icon.times {
     --_content: "\f00d";
 }
+.icon.themes {
+    --_content: "\f0e8";
+}
 .icon.unlock {
     --_content: "\f09c";
 }
