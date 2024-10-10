@@ -583,12 +583,12 @@ button[type="submit"] {
         margin-left: 0;
     }
 
-    & > ul a {
+    & > ul a, & > ul button[type="menu"] {
         display: block;
         padding: var(--body-paragraph-spacing);
     }
 
-    & > ul a:hover {
+    & > ul a:hover, & > ul button[type="menu"]:hover {
         background-color: var(--color-grey);
     }
 
@@ -1093,8 +1093,16 @@ button[type="submit"]
 }
 
 /* Chart End */
+button[type="menu"] {
+    background-color: transparent;
+    border: none;
+    display: inline;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
 
-a {
+a, button[type="menu"] {
     text-decoration: none;
     color: var(--color-green);
 }
