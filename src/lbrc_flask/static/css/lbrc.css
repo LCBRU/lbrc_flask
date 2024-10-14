@@ -586,7 +586,6 @@ button[type="submit"] {
     & > ul a, & > ul button[type="menu"] {
         display: block;
         padding: var(--body-paragraph-spacing);
-        min-width: 100%;
         white-space: nowrap;
     }
 
