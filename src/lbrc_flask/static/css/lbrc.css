@@ -589,6 +589,10 @@ button[type="submit"] {
         white-space: nowrap;
     }
 
+    & > ul button[type="menu"] {
+        min-width: 100%;
+    }
+
     & > ul a:hover, & > ul button[type="menu"]:hover {
         background-color: var(--color-grey);
     }
