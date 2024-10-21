@@ -444,6 +444,10 @@ select[multiple]:focus option:checked {
     background: var(--color-red) linear-gradient(0deg, var(--color-red) 0%, var(--color-red) 100%);
 }
 
+textarea {
+    resize: vertical;
+}
+
 a[role=button],
 input[type="button"],
 input[type="reset"],
