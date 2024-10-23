@@ -1,0 +1,27 @@
+{% from "lbrc/pagination.html" import pagination_summary %}
+
+<p>
+    {{ pagination_summary(results, 'result') }}
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in results.items %}
+        <tr>
+            <td>{{ r.name }}</td>
+            <td class="grid_stacked_left">
+                <form hx-post="{{ url }}">
+                    <input type="hidden" name="id" value="{{ r.id }}">
+                    <button class="icon add" type="submit" title="{{ add_title }}"></button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

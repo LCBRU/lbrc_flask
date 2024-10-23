@@ -1,0 +1,24 @@
+{% extends "lbrc/modal.html" %}
+{% from "lbrc/form_macros.html" import render_form_fields %}
+
+{% block content %}
+<h2>{{title}}</h2>
+
+<form>
+    <fieldset>
+        <input
+            type="search"
+            placeholder="{{search_placeholder or 'Search ...'}}"
+            name="search_string"
+            id="search_string"
+            hx-trigger="input changed delay:500ms"
+            hx-get="{{ results_url }}"
+            hx-target="#search_results" >
+            </fieldset>
+</form>
+
+<div id="search_results" hx-get="{{ results_url }}" hx-trigger="load"></div>
+
+{% endblock %}
+
+
