@@ -1,27 +1,34 @@
 {% from "lbrc/pagination.html" import pagination_summary %}
 
-<p>
-    {{ pagination_summary(results, 'result') }}
-</p>
+<div id="search_results_results" hx-target="#search_results_results" hx-swap="outerHTML">
+    <p>
+        {{ pagination_summary(results, 'result') }}
+    </p>
 
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for r in results.items %}
-        <tr>
-            <td>{{ r.name }}</td>
-            <td class="grid_stacked_left">
-                <form hx-post="{{ url }}">
-                    <input type="hidden" name="id" value="{{ r.id }}">
-                    <button class="icon add" type="submit" title="{{ add_title }}"></button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in results.items %}
+            <tr>
+                <td>{{ r.name }}</td>
+                <td class="grid_stacked_left">
+                    <form hx-post="{{ add_url }}">
+                        <input type="hidden" name="id" value="{{ r.id }}">
+                        <button class="icon add" type="submit" title="{{ add_title }}"></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        {% set rargs = results_url_args or {} %}
+        {{ render_pagination_htmx(academics, results_url, **rargs) }}
+    </p>
+</div>
