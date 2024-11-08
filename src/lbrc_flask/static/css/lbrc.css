@@ -1198,6 +1198,7 @@ p {
     padding: var(--body-spacing);
     border-radius: 2em;
     white-space: nowrap;
+    line-height: 1.5;
 
     & a {
         color: var(--color-white);
