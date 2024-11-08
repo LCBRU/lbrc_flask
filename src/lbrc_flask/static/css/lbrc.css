@@ -765,6 +765,18 @@ ul.panel_list > li {
         padding: var(--body-paragraph-spacing);
     }
 
+    & header.success {
+        background-color: var(--color-green);
+    }
+
+    & header.warning {
+        background-color: var(--color-orange);
+    }
+
+    & header.error {
+        background-color: var(--color-red);
+    }
+
     & > * {
         padding-inline: var(--body-paragraph-spacing);
     }
