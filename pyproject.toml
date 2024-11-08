@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.5.1"
+version = "1.6.0"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -42,6 +42,7 @@ dependencies=[
   'python-ldap',
   'pytz',
   'rich',
+  'setuptools',
   'WTForms',
   'xlrd',
 ]
