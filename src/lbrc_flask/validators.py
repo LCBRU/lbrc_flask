@@ -104,7 +104,7 @@ def is_invalid_postcode(postcode):
 
 def is_number(s):
     """ Returns True if string is a number. """
-    if re.match("^\d+?\.\d+?$", s) is None:
+    if re.match(r"^\d+?\.\d+?$", s) is None:
         return s.isdigit()
     return True
 
