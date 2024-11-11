@@ -167,6 +167,12 @@ main {
     gap: var(--body-spacing);
 }
 
+.grid_stacked_right {
+    display: grid;
+    justify-items: right;
+    gap: var(--body-spacing);
+}
+
 /* Layout End */
 
 /* Header Starter */
