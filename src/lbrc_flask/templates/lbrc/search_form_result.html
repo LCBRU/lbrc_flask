@@ -5,6 +5,9 @@
         {% if warning %}
             <div class="pill warning icon exclamation">{{warning}}</div>
         {% endif %}
+        {% if message %}
+            <p>{{message}}</p>
+        {% endif %}
         {{render_form_fields(form)}}
         {{render_modal_button_bar(submit_label=submit_label, delete_link=delete_link)}}
     </fieldset>
