@@ -1,13 +1,14 @@
 {% from "lbrc/form_macros.html" import render_form_fields, render_modal_button_bar %}
 
+{% if warning %}
+    <div class="pill warning icon exclamation">{{warning}}</div>
+{% endif %}
+{% if message %}
+    <p>{{message}}</p>
+{% endif %}
+
 <form action="{{ url }}" hx-post="{{ url }}" hx-indicator="#spinner" method="POST" enctype="multipart/form-data">
     <fieldset>
-        {% if warning %}
-            <div class="pill warning icon exclamation">{{warning}}</div>
-        {% endif %}
-        {% if message %}
-            <p>{{message}}</p>
-        {% endif %}
         {{render_form_fields(form)}}
         {{render_modal_button_bar(submit_label=submit_label, delete_link=delete_link)}}
     </fieldset>
