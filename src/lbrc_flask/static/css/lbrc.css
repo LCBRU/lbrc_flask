@@ -398,7 +398,15 @@ select,
     border: 1px solid var(--color-grey);
 }
 
-input:not([type="search"]),
+/*
+    Taken out to fix  problem where:
+    - form is in a modal dialog
+    - form has another element, say paragraph or pill, that is greater than 1 column
+      width, but not yet 2 columns wide.
+    - Paragraph stretches width of modal dialog
+    - But inputs remain fixed width and are squeezed to the left.
+*/
+/* input:not([type="search"]),
 textarea,
 select,
 .select2-selection.select2-selection--multiple,
@@ -406,7 +414,7 @@ select,
 .select2-container--default
  {
     max-width: min(100%, var(--column-min-width));
-}
+} */
 
 input[type="checkbox"], input[type="radio"] {
     display: block;
