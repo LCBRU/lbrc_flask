@@ -370,7 +370,7 @@ fieldset {
     margin-block: var(--body-paragraph-spacing);
 }
 
-fieldset > p {
+fieldset > p, fieldset > .pill {
     grid-column: start / end;
 }
 
