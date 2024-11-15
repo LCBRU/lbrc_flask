@@ -5,7 +5,17 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 
 
-db = SQLAlchemy()
+class LbrcSQLAlchemy(SQLAlchemy):
+    def paginate(self, **kwargs):
+        if 'per_page' not in kwargs:
+            kwargs['per_page'] = 5
+        if 'error_out' not in kwargs:
+            kwargs['error_out'] = False
+
+        return super().paginate(**kwargs)
+
+
+db = LbrcSQLAlchemy()
 
 
 # See https://docs.sqlalchemy.org/en/13/core/custom_types.html#backend-agnostic-guid-type
