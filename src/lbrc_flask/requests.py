@@ -2,13 +2,17 @@ import urllib
 from flask import request
 
 
-def get_value_from_all_arguments(name):
-    all_args = {**request.view_args, **request.args, **request.form}
+def all_args():
+    result = {**request.view_args, **request.args, **request.form}
 
     if request.data and request.json:
-        all_args.update(request.json)
+        result.update(request.json)
+    
+    return result
 
-    return all_args.get(name)
+
+def get_value_from_all_arguments(name):
+    return all_args().get(name)
 
 
 def add_parameters_to_url(url, parameters):
@@ -24,5 +28,3 @@ def add_parameters_to_url(url, parameters):
     url_parts = url_parts._replace(query = '&'.join(newq))
 
     return urllib.parse.urlunparse(url_parts)
-
-
