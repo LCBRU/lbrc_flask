@@ -161,6 +161,10 @@ class SearchForm(FlashingForm):
     search = SearchField("Search", validators=[Length(max=100)])
     page = IntegerField("Page", default=1)
 
+    @property
+    def search_words(self):
+        return (self.search.data or '').split()
+
 
 class ConfirmForm(FlashingForm):
     id = HiddenField("id", validators=[DataRequired()])
