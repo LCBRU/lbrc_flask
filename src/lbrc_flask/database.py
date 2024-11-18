@@ -1,5 +1,6 @@
 import uuid
 from flask_sqlalchemy import SQLAlchemy
+from lbrc_flask.requests import get_value_from_all_arguments
 from sqlalchemy.types import TypeDecorator, CHAR
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -11,6 +12,8 @@ class LbrcSQLAlchemy(SQLAlchemy):
             kwargs['per_page'] = 5
         if 'error_out' not in kwargs:
             kwargs['error_out'] = False
+        if 'page' not in kwargs:
+            kwargs['page'] = get_value_from_all_arguments('page')
 
         return super().paginate(**kwargs)
 
