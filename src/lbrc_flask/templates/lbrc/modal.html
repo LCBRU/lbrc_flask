@@ -4,7 +4,7 @@
     <div class="modal-underlay" _="on click trigger closeModal"></div>
 	<div class="modal-content container">
         <div class="errors">
-            {{ errors.render_errors(get_flashed_messages(with_categories=true)) }}
+            {{ render_errors(get_flashed_messages(with_categories=true)) }}
         </div>    
     
         {% block content %}{% endblock %}
