@@ -16,6 +16,7 @@ from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
 
 from lbrc_flask.data_conversions import ensure_list
+from lbrc_flask.requests import all_args
 from lbrc_flask.validators import is_integer
 
 
@@ -153,6 +154,9 @@ class FlashingForm(FlaskForm):
 class SearchForm(FlashingForm):
 
     def __init__(self, search_placeholder=None, **kwargs):
+        if 'data' not in kwargs:
+            kwargs['data'] = all_args()
+
         super().__init__(**kwargs, meta={'csrf': False})
 
         if search_placeholder:
