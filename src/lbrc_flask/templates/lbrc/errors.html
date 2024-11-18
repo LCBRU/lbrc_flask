@@ -3,6 +3,16 @@
 {% macro render_errors(errors) %}
 
     {% if errors | length > 0 %}
+        {% for category, message in errors %}
+            <div class="flash {{category}}">{{message}}</div>
+        {% endfor %}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro render_errors_modal(errors) %}
+
+    {% if errors | length > 0 %}
         <div class="modal" _="on closeModal add .closing then wait for animationend then remove me">
             <div class="modal-underlay" _="on click trigger closeModal"></div>
             <div class="modal-content container">

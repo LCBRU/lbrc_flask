@@ -23,7 +23,7 @@
     </header>
   
     <main>
-      {{ render_errors(get_flashed_messages(with_categories=true)) }}
+      {{ render_errors_modal(get_flashed_messages(with_categories=true)) }}
  
       {% block page_content %}{% endblock %}
     </main>
