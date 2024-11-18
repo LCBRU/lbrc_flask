@@ -13,7 +13,7 @@ class LbrcSQLAlchemy(SQLAlchemy):
         if 'error_out' not in kwargs:
             kwargs['error_out'] = False
         if 'page' not in kwargs:
-            kwargs['page'] = get_value_from_all_arguments('page')
+            kwargs['page'] = int(get_value_from_all_arguments('page') or 1)
 
         return super().paginate(**kwargs)
 
