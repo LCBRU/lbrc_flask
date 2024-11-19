@@ -20,7 +20,7 @@
         {% endif %}
 
         {% if field.type == "SelectMultipleField" %}
-          {{ field( class="form-control select2", **kwargs)|safe }}
+          {{ field( class="select2", **kwargs)|safe }}
         {% elif field.type == "SearchField" %}
           {{ render_search_field(field) }}
         {% else %}
