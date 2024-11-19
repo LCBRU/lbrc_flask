@@ -1,6 +1,12 @@
+{% from "lbrc/errors.html" import render_errors %}
+
 <div class="modal" _="on closeModal {% for e in closing_events %} or {{e}}{% endfor %} add .closing then wait for animationend then remove me">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
 	<div class="modal-content container">
+        <div class="errors">
+            {{ render_errors(get_flashed_messages(with_categories=true)) }}
+        </div>    
+    
         {% block content %}{% endblock %}
 	</div>
 </div>

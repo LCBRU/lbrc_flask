@@ -167,6 +167,12 @@ main {
     gap: var(--body-spacing);
 }
 
+.grid_stacked_right {
+    display: grid;
+    justify-items: right;
+    gap: var(--body-spacing);
+}
+
 /* Layout End */
 
 /* Header Starter */
@@ -364,7 +370,7 @@ fieldset {
     margin-block: var(--body-paragraph-spacing);
 }
 
-fieldset > p {
+fieldset > p, fieldset > .pill {
     grid-column: start / end;
 }
 
@@ -392,7 +398,15 @@ select,
     border: 1px solid var(--color-grey);
 }
 
-input:not([type="search"]),
+/*
+    Taken out to fix  problem where:
+    - form is in a modal dialog
+    - form has another element, say paragraph or pill, that is greater than 1 column
+      width, but not yet 2 columns wide.
+    - Paragraph stretches width of modal dialog
+    - But inputs remain fixed width and are squeezed to the left.
+*/
+/* input:not([type="search"]),
 textarea,
 select,
 .select2-selection.select2-selection--multiple,
@@ -400,7 +414,7 @@ select,
 .select2-container--default
  {
     max-width: min(100%, var(--column-min-width));
-}
+} */
 
 input[type="checkbox"], input[type="radio"] {
     display: block;
@@ -763,6 +777,18 @@ ul.panel_list > li {
     & header {
         background-color: var(--color-light-grey);
         padding: var(--body-paragraph-spacing);
+    }
+
+    & header.success {
+        background-color: var(--color-green);
+    }
+
+    & header.warning {
+        background-color: var(--color-orange);
+    }
+
+    & header.error {
+        background-color: var(--color-red);
     }
 
     & > * {
@@ -1186,6 +1212,7 @@ p {
     padding: var(--body-spacing);
     border-radius: 2em;
     white-space: nowrap;
+    line-height: 1.5;
 
     & a {
         color: var(--color-white);
