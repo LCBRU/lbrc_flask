@@ -1206,6 +1206,11 @@ p {
     line-height: 1.5em;
 }
 
+hr {
+    color: var(--color-light-grey);
+    margin: var(--body-paragraph-spacing);
+}
+
 .pill {
     background-color: var(--_pill_background_color);
     color: var(--_pill_forground_color);
