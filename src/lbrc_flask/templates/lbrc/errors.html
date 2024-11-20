@@ -1,4 +1,4 @@
-{% from "lbrc/form_macros.html" import render_modal_cancel_bar %}
+{% from "lbrc/form_macros.html" import render_modal_ok_bar %}
 
 {% macro render_errors(errors) %}
 
@@ -20,7 +20,7 @@
                     <div class="flash {{category}}">{{message}}</div>
                 {% endfor %}
         
-                {{render_modal_cancel_bar()}}
+                {{render_modal_ok_bar()}}
             </div>
         </div>
     {% endif %}
