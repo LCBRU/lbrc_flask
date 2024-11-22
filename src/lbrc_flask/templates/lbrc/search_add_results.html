@@ -15,12 +15,17 @@
         <tbody>
             {% for r in results.items %}
             <tr>
-                <td>{{ r.name }}</td>
+                <td class="grid_stacked_left">
+                    <span>{{ r.name }}</span>
+                    <span>{{ r.info }}</span>                    
+                </td>
                 <td class="grid_stacked_right">
-                    <form hx-post="{{ add_url }}">
-                        <input type="hidden" name="id" value="{{ r.id }}">
-                        <button class="icon {{select_icon | default_if_none('add')}}" type="submit" title="{{ add_title }}"></button>
-                    </form>
+                    {% if not r.not_selectable %}
+                        <form hx-post="{{ add_url }}">
+                            <input type="hidden" name="id" value="{{ r.id }}">
+                            <button class="icon {{select_icon | default_if_none('add')}}" type="submit" title="{{ add_title }}"></button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
