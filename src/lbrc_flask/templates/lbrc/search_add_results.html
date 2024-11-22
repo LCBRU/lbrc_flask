@@ -16,10 +16,10 @@
             {% for r in results.items %}
             <tr>
                 <td>{{ r.name }}</td>
-                <td class="grid_stacked_left">
+                <td class="grid_stacked_right">
                     <form hx-post="{{ add_url }}">
                         <input type="hidden" name="id" value="{{ r.id }}">
-                        <button class="icon add" type="submit" title="{{ add_title }}"></button>
+                        <button class="icon {{select_icon | default_if_none('add')}}" type="submit" title="{{ add_title }}"></button>
                     </form>
                 </td>
             </tr>

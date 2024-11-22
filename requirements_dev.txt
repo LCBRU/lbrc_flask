@@ -1,0 +1,4 @@
+.
+pytest
+faker
+bs4
