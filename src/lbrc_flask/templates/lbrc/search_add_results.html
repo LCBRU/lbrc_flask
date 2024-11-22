@@ -16,8 +16,10 @@
             {% for r in results.items %}
             <tr>
                 <td>
-                    <span>{{ r.name }}</span>
-                    <span>{{ r.info | blank_if_none }}</span>                    
+                    <div>{{ r.name }}</div>
+                    {% if r.info %}
+                        <div>{{ r.info | blank_if_none }}</div>
+                    {% endif %}
                 </td>
                 <td class="grid_stacked_right">
                     {% if not r.not_selectable %}
