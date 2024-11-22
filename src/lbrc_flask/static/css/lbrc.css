@@ -1246,6 +1246,10 @@ hr {
     color: var(--color-red);
 }
 
+.text-muted {
+    color: var(--color-dark-grey);
+}
+
 #spinner {
     opacity: 0;
     transition: opacity 500ms ease-in;

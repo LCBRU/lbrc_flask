@@ -18,7 +18,7 @@
                 <td>
                     <div>{{ r.name }}</div>
                     {% if r.info %}
-                        <div>{{ r.info | blank_if_none }}</div>
+                        <div class="text-muted">{{ r.info | blank_if_none }}</div>
                     {% endif %}
                 </td>
                 <td class="grid_stacked_right">
