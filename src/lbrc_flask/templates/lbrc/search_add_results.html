@@ -17,7 +17,7 @@
             <tr>
                 <td>
                     <span>{{ r.name }}</span>
-                    <span>{{ r.info }}</span>                    
+                    <span>{{ r.info | blank_if_none }}</span>                    
                 </td>
                 <td class="grid_stacked_right">
                     {% if not r.not_selectable %}
