@@ -365,7 +365,7 @@ fieldset {
     border: none;
     display: grid;
     gap: var(--body-paragraph-spacing);
-    align-items: last baseline;
+    align-items: first baseline;
     grid-template-columns: [start] repeat( auto-fit, minmax(min(var(--column-min-width), 100%), 1fr) ) [end];
     margin-block: var(--body-paragraph-spacing);
 }
@@ -393,10 +393,19 @@ select,
 .select2-selection.select2-selection--multiple,
 .select2-container--default.select2-container--focus .select2-selection--multiple,
 .select2-container--default
- {
+{
     accent-color: var(--color-red);
     border: 1px solid var(--color-grey);
 }
+
+.select2-selection__choice {
+    white-space: wrap !important;
+}
+
+.select2-selection__choice__remove {
+    border-bottom: 1px solid #aaa !important;
+}
+
 
 /*
     Taken out to fix  problem where:
