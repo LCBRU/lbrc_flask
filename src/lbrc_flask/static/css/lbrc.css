@@ -1002,6 +1002,9 @@ button[type="submit"]
 .icon.folder_add {
     --_content: "\f65e";
 }
+.icon.folder_open {
+    --_content: "\f07c";
+}
 .icon.home {
     --_content: "\f015";
 }
