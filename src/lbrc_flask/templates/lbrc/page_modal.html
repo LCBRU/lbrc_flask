@@ -1,10 +1,13 @@
-{% extends "lbrc/page.html" %}
+{% extends "lbrc/base.html" %}
+{% from "lbrc/errors.html" import render_errors %}
 
-{% block page_content %}
+{% block base_content %}
 
 <div class="modal">
     <div class="modal-underlay"></div>
 	<div class="modal-content container">
+        {{ render_errors(get_flashed_messages(with_categories=true)) }}
+
         {% block content %}{% endblock %}
 	</div>
 </div>
