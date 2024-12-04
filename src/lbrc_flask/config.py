@@ -42,6 +42,8 @@ class BaseConfig:
 
     LBRC_FLASK_LOGIN_FORM_DESCRIPTION = os.getenv("LBRC_FLASK_LOGIN_FORM_DESCRIPTION", '')
     LBRC_FLASK_TABLE_BASED_SECURITY = os.getenv("LBRC_FLASK_TABLE_BASED_SECURITY", 'True') == 'True'
+    LBRC_UOL_LDAP_SECURITY = os.getenv("LBRC_UOL_LDAP_SECURITY", 'True') == 'True'
+    LBRC_UHL_LDAP_SECURITY = os.getenv("LBRC_UHL_LDAP_SECURITY", 'True') == 'True'
 
     # Users
     ADMIN_EMAIL_ADDRESS = os.getenv("ADMIN_EMAIL_ADDRESS", '')

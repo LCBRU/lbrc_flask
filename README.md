@@ -138,3 +138,8 @@ Once all the models have basic information about when they changed and who done 
 step will be to come up with a solution for saving historic audit information.  This could be:
 1. Database triggers - and is there a way to get Alembic to create them?
 2. Hooking into SqlAlchemy shenanigans
+### Better Icons
+#### Problem
+The icon set that we use (FontAwesome) is a bit limited.
+#### Solution
+Use [Nerd Fonts Aggregated Icons](https://www.nerdfonts.com/)
