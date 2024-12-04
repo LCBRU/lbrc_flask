@@ -366,8 +366,12 @@ fieldset {
     display: grid;
     gap: var(--body-paragraph-spacing);
     align-items: first baseline;
-    grid-template-columns: [start] repeat( auto-fit, minmax(min(var(--column-min-width), 100%), 1fr) ) [end];
+    grid-template-columns: [start] minmax(min(var(--column-min-width), 100%), 1fr) [end];
     margin-block: var(--body-paragraph-spacing);
+}
+
+fieldset.columns {
+    grid-template-columns: [start] repeat( auto-fit, minmax(min(var(--column-min-width), 100%), 1fr) ) [end];
 }
 
 fieldset > p, fieldset > .pill {
