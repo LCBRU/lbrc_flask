@@ -2,6 +2,6 @@
 <p>
     Your password for the {{ organisation_name }} {{ application_title }} application
     has been reset.  If this is unexpected, please contact the Leicester Biomedical
-    Research Centre Health Informatics Platform and reset it using the this link:
-    {{ url_for_security('forgot_password', _external=True) }}.
+    Research Centre Health Informatics Platform and reset it using
+    <a href="{{ url_for_security('forgot_password', _external=True) }}">this link</a>.
 </p>
