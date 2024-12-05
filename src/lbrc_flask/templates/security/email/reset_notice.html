@@ -1,4 +1,7 @@
+<h1>{{ organisation_name }} {{ application_title }} Password Reset</h1>
 <p>
-    Your password has been reset for the LBRC Uploads Portal.
+    Your password for the {{ organisation_name }} {{ application_title }} application
+    has been reset.  If this is unexpected, please contact the Leicester Biomedical
+    Research Centre Health Informatics Platform and reset it using the this link:
+    {{ url_for_security('forgot_password', _external=True) }}.
 </p>
-
