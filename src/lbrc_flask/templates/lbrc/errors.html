@@ -5,7 +5,9 @@
     {% if errors | length > 0 %}
         <ul class="errors">
             {% for category, message in errors %}
-                <li class="flash {{category}}">{{message}}</li>
+                {% if message != config['SECURITY_MSG_LOGIN'] %}
+                    <li class="flash {{category}}">{{message}}</li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}
