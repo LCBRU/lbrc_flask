@@ -1,53 +1,14 @@
-{% extends "lbrc_flask/dialog.html" %}
-{% import "lbrc_flask/form_macros.html" as formhelper %}
-{% from "security/_macros.html" import render_field_with_errors, render_field %}
-
-{% block formname %}Login{% endblock%}
-{% block errors %}
-	{{ formhelper.render_form_errors(login_user_form)  }}
-{% endblock %}
+{% extends "lbrc/page_modal.html" %}
 
 {% block content %}
-<div class="form">  
-	<p>Please enter your username and password to login</p>
-	<p>Use the following link if you have <a href="{{ url_for_security('forgot_password') }}">forgotten your password</a></p>
-	<p>If this is your first time here, use this link to <a href="{{ url_for_security('forgot_password') }}">register a password</a></p>
 
-	<form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
-		{{ login_user_form.hidden_tag() }}
+    {% set login_link = 'table_based_login' %}
 
-		<div class="form-group input-group">
-			<span class="input-group-prepend">
-				<span class="input-group-text">
-					<span class="fas fa-envelope"></span>
-				</span>
-			</span>
-			{{ login_user_form.email(class="form-control", placeholder="Email Address") }}
-		</div>
+    {% if config['LBRC_UOL_LDAP_SECURITY'] %}
+        {% set login_link = 'uol_login' %}
+    {% elif config['LBRC_UHL_LDAP_SECURITY'] %}
+        {% set login_link = 'uhl_login' %}
+    {% endif %}
 
-		<div class="form-group input-group">
-			<span class="input-group-prepend">
-				<span class="input-group-text">
-					<span class="fas fa-lock"></span>
-				</span>
-			</span>
-			{{ login_user_form.password(class="form-control", placeholder="Password") }}
-		</div>
-
-		<div class="checkbox">
-			<label>
-				{{ login_user_form.remember }} Remember me on this computer
-			</label>
-		</div>
-
-		<div class="text-right">
-			{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
-				<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">First Login</a>
-				<a href="{{ url_for_security('forgot_password') }}" class="btn btn-info" role="button">Forgotten Password</a>
-			{% endif %}
-			<button type="submit" class="btn btn-primary">Login</button>
-		</div>
-	</form>
-</div>
-
+    <div hx-trigger="load" hx-target="this" hx-swap="innerHTML" hx-get="{{ url_for(login_link) }}"></div>
 {% endblock %}

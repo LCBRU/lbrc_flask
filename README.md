@@ -143,3 +143,24 @@ step will be to come up with a solution for saving historic audit information.  
 The icon set that we use (FontAwesome) is a bit limited.
 #### Solution
 Use [Nerd Fonts Aggregated Icons](https://www.nerdfonts.com/)
+### Smaller Search Forms
+#### Problem
+The search form at the top of index pages can get quite large, which hides the important
+content of the page.
+#### Solution
+There are a few options:
+1. Put the search form in a concertino panel
+2. Dropdown list of search fields and dynamic entry
+3. Some way to pick what you want to search (but not a drop down) and the enter the value
+All of these options will probably need a way to show what filters are currently in place
+and let users delete theme.  Something like a list of buttons with an X on them.
+### Editable LBRC Flask Library
+#### Problem
+You used to be able to include the requirements in the `requirements.txt`
+file with a `-e` flag that made them editable.  That is now deprecated.
+This means that you have to have the requirement as a separate project
+and release it everytime you make a little change.  This slows down the
+process considerably.
+#### Solution
+I dunno.  There must be a solution to this.  I don't know why they had
+to deprecate the old version.

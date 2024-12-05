@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.7.35"
+version = "1.8.0"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
