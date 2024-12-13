@@ -1,7 +1,7 @@
 :root{
-    --body-font-family:Lato;
-    --body-font-weight:400;
-    --body-font-weight-bold:700;
+    --body-font-family: Lato;
+    --body-font-weight: 400;
+    --body-font-weight-bold: 700;
     --body-line-height: 1.625;
     --body-font-style: normal;
     --body-font-size: 1rem;
@@ -411,12 +411,6 @@ select,
     border-bottom: 1px solid #aaa !important;
 }
 
-.MultiCheckboxField * {
-    display: inline-block;
-}
-
-
-
 /*
     Taken out to fix  problem where:
     - form is in a modal dialog
@@ -524,20 +518,22 @@ button[type="submit"] {
 
 .checkbox_bar, .radio_bar {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));;
+    grid-template-columns: repeat(auto-fill, minmax(var(--column-min-width), 1fr));;
     gap: var(--body-spacing);
 }
 
-.RadioField ul {
+.RadioField ul, .MultiCheckboxField ul {
     display: grid;
     list-style: none;
-    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));;
+    grid-template-columns: repeat(auto-fill, minmax(var(--column-min-width), 1fr));;
     gap: var(--body-spacing);
     padding-top: var(--body-spacing);
+    padding-left: var(--body-paragraph-spacing);
 
     & li {
         display: flex;
         gap: var(--body-spacing);
+        align-items: baseline;
     }
 }
 
