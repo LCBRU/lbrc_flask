@@ -3,7 +3,6 @@ from flask import flash
 from flask_wtf import FlaskForm
 from wtforms import (
     IntegerField,
-    StringField,
     HiddenField,
     Field,
     SelectMultipleField,
@@ -30,8 +29,9 @@ class SelectListWidget:
         html = []
 
         for subfield in field:
-            html.append(subfield.label())
             html.append(subfield())
+            html.append(subfield.label())
+            html.append("Hello")
 
         return Markup("".join(html))
 
