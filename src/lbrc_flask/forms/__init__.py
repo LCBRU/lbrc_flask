@@ -12,7 +12,7 @@ from wtforms import (
 from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
-from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
+from wtforms.widgets import FileInput as _FileInput, CheckboxInput, HiddenInput
 from markupsafe import Markup
 
 from lbrc_flask.data_conversions import ensure_list
@@ -30,10 +30,8 @@ class SelectListWidget:
         html = []
 
         for subfield in field:
-            print("Hellololo")
-            html.append(subfield.label())
             html.append(subfield())
-            html.append("Hello")
+            html.append(subfield.label())
 
         return Markup("".join(html))
 
