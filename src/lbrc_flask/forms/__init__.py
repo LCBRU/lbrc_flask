@@ -26,12 +26,13 @@ class HiddenBooleanField(BooleanField):
 
 class SelectListWidget:
     def __call__(self, field):
+        print("Yello")
         html = []
 
         for subfield in field:
             print("Hellololo")
-            html.append(subfield())
             html.append(subfield.label())
+            html.append(subfield())
             html.append("Hello")
 
         return Markup("".join(html))
