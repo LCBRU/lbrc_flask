@@ -361,7 +361,8 @@ aside {
 
 /* Form Start */
 
-fieldset {
+fieldset
+{
     border: none;
     display: grid;
     gap: var(--body-paragraph-spacing);
@@ -409,6 +410,11 @@ select,
 .select2-selection__choice__remove {
     border-bottom: 1px solid #aaa !important;
 }
+
+.MultiCheckboxField * {
+    display: inline-block;
+}
+
 
 
 /*

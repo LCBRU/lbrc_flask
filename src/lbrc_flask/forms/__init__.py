@@ -14,6 +14,7 @@ from wtforms.validators import Length, DataRequired, ValidationError
 from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, ListWidget, CheckboxInput, HiddenInput
+from markupsafe import Markup
 
 from lbrc_flask.data_conversions import ensure_list
 from lbrc_flask.requests import all_args
@@ -22,6 +23,22 @@ from lbrc_flask.validators import is_integer
 
 class HiddenBooleanField(BooleanField):
     widget = HiddenInput()
+
+
+class SelectListWidget:
+    def __call__(self, field):
+        html = []
+
+        for subfield in field:
+            html.append(subfield.label())
+            html.append(subfield())
+
+        return Markup("".join(html))
+
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = SelectListWidget()
+    option_widget = CheckboxInput()
 
 
 class DataListField(Field):
