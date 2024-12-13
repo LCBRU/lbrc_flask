@@ -29,6 +29,7 @@ class SelectListWidget:
         html = []
 
         for subfield in field:
+            print("Hellololo")
             html.append(subfield())
             html.append(subfield.label())
             html.append("Hello")
