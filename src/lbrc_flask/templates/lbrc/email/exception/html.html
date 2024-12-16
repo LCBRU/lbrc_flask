@@ -162,6 +162,8 @@
     {% endfor%}
 
     <h3>JSON</h3>
+    <p>The parsed JSON data if mimetype indicates JSON</p>
+    
     {% if request.is_json %}
         <pre>{{ request.json | jsonify }}</pre>
     {% endif %}
