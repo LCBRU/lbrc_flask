@@ -105,6 +105,11 @@ def init_template_filters(app):
         else:
             return dict()
 
+    @app.template_filter("dictionary_to_string")
+    def dictionary_to_string(value):
+        return '<br/>'.join([f'{key}:: {value}' for key, value in (value or {}).items()])
+
+
     @app.context_processor
     def inject_studd():
         if 'lbrc_flask_title' in g:

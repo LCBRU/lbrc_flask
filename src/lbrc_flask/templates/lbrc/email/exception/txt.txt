@@ -1,0 +1,6 @@
+# Execption for Application {{ organisation_name }} {{ application_title }}
+
+## Traceback
+```
+{{ traceback }}
+```
