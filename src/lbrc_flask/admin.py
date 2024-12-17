@@ -2,6 +2,7 @@ from flask_admin import AdminIndexView, Admin, expose
 from flask import current_app, abort, redirect, url_for, request
 from flask_security import current_user
 from flask_admin.contrib.sqla import ModelView
+from flask_security import roles_accepted
 
 
 class AdminCustomView(ModelView):
@@ -27,6 +28,7 @@ class AdminCustomView(ModelView):
 
 
 class AdminHomeView(AdminIndexView):
+    @roles_accepted('admin')
     @expose('/')
     def index(self):
         return super().index()
