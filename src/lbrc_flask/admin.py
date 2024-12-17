@@ -1,4 +1,4 @@
-import flask_admin as admin
+from flask_admin import AdminIndexView, Admin, expose
 from flask import current_app, abort, redirect, url_for, request
 from flask_security import current_user
 from flask_admin.contrib.sqla import ModelView
@@ -26,14 +26,21 @@ class AdminCustomView(ModelView):
                 return redirect(url_for("security.login", next=request.url))
 
 
+class AdminHomeView(AdminIndexView):
+    @expose('/')
+    def index(self):
+        return super().index()
+
+
 def init_admin(app, title, views, url=None, endpoint=None):
     url = url or '/admin'
-    flask_admin = admin.Admin(
+    flask_admin = Admin(
         app,
         name="{} {}".format(current_app.config["ORGANISATION_NAME"], title),
         url=url,
         endpoint=endpoint,
         template_mode='bootstrap4',
+        index_view=AdminHomeView()
     )
 
     for v in views:
