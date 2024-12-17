@@ -6,7 +6,10 @@ from flask_admin.contrib.sqla import ModelView
 
 class AdminCustomView(ModelView):
     def is_accessible(self):
-        return current_user.is_admin
+        if hasattr(current_user, 'is_admin'):
+            return current_user.is_admin
+        else:
+            return False
 
 
 def init_admin(app, title, views, url=None, endpoint=None):
