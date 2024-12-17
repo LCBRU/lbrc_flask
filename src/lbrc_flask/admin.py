@@ -10,7 +10,7 @@ class AdminCustomView(ModelView):
         return (
             current_user.is_active
             and current_user.is_authenticated
-            and current_user.has_role("superuser")
+            and current_user.has_role("admin")
         )
 
     def _handle_view(self, name, **kwargs):
