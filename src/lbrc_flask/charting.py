@@ -1,6 +1,6 @@
 from collections import Counter
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from itertools import groupby, zip_longest
 from tempfile import NamedTemporaryFile
 
@@ -111,7 +111,7 @@ class BarChart:
             return send_file(
                 tmp.name,
                 as_attachment=True,
-                download_name=f'{self.title}_{datetime.utcnow():%Y%m%d_%H%M%S}.png',
+                download_name=f'{self.title}_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}.png',
                 max_age=0,
                 mimetype='image/png',
             )
@@ -125,7 +125,7 @@ class BarChart:
 
             return send_file(
                 tmp.name,
-                download_name=f'{self.title}_{datetime.utcnow():%Y%m%d_%H%M%S}.svg',
+                download_name=f'{self.title}_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}.svg',
                 max_age=0,
                 mimetype='image/svg+xml',
             )
@@ -139,10 +139,14 @@ class BarChart:
 
             return send_file(
                 tmp.name,
-                download_name=f'{self.title}_{datetime.utcnow():%Y%m%d_%H%M%S}.png',
+                download_name=f'{self.title}_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}.png',
                 max_age=0,
                 mimetype='image/png',
             )
+
+    def send_table(self):
+        chart = self.get_chart()
+        return chart.render_table()
 
 
 def grouped_bar_chart(title, details, buckets=None):
