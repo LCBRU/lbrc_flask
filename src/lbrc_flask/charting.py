@@ -146,7 +146,7 @@ class BarChart:
 
     def send_table(self):
         chart = self.get_chart()
-        return chart.render_table()
+        return chart.render_table(transpose=True)
 
 
 def grouped_bar_chart(title, details, buckets=None):

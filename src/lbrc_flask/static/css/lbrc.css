@@ -1153,10 +1153,15 @@ button[type="submit"]
     }
     
     & nav.link_list {
+        background-color: var(--color-white);
+        border: 1px var(--color-light-grey) solid;
+        border-radius: var(--border-radius);
+        padding: 0.5rem;
         position: absolute;
         display: none;
         right: var(--body-paragraph-double-spacing);
         top: var(--body-paragraph-spacing);
+        box-shadow: 0px 8px 16px 0px var(--color-shadow);
     }    
 }
 
