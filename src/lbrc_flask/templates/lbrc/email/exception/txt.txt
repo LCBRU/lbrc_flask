@@ -1,0 +1,102 @@
+# Execption for Application {{ organisation_name }} {{ application_title }}
+
+## Request
+
+URL
+: {{ request.url }}
+Method
+: {{ request.method }}
+Base URL
+: {{ request.base_url }}
+Query String
+: {{ request.query_string }}
+Referrer
+: {{ request.referrer }}
+
+## Headers
+
+{% for h in request.headers %}
+{{ h[0] }}
+: {{ h[1] }}
+{% endfor %}
+
+## User Context
+
+Referrer
+: {{ request.referrer }}
+User Agent
+: {{ request.user_agent }}
+Remote User
+: {{ request.remote_user }}
+User Address
+: {{ request.remote_addr }}
+Application User
+: {{ current_user }}
+
+## View
+
+URL Rule
+: {{ request.url_rule }}
+Blurprint
+: {{ request.blueprint }}
+Endpoint
+: {{ request.endpoint }}
+
+## Parameters
+### Args
+
+The parsed URL parameters (the part in the URL after the question mark).
+
+{% for key, value in request.args.items() %}
+{{ key }}
+: {{ value }}
+{% endfor %}
+
+### View Args
+
+A dict of view arguments that matched the request. If an exception happened when matching, this will be None.
+
+{% for key, value in request.view_args.items() %}
+{{ key }}
+: {{ value }}
+{% endfor %}
+
+### Form
+The form parameters.  Except files
+
+{% for key, value in request.form.items() %}
+{{ key }}
+: {{ value }}
+{% endfor %}
+
+### Files
+
+Files uploaded in input fields of type "file".
+
+*Note that files will only contain data if the request method was POST, PUT or PATCH and the form that posted to the request had enctype="multipart/form-data". It will be empty otherwise.*
+
+{% for key, value in request.files.items() %}
+#### key
+Filename
+: {{value.filename}}
+Mimetype
+: {{value.mimetype}}
+Size
+: {{value.content_length | separated_number}}
+{% endfor %}
+
+### JSON
+
+The parsed JSON data if mimetype indicates JSON
+
+{% if request.is_json %}
+```
+{{ request.json | jsonify }}
+```
+{% endif %}
+
+## Traceback
+
+```
+{{ traceback }}
+```

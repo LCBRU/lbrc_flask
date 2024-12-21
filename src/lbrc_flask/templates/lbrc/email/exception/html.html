@@ -1,0 +1,174 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>{{ organisation_name }} {{ application_title }} Exception</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5em;
+        }
+
+        h1, h2, h3, h4 {
+            margin: 0;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            columns: #222;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: #29465B;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            color: #8B4000;
+        }
+
+        h4 {
+            font-size: 1rem;
+        }
+
+        p {
+            margin-top: 0;
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: max-content auto;
+        }
+
+        dt {
+            grid-column-start: 1;
+            font-weight: bold;
+            color: #F08000;
+        }
+
+        dd {
+            grid-column-start: 2;
+        }
+
+        pre {
+            background-color: #F8F8F8;
+            padding: 1rem;
+            border: #CCC 1px solid;
+            border-radius: 0.5rem;
+            min-width: 100%;
+        }
+
+</style>
+</head>
+
+<body>
+	<h1>Exception for Application {{ organisation_name }} {{ application_title }}</h1>
+
+    <h2>Request</h2>
+    <dl>
+        <dt>URL</dt>
+        <dd>{{ request.url }}</dd>
+        <dt>Method</dt>
+        <dd>{{ request.method }}</dd>
+        <dt>Base URL</dt>
+        <dd>{{ request.base_url }}</dd>
+        <dt>Query String</dt>
+        <dd>{{ request.query_string }}</dd>
+
+        <dt>Referrer</dt>
+        <dd>{{ request.referrer }}</dd>
+    </dl>
+
+    <h2>Headers</h2>
+    <dl>
+        {% for h in request.headers %}
+            <dt>{{ h[0] }}</dt>
+            <dd>{{ h[1] }}</dd>
+        {% endfor %}
+    </dl>
+
+    <h2>User Context</h2>
+    <dl>
+        <dt>Referrer</dt>
+        <dd>{{ request.referrer }}</dd>
+
+        <dt>User Agent</dt>
+        <dd>{{ request.user_agent }}</dd>
+        <dt>Remote User</dt>
+        <dd>{{ request.remote_user }}</dd>
+        <dt>User Address</dt>
+        <dd>{{ request.remote_addr }}</dd>
+        <dt>Application User</dt>
+        <dd>{{ current_user }}</dd>
+    </dl>
+
+    <h2>View</h2>
+    <dl>
+        <dt>URL Rule</dt>
+        <dd>{{ request.url_rule }}</dd>
+        <dt>Blurprint</dt>
+        <dd>{{ request.blueprint }}</dd>
+        <dt>Endpoint</dt>
+        <dd>{{ request.endpoint }}</dd>
+    </dl>
+
+    <h2>Parameters</h2>
+    <h3>Args</h3>
+    <p>The parsed URL parameters (the part in the URL after the question mark).</p>
+    <dl>
+        {% for key, value in request.args.items() %}
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+        {% endfor%}
+    </dl>
+
+    <h3>View Args</h3>
+    <p>A dict of view arguments that matched the request. If an exception happened when matching, this will be None.</p>
+    <dl>
+        {% for key, value in request.view_args.items() %}
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+        {% endfor%}
+    </dl>
+
+    <h3>Form</h3>
+    <p>The form parameters.  Except files</p>
+    <dl>
+        {% for key, value in request.form.items() %}
+            <dt>{{ key }}</dt>
+            <dd>{{ value }}</dd>
+        {% endfor%}
+    </dl>
+
+    <h3>Files</h3>
+    <p>Files uploaded in input fields of type "file".</p>
+    <p><i>Note that files will only contain data if the request method was POST, PUT or PATCH and the form that posted to the request had enctype="multipart/form-data". It will be empty otherwise.</i></p>
+
+    {% for key, value in request.files.items() %}
+        <h4>key</h4>
+        <dl>
+            <dt>Filename</dt>
+            <dd>{{value.filename}}</dd>
+            <dt>Mimetype</dt>
+            <dd>{{value.mimetype}}</dd>
+            <dt>Size</dt>
+            <dd>{{value.content_length | separated_number}}</dd>
+        </dl>
+    {% endfor%}
+
+    <h3>JSON</h3>
+    <p>The parsed JSON data if mimetype indicates JSON</p>
+    
+    {% if request.is_json %}
+        <pre>{{ request.json | jsonify }}</pre>
+    {% endif %}
+
+    <h2>Traceback</h2>
+    <pre>{{ traceback }}</pre>
+</body>
+</html>

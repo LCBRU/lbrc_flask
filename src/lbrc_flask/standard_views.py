@@ -1,6 +1,7 @@
 import os
 import traceback
 from flask import render_template, send_from_directory, current_app, g
+from lbrc_flask.logging import log_exception
 from .emailing import email
 
 
@@ -52,11 +53,6 @@ def init_standard_views(app):
         else:
             app_name = 'Application'
 
-        print(traceback.format_exc())
-        app.logger.error(traceback.format_exc())
-        email(
-            subject="{} {} Error".format(current_app.config["ORGANISATION_NAME"], app_name),
-            message=traceback.format_exc(),
-            recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
-        )
+        log_exception(exception)
+
         return render_template("lbrc_flask/500.html"), 500
