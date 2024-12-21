@@ -1,7 +1,7 @@
 from lbrc_flask.security.forms import LbrcChangePasswordForm, LbrcLoginForm, LbrcForgotPasswordForm
 from flask_security import Security, SQLAlchemyUserDatastore
 from flask_login import current_user
-from flask import current_app, abort
+from flask import current_app, abort, render_template
 from flask_security.utils import _datastore
 from functools import wraps
 from ..database import db
@@ -63,6 +63,41 @@ def init_security(app, user_class, role_class):
         change_password_form=LbrcChangePasswordForm,
         login_form=LbrcLoginForm,
     )
+
+    @app.route("/table_based_login")
+    def table_based_login():
+        return render_template(
+            "security/table_based_login.html",
+            login_user_form=LbrcLoginForm(),
+        )
+    
+    @app.route("/uol_login")
+    def uol_login():
+        return render_template(
+            "security/uol_login.html",
+            login_user_form=LbrcLoginForm(),
+        )
+    
+    @app.route("/uhl_login")
+    def uhl_login():
+        return render_template(
+            "security/uhl_login.html",
+            login_user_form=LbrcLoginForm(),
+        )
+    
+    @app.route("/forgotten_password")
+    def forgotten_password():
+        return render_template(
+            "security/forgotten_password.html",
+            forgot_password_form=LbrcForgotPasswordForm(),
+        )
+    
+    @app.route("/first_login")
+    def first_login():
+        return render_template(
+            "security/first_login.html",
+            forgot_password_form=LbrcForgotPasswordForm(),
+        )
 
 
 def init_roles(roles=None):
