@@ -58,15 +58,18 @@ class AsyncJob(db.Model):
             db.session.commit()
 
     def scheduled_before_rerun(self):
-        return self.scheduled < (self.last_executed + self.__retry_timedelta())
+        if not self.scheduled or not self.last_executed:
+            return False
+        else:
+            return self.scheduled < (self.last_executed + self.__retry_timedelta())
 
     def __retry_timedelta(self):
         params = {}
 
         if self.retry_timedelta_period == AsyncJob.TIMEDELTA_HOURS:
-            params = {'hours': self.retry_timedelta_size}
+            params = {'hours': int(self.retry_timedelta_size)}
         elif self.retry_timedelta_period == AsyncJob.TIMEDELTA_DAYS:
-            params = {'days': self.retry_timedelta_size}
+            params = {'days': int(self.retry_timedelta_size)}
         
         return timedelta(**params)
     
