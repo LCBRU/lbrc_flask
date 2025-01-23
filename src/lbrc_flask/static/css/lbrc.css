@@ -19,6 +19,7 @@
 
     --submenu-max-width: 30rem;
     --column-min-width: 300px;
+    --panel-min-width: 500px;
 
     --color-black:#111111;
     --color-white:#ffffff;
@@ -281,6 +282,10 @@ aside {
 /* Side Menu End */
 
 /* Modal Start */
+body:has(.modal) {
+    overflow: hidden;
+}
+
 .modal {
 	/* Underlay covers entire screen. */
 	position: fixed;
@@ -321,6 +326,9 @@ aside {
 	animation-name: zoomIn;
 	animation-duration: var(--animation-duration);
 	animation-timing-function: ease;
+
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
 }
 
 .modal.closing {
@@ -817,6 +825,53 @@ ul.panel_list > li {
 
 /* Panel List End */
 
+/* Cards Start */
+
+ul.cards {
+    display: grid;
+    gap: var(--body-paragraph-spacing);
+    align-items: first baseline;
+    grid-template-columns: [start] repeat( auto-fit, minmax(min(var(--panel-min-width), 100%), 1fr) ) [end];
+    margin-block: var(--body-paragraph-spacing);
+}
+
+ul.cards > li {
+    list-style: none;
+    margin-left: 0;
+    padding-bottom: var(--body-paragraph-spacing);
+
+    border: 1px solid var(--color-light-grey);
+    border-radius: var(--border-radius);
+
+    & header {
+        background-color: var(--color-light-grey);
+        padding: var(--body-paragraph-spacing);
+        margin-bottom: var(--body-paragraph-spacing);
+    }
+
+    & header.success {
+        background-color: var(--color-green);
+    }
+
+    & header.warning {
+        background-color: var(--color-orange);
+    }
+
+    & header.error {
+        background-color: var(--color-red);
+    }
+
+    & > * {
+        padding-inline: var(--body-paragraph-spacing);
+    }
+
+    & > *:last-child {
+        margin-bottom: 0;
+    }
+}
+
+/* Cards End */
+
 /* Simple List Start */
 ul.simple_list {
     margin: var(--body-spacing);
@@ -1019,6 +1074,9 @@ button[type="submit"]
 }
 .icon.folder_open {
     --_content: "\f07c";
+}
+.icon.hide {
+    --_content: "\f070";
 }
 .icon.home {
     --_content: "\f015";

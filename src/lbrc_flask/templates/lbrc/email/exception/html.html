@@ -130,7 +130,7 @@
     <h3>View Args</h3>
     <p>A dict of view arguments that matched the request. If an exception happened when matching, this will be None.</p>
     <dl>
-        {% for key, value in request.view_args.items() %}
+        {% for key, value in (request.view_args or {}).items() %}
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
         {% endfor%}
@@ -139,7 +139,7 @@
     <h3>Form</h3>
     <p>The form parameters.  Except files</p>
     <dl>
-        {% for key, value in request.form.items() %}
+        {% for key, value in (request.form or {}).items() %}
             <dt>{{ key }}</dt>
             <dd>{{ value }}</dd>
         {% endfor%}
@@ -149,7 +149,7 @@
     <p>Files uploaded in input fields of type "file".</p>
     <p><i>Note that files will only contain data if the request method was POST, PUT or PATCH and the form that posted to the request had enctype="multipart/form-data". It will be empty otherwise.</i></p>
 
-    {% for key, value in request.files.items() %}
+    {% for key, value in (request.files or {}).items() %}
         <h4>key</h4>
         <dl>
             <dt>Filename</dt>
