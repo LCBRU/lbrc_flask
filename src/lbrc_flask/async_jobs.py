@@ -57,6 +57,8 @@ class AsyncJob(db.Model):
             db.session.add(self)
             db.session.commit()
 
+    def scheduled_before_rerun(self):
+        return self.scheduled < (self.last_executed + self.__retry_timedelta())
 
     def __retry_timedelta(self):
         params = {}
@@ -117,7 +119,9 @@ class AsyncJobs:
             existing.retry_timedelta_period = job.retry_timedelta_period
             existing.retry_timedelta_size = job.retry_timedelta_size
 
-            db.session.add(existing)
+            if not existing.scheduled_before_rerun():
+                # Do not reschedule if it has resently been run
+                db.session.add(existing)
         else:
             db.session.add(job)
 
