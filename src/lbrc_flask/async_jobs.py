@@ -62,9 +62,9 @@ class AsyncJob(db.Model):
             return False
         else:
             logging.warning(self.scheduled)
-            logging.warning(self.last_executed)
-            logging.warning((self.last_executed + self.__retry_timedelta()))
-            return self.scheduled < (self.last_executed + self.__retry_timedelta())
+            logging.warning(self.last_executed.astimezone(timezone.utc))
+            logging.warning((self.last_executed.astimezone(timezone.utc) + self.__retry_timedelta()))
+            return self.scheduled < (self.last_executed.astimezone(timezone.utc) + self.__retry_timedelta())
 
     def __retry_timedelta(self):
         params = {}
