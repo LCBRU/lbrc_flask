@@ -1102,6 +1102,9 @@ button[type="submit"]
 .icon.publication {
     --_content: "\f1ea";
 }
+.icon.quote {
+    --_content: "\f10e";
+}
 .icon.random {
     --_content: "\f074";
 }
