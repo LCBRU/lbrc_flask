@@ -1021,6 +1021,9 @@ button[type="submit"]
 .icon.check_circle {
     --_content: "\f058";
 }
+.icon.check_circle_unchecked {
+    --_content: "\f111";
+}
 .icon.check_list {
     --_content: "\f0ae";
 }
@@ -1128,6 +1131,15 @@ button[type="submit"]
 }
 .icon.themes {
     --_content: "\f0e8";
+}
+.icon.tristate_checked {
+    --_content: "\f058";
+}
+.icon.tristate_unchecked {
+    --_content: "\f111";
+}
+.icon.tristate_none {
+    --_content: "\f056";
 }
 .icon.unlock {
     --_content: "\f09c";
