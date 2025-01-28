@@ -375,7 +375,7 @@ fieldset
     display: grid;
     gap: var(--body-paragraph-spacing);
     align-items: first baseline;
-    grid-template-columns: [start] minmax(min(var(--column-min-width)*2, 100%), 1fr) [end];
+    grid-template-columns: [start] minmax(min(var(--column-min-width), 100%), 1fr) [end];
     margin-block: var(--body-paragraph-spacing);
 }
 
