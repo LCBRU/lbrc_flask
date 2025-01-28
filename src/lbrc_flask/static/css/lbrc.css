@@ -667,6 +667,10 @@ td, th {
     vertical-align: top;
 }
 
+table.with_icons td:first-child {
+    white-space: nowrap;
+}
+
 th {
     font-weight: var(--body-font-weight-bold);
 }
