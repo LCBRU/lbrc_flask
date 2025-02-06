@@ -42,7 +42,7 @@ def format_date(value):
     if value is None:
         return ''
     if value and (isinstance(value, date) or isinstance(value, datetime)):
-        return value.strftime("%-d %b %Y")
+        return value.strftime("%d %b %Y")
     else:
         return value
 
