@@ -1097,6 +1097,9 @@ button[type="submit"]
 .icon.lock {
     --_content: "\f023";
 }
+.icon.pack {
+    --_content: "\f466";
+}
 .icon.pause {
     --_content: "\f04c";
 }
@@ -1126,6 +1129,9 @@ button[type="submit"]
 }
 .icon.signpost {
     --_content: "\f277";
+}
+.icon.shipment {
+    --_content: "\f48b";
 }
 .icon.table {
     --_content: "\f0ce";
