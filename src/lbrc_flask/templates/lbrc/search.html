@@ -11,7 +11,7 @@
             placeholder="{{search_placeholder or 'Search ...'}}"
             name="search_string"
             id="search_string"
-            hx-trigger="input changed delay:500ms"
+            hx-trigger="input changed delay:500ms, refresh_results"
             hx-get="{{ results_url }}"
             hx-target="#search_results" >
             </fieldset>
