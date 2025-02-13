@@ -4,6 +4,7 @@
 
 {% block content %}
     <h2>{{ title }}</h2>
+    <h3>{{ subtitle }}</h3>
 
     <form action="{{ url }}" hx-post="{{ url }}" hx-indicator="#spinner" method="POST" enctype="multipart/form-data">
         <fieldset>
