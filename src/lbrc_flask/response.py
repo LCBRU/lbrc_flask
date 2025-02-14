@@ -13,6 +13,12 @@ def refresh_results():
     return resp
 
 
+def refresh_details():
+    resp = Response('')
+    resp.headers['HX-Trigger'] = 'refreshDetails'
+    return resp
+
+
 def trigger_response(trigger_name):
     resp = Response('')
     resp.headers['HX-Trigger'] = trigger_name
