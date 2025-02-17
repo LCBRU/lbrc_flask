@@ -8,9 +8,6 @@
 
 
 {% macro render_field(field) %}
-  {% if field.render_kw %}
-    {% if kwargs.update(field.render_kw) %} {% endif %}
-  {% endif %}
     {% if field.type == "HiddenField" or field.type == "CSRFTokenField" or field.name == "page" %}
       <!-- Do not render -->
     {% else %}
@@ -19,10 +16,10 @@
           {{ field.label() }}
         {% endif %}
 
-        {% if field.type == "SearchField" %}
-          {{ render_search_field(field) }}
+        {% if field.type in ["SelectField", "SelectMultipleField"] %}
+          {{ field()|safe }}
         {% else %}
-          <input type="text">
+          <input type="text" />
         {% endif %}
       </div>
     {% endif %}
