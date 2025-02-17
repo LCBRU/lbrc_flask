@@ -19,7 +19,7 @@
         {% if field.type in ["SelectMultipleField", "TextAreaField"] %}
           {{ field()|safe }}
         {% elif field.type in ["SelectField"] %}
-          {{ field(render_kw="multiple")|safe }}
+          {{ field(multiple="multiple")|safe }}
         {% else %}
           <input type="text" />
         {% endif %}
