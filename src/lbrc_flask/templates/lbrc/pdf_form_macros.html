@@ -1,0 +1,29 @@
+{% macro render_form_fields(form) %}
+  {{ form.hidden_tag() }}
+
+  {% for f in form %}
+      {{ render_field(f) }}
+  {% endfor %}
+{% endmacro %}
+
+
+{% macro render_field(field) %}
+  {% if field.render_kw %}
+    {% if kwargs.update(field.render_kw) %} {% endif %}
+  {% endif %}
+    {% if field.type == "HiddenField" or field.type == "CSRFTokenField" or field.name == "page" %}
+      <!-- Do not render -->
+    {% else %}
+      <div class="field {% if field.errors %}error{%endif%} {{field.type}}">
+        {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField", "SearchField"] %}
+          {{ field.label() }}
+        {% endif %}
+
+        {% if field.type == "SearchField" %}
+          {{ render_search_field(field) }}
+        {% else %}
+          <input type="text">
+        {% endif %}
+      </div>
+    {% endif %}
+{% endmacro %}
