@@ -31,7 +31,7 @@
 {% macro render_select_field(field) %}
     <div class="choices">
       {% for c in field.choices %}
-        {% if c[1] | length > 0 %}
+        {% if c[1] | trim | length > 0 %}
           <div class="choice">
             <div class="checkbox"></div>
             <div class="label">{{ c[1] }}</div>  
