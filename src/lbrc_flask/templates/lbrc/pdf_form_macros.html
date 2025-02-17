@@ -30,7 +30,6 @@
 
 {% macro render_select_field(field) %}
     {% for c in field.choices %}
-        <label for="">{{ c }}</label>  
+        <div class="choice">{{ c[1] }}</div>
     {% endfor %}
-
 {% endmacro %}
