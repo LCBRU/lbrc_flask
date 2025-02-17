@@ -16,13 +16,21 @@
           {{ field.label() }}
         {% endif %}
 
-        {% if field.type in ["SelectMultipleField", "TextAreaField"] %}
+        {% if field.type in ["TextAreaField"] %}
           {{ field()|safe }}
-        {% elif field.type in ["SelectField"] %}
-          {{ field(multiple="multiple")|safe }}
+        {% elif field.type in ["SelectMultipleField", "SelectField"] %}
+          {{ render_select_field(field) }}
         {% else %}
           <input type="text" />
         {% endif %}
       </div>
     {% endif %}
+{% endmacro %}
+
+
+{% macro render_select_field(field) %}
+    {% for c in field.choices %}
+        <label for="">{{ c }}</label>  
+    {% endfor %}
+
 {% endmacro %}
