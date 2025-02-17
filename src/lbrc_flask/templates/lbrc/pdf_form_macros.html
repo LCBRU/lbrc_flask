@@ -8,7 +8,7 @@
 
 
 {% macro render_field(field) %}
-    {% if field.type == "HiddenField" or field.type == "CSRFTokenField" or field.name == "page" %}
+    {% if field.type == "HiddenField" or field.type in ["CSRFTokenField", "DescriptionField", "DataListField"] or field.name == "page" %}
       <!-- Do not render -->
     {% else %}
       <div class="field {% if field.errors %}error{%endif%} {{field.type}}">
