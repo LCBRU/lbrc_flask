@@ -29,7 +29,9 @@
 
 
 {% macro render_select_field(field) %}
-    {% for c in field.choices %}
-        <div class="choice">{{ c[1] }}</div>
-    {% endfor %}
+    <div class="choices">
+      {% for c in field.choices %}
+          <div class="choice">{{ c[1] }}</div>
+      {% endfor %}
+    </div>
 {% endmacro %}
