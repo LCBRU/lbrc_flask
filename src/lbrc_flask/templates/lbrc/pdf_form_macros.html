@@ -16,8 +16,10 @@
           {{ field.label() }}
         {% endif %}
 
-        {% if field.type in ["SelectField", "SelectMultipleField", "TextAreaField"] %}
+        {% if field.type in ["SelectMultipleField", "TextAreaField"] %}
           {{ field()|safe }}
+        {% if field.type in ["SelectField"] %}
+          {{ field(render_kw="multiple")|safe }}
         {% else %}
           <input type="text" />
         {% endif %}
