@@ -13,6 +13,8 @@
   {% endif %}
     {% if field.type == "HiddenField" or field.type == "CSRFTokenField" or field.name == "page" %}
       <!-- Do not render -->
+    {% if field.type == "DataListField" %}
+      {{ field(**kwargs)|safe }}
     {% else %}
       <div class="field {% if field.errors %}error{%endif%} {{field.type}}">
         {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField", "SearchField"] %}
