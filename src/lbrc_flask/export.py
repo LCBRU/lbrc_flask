@@ -29,7 +29,7 @@ def excel_download(title, headers, details):
         return send_file(
             tmp.name,
             as_attachment=True,
-            download_name='{}_{}.xlsx'.format(title, datetime.utcnow().strftime("%Y%m%d_%H%M%S")),
+            download_name='{}_{}.xlsx'.format(title, datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S")),
             max_age=0,
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         )
@@ -50,7 +50,7 @@ def csv_download(title, headers, details):
         return send_file(
             tmp.name,
             as_attachment=True,
-            download_name=f'{title}_{datetime.utcnow():%Y%m%d_%H%M%S}.csv',
+            download_name=f'{title}_{datetime.datetime.now(datetime.UTC):%Y%m%d_%H%M%S}.csv',
         )
 
 
@@ -69,5 +69,5 @@ def pdf_download(template, title="report", path=None, **kwargs):
         return send_file(
             tmp_pdf.name,
             as_attachment=True,
-            download_name=f'{title}_{datetime.utcnow():%Y%m%d_%H%M%S}.pdf',
+            download_name=f'{title}_{datetime.datetime.now(datetime.UTC):%Y%m%d_%H%M%S}.pdf',
         )

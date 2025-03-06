@@ -81,7 +81,7 @@ def is_invalid_dob(dob):
     if isinstance(dob, datetime):
         dob = dob.date()
 
-    return dob < (datetime.utcnow().date() - relativedelta(years=130)) or dob > datetime.utcnow().date()
+    return dob < (datetime.datetime.now(datetime.UTC).date() - relativedelta(years=130)) or dob > datetime.datetime.now(datetime.UTC).date()
 
 
 def standardise_postcode(postcode):

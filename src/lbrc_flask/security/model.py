@@ -10,6 +10,9 @@ from lbrc_flask.model import CommonMixin
 from ..database import db
 
 
+def utc_now_default():
+    return datetime.datetime.now(datetime.UTC)
+
 class AuditMixin(object):
 
     @staticmethod
@@ -22,8 +25,8 @@ class AuditMixin(object):
     last_update_date = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow,
-        onupdate=datetime.utcnow,
+        default=utc_now_default,
+        onupdate=utc_now_default,
     )
 
     @declared_attr
@@ -39,7 +42,7 @@ class AuditMixin(object):
     created_date = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow,
+        default=utc_now_default,
     )
 
     @declared_attr
@@ -72,7 +75,7 @@ class Role(db.Model, RoleMixin, CommonMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, nullable=False, default=utc_now_default)
 
     def __str__(self):
         return self.name or ""
@@ -103,7 +106,7 @@ class User(db.Model, CommonMixin, UserMixin):
     last_login_ip = db.Column(db.String(50))
     current_login_ip = db.Column(db.String(50))
     login_count = db.Column(db.Integer())
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_created = db.Column(db.DateTime, nullable=False, default=utc_now_default)
     ldap_user = db.Column(db.Boolean())
     fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False, default=random_fs_uniquifier)
     roles = db.relationship(

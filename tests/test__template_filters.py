@@ -22,6 +22,6 @@ def test__yesno_format(client, faker):
     assert resp.soup.find('li', id='default_if_none__not_none', string='Lorem Ipsum')
     assert resp.soup.find('li', id='nbsp', string='Lorem\xa0ipsum\xa0dolor\xa0sit\xa0amet.')
     assert resp.soup.find('li', id='nbsp__none', string='')
-    assert resp.soup.find('li', id='current_year', string=datetime.datetime.utcnow().strftime("%Y"))
+    assert resp.soup.find('li', id='current_year', string=datetime.datetime.now(datetime.UTC).strftime("%Y"))
     assert resp.soup.find('li', id='application_title', string='LBRC Flask')
     assert resp.soup.find('li', id='previous_page', string=url_for('search'))

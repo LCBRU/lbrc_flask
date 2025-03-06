@@ -143,10 +143,10 @@ def test__parse_date(client, value, is_error, expected):
     [
         (None, False),
         ('', False),
-        (datetime.datetime.utcnow() - relativedelta(years=130), False),
-        (datetime.datetime.utcnow() - relativedelta(years=130, days=1), True),
-        (datetime.datetime.utcnow(), False),
-        (datetime.datetime.utcnow() + relativedelta(days=1), True),
+        (datetime.datetime.now(datetime.UTC) - relativedelta(years=130), False),
+        (datetime.datetime.now(datetime.UTC) - relativedelta(years=130, days=1), True),
+        (datetime.datetime.now(datetime.UTC), False),
+        (datetime.datetime.now(datetime.UTC) + relativedelta(days=1), True),
     ],
 )
 def test__is_invalid_dob(client, value, expected):
