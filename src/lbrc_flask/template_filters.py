@@ -126,8 +126,8 @@ def init_template_filters(app):
             prev = ''
 
         return {
-            'current_date': datetime.utcnow().strftime("%c"),
-            'current_year': datetime.utcnow().strftime("%Y"),
+            'current_date': datetime.datetime.now(datetime.UTC).strftime("%c"),
+            'current_year': datetime.datetime.now(datetime.UTC).strftime("%Y"),
             'organisation_name': current_app.config["ORGANISATION_NAME"],
             'application_title': app_name,
             'previous_page': prev,
