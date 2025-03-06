@@ -1,7 +1,7 @@
 import random
 import string
 import uuid
-from datetime import datetime
+import datetime
 from flask_security.core import RoleMixin, UserMixin
 from flask_security.utils import verify_and_update_password
 from flask_login import current_user
@@ -11,7 +11,7 @@ from ..database import db
 
 
 def utc_now_default():
-    return datetime.now(datetime.UTC)
+    return datetime.datetime.now(datetime.UTC)
 
 class AuditMixin(object):
 
