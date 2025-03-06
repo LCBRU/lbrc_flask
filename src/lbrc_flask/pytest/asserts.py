@@ -1,8 +1,7 @@
+import http
 import re
 from urllib.parse import urlparse, parse_qs
 from flask import url_for
-from lbrc_flask.pytest.helpers import login
-from flask_api import status
 from lbrc_flask.url_helpers import update_querystring
 
 
@@ -47,7 +46,7 @@ def assert__error__required_field(soup, field_name):
 
 
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
-    assert response.status_code == status.HTTP_302_FOUND
+    assert response.status_code == http.HTTP.FOUND
 
     if endpoint:
         if urlparse(response.location).netloc:
@@ -75,7 +74,7 @@ def assert__requires_login(client, url, post=False):
     # flask_login or flask_security is adding the
     # endpoint parameters as querystring arguments as well
     # as having them in the `next` parameter  
-    assert response.status_code == status.HTTP_302_FOUND
+    assert response.status_code == http.HTTP.FOUND
 
     login_loc = urlparse(url_for('security.login', next=url))
     resp_loc = urlparse(response.location)
