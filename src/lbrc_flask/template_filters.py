@@ -1,6 +1,6 @@
 import json
 import calendar
-from datetime import datetime
+import datetime
 from flask import g, request, current_app
 from markdown import markdown
 from .formatters import format_currency, format_date, format_datetime, format_month, format_number, format_yesno, humanize_datetime, humanize_date
