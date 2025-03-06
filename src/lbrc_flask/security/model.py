@@ -11,7 +11,7 @@ from ..database import db
 
 
 def utc_now_default():
-    return datetime.datetime.now(datetime.UTC)
+    return datetime.now(datetime.UTC)
 
 class AuditMixin(object):
 
