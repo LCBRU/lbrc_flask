@@ -12,11 +12,14 @@ from lbrc_flask.validators import (
     calculate_nhs_number_checksum,
 )
 from sqlalchemy import select
+from faker import Faker
 
 
 class FakeCreator():
     def __init__(self, cls):
         self.cls = cls
+        self.faker = Faker("en_GB")
+        self.faker.add_provider(LbrcFlaskFakerProvider)
 
     def get(self, **kwargs):
         return None
