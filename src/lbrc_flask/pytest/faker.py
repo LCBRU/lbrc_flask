@@ -73,6 +73,9 @@ class LbrcFlaskFakerProvider(BaseProvider):
         prefix = choice(['ABCDEFGHIJKLMNOPQRSTUVWXYZ'])
         return f'{prefix}{randint(10_000, 99_999)}'
 
+    def orcid(self):
+        return f'{randint(0, 9_999):04d}-{randint(0, 9_999):04d}-{randint(0, 9_999):04d}-{randint(0, 9_999):04d}'
+
     def person_details(self):
         if not randint(0, 1):
             return self.female_person_details()
