@@ -4,7 +4,7 @@ from faker.providers import BaseProvider
 from lbrc_flask.security import Role, User
 from lbrc_flask.forms.dynamic import FieldGroup, Field, FieldType
 from lbrc_flask.database import db
-from random import randint, choice, randrange
+from random import randint, choice, randrange, choices
 from lbrc_flask.validators import (
     is_invalid_nhs_number,
     calculate_nhs_number_checksum,
@@ -68,11 +68,15 @@ class LbrcFlaskFakerProvider(BaseProvider):
         return 'ABC'
 
     def gp_practice_code(self):
-        prefix = choice(['ABCDEFGHIJKLMNOPQRSTUVWXYZ'])
+        prefix = choice('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         return f'{prefix}{randint(10_000, 99_999)}'
 
     def orcid(self):
         return f'{randint(0, 9_999):04d}-{randint(0, 9_999):04d}-{randint(0, 9_999):04d}-{randint(0, 9_999):04d}'
+
+    def local_rec_number(self):
+        midfix = ''.join(choices('ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=2))
+        return f'{randint(0, 99):02d}/{midfix}/{randint(0, 9_999):04d}'
 
     def person_details(self):
         if not randint(0, 1):
