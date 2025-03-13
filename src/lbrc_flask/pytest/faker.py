@@ -1,4 +1,6 @@
 import datetime
+import io
+from openpyxl import Workbook
 from dateutil.relativedelta import relativedelta
 from faker.providers import BaseProvider
 from lbrc_flask.security import Role, User
@@ -182,3 +184,52 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
         db.session.commit()
 
         return result
+
+
+class FakeXlsxFile():
+    def __init__(self, filename, headers, data):
+        self.filename = filename
+        self.headers = headers
+        self.data = data
+
+    def get_iostream(self):
+        self.workbook= Workbook()
+        ws1 = self.workbook.active
+
+        ws1.append(self.headers)
+
+        for d in self.data:
+            row = []
+            for h in self.headers:
+                row.append(d.get(h, ''))
+            ws1.append(row)
+
+        result = io.BytesIO()
+        self.workbook.save(result)
+        return result.getvalue()
+
+
+class LbrcFileProvider(BaseProvider):
+    def xlsx(self, headers, data, filename=None):
+        headers = list(headers)
+        filename = filename or self.generator.file_name(extension='xlsx')
+
+        return FakeXlsxFile(filename, headers, data)
+
+    def data_from_definition(self, columns_definition: dict, rows=10):
+        data = []
+        for _ in range(rows):
+            row = {}
+            for h, definition in columns_definition.items():
+                if definition['type'] == 'int':
+                    row[h] = self.generator.pyint()
+                elif definition['type'] == 'str':
+                    min_length = definition.get('min_length', 1)
+                    max_length = definition.get('max_length', 10)
+                    row[h] = self.generator.pystr(min_chars=min_length, max_chars=max_length)
+                elif definition['type'] == 'date':
+                    row[h] = self.generator.date()
+                        
+            data.append(row)
+
+        return data
