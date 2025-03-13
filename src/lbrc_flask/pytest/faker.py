@@ -6,11 +6,34 @@ from faker.providers import BaseProvider
 from lbrc_flask.security import Role, User
 from lbrc_flask.forms.dynamic import FieldGroup, Field, FieldType
 from lbrc_flask.database import db
-from random import randint, choice, randrange, choices
+from random import randint, choice, randrange, choices, sample
 from lbrc_flask.validators import (
     is_invalid_nhs_number,
     calculate_nhs_number_checksum,
 )
+from sqlalchemy import select
+
+
+class FakeCreator():
+    def __init__(self, cls):
+        self.cls = cls
+
+    def get(self, **kwargs):
+        return None
+
+    def get_in_db(self, **kwargs):
+        x = self.get(**kwargs)
+
+        db.session.add(x)
+        db.session.commit()
+
+        return x
+
+    def choice_from_db(self, **kwargs):
+        return choice(list(db.session.execute(select(self.cls)).scalars()))
+
+    def choices_from_db(self, k=1, **kwargs):
+        return sample(list(db.session.execute(select(self.cls)).scalars()), k)
 
 
 class LbrcFlaskFakerProvider(BaseProvider):
