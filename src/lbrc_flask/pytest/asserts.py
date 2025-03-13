@@ -27,11 +27,19 @@ def _assert_csrf_token(soup):
     )
 
 
+def _assert_modal_boilerplate(soup):
+    modal = soup.find(class_="modal") 
+    assert modal is not None
+    assert modal.find(class_="modal-underlay") is not None
+    assert modal.find(class_="modal-content container") is not None
+
+
 def _assert_basic_navigation(soup, user):
     assert soup.nav is not None
     assert soup.nav.find("a", href="/") is not None
     assert soup.nav.find("a", string=user.full_name) is not None
-    assert soup.nav.find("a", href="/change") is not None
+    if not (user.ldap_user or False):
+        assert soup.nav.find("a", href="/change") is not None
     assert soup.nav.find("a", href="/logout") is not None
 
 
@@ -62,6 +70,13 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
     if url:
         print(f'{response.location=} {url=}')
         assert resp_loc.path == url_loc.path
+
+
+def assert__refresh_response(response):
+    assert response.status_code == http.HTTPStatus.OK
+    print(response.text)
+    assert 'HX-Refresh' in response.headers
+    assert response.headers['HX-Refresh'] == 'true'
 
 
 def assert__requires_login(client, url, post=False):
@@ -96,7 +111,7 @@ def assert__requires_role(client, url, post=False):
 
 def assert__search_html(soup, clear_url):
     assert soup.find('input', id="search") is not None
-    assert soup.find('a', string="Clear Search", href=clear_url) is not None
+    assert soup.find('a', string="Clear Search", href='?') is not None
     assert soup.find('button', type="submit", string="Search") is not None
 
 
@@ -108,8 +123,33 @@ def assert__select(soup, id, options, multiselect=False):
     else:
         assert 'multiple' not in select.attrs
 
-    for o in options:
-        assert select.find('option', value=o[0], string=o[1])
+    found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
+
+    assert found_options == options
+
+
+def assert__input_date(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "date"
+
+
+def assert__input_number(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "number"
+
+
+def assert__input_text(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "text"
+
+
+def assert__input_file(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "file"
 
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
@@ -119,6 +159,17 @@ def get_and_assert_standards(client, url, user, has_form=False, has_navigation=T
 
     if has_navigation:
         _assert_basic_navigation(resp.soup, user)
+
+    if has_form:
+        _assert_csrf_token(resp.soup)
+
+    return resp
+
+
+def get_and_assert_standards_modal(client, url, user, has_form=False, has_navigation=True):
+    resp = client.get(url)
+
+    _assert_modal_boilerplate(resp.soup)
 
     if has_form:
         _assert_csrf_token(resp.soup)
@@ -194,3 +245,4 @@ def assert__urls_the_same(url1, url2):
 def assert__flash_messages_contains_error(client):
     with client.session_transaction() as session:
         return dict(session['_flashes']).get('error') is not None
+
