@@ -74,7 +74,6 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
 
 def assert__refresh_response(response):
     assert response.status_code == http.HTTPStatus.OK
-    print(response.text)
     assert 'HX-Refresh' in response.headers
     assert response.headers['HX-Refresh'] == 'true'
 
