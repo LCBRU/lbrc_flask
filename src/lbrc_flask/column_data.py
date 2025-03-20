@@ -11,8 +11,9 @@ from lbrc_flask.validators import is_integer, parse_date_or_none
 
 
 class ColumnData():
-    def __init__(self, filepath):
+    def __init__(self, filepath, header_rows: int = 1):
         self.filepath = filepath
+        self.header_rows = header_rows
 
 
 class ExcelData(ColumnData):
@@ -30,7 +31,7 @@ class ExcelData(ColumnData):
         ws = wb.active
 
         column_names = self.get_column_names()
-        for r in ws.iter_rows(min_row=2, values_only=True):
+        for r in ws.iter_rows(min_row=self.header_rows + 1, values_only=True):
             yield dict(zip(column_names, r))
 
 
@@ -49,7 +50,8 @@ class Excel97Data(ColumnData):
 
         column_names = self.get_column_names()
         rows = ws.get_rows()
-        next(rows)
+        for _ in range(self.header_rows):
+            next(rows)
         for r in rows:
             yield dict(zip(column_names, [self._value_from_cell(c, wb.datemode) for c in r]))
 
@@ -87,7 +89,7 @@ class CsvData(ColumnData):
         with open(self.filepath, 'r', encoding=self._get_encoding()) as f:
             reader = csv.reader(f)
 
-            for row in islice(reader, 1, None):
+            for row in islice(reader, self.header_rows, None):
                 yield dict(zip_longest(column_names, row, fillvalue=''))
 
 
@@ -105,118 +107,58 @@ class ColumnsDefinition():
             if d.name == name:
                 return d
 
-
-@dataclass
-class ColumnDefinition:
-    COLUMN_TYPE_STRING = 'str'
-    COLUMN_TYPE_INTEGER = 'int'
-    COLUMN_TYPE_DATE = 'date'
-
-    name: str
-    type: str
-    allow_null: bool = False
-    max_length: Optional[int] = None
-    translated_name: Optional[str] = None
-
-    def value(self, row: dict):
-        return row.get(self.name, None)
-
-    def stringed_value(self, row: dict):
-        return str(self.value(row) or '').strip()
-
-    def has_value(self, row: dict):
-        return len(self.stringed_value(row)) > 0
-
-    def get_translated_name(self):
-        return self.translated_name or self.name
-
-
-class Spreadsheet():
-    def __init__(self, filepath: Path, header_rows: int = 1):
-        self.filepath: Path = filepath
-        self.header_rows: int = header_rows
-
-    def worksheet(self):
-        wb = load_workbook(filename=self.filepath, read_only=True)
-        return wb.active
-
-    @cached_property
-    def column_names(self):
-        rows = self.worksheet().values
-        first_row = next(rows)
-
-        result = [c.lower() for c in takewhile(lambda x: x, first_row)]
-
-        return result
-
-    def iter_rows(self):
-        for r in self.worksheet().values:
-            yield dict(zip(self.column_names, r))
-
-    def iter_data(self):
-        for r in islice(self.iter_rows(), self.header_rows, None):
-            yield r
-
-
-class SpreadsheetDefinition:
-    def __init__(self, spreadsheet: Spreadsheet, column_definition: ColumnsDefinition):
-        self.spreadsheet: Spreadsheet = spreadsheet
-        self.column_definition: ColumnsDefinition = column_definition
-    
-    def validation_errors(self):
+    def validation_errors(self, spreadsheet):
         errors = []
 
-        errors.extend(self.column_validation_errors())
-        errors.extend(self.data_validation_errors())
+        errors.extend(self.column_validation_errors(spreadsheet))
+        errors.extend(self.data_validation_errors(spreadsheet))
 
         return errors
 
-    def column_validation_errors(self):
-        missing_columns = set(self.column_definition.column_names) - set(self.spreadsheet.column_names)
+    def column_validation_errors(self, spreadsheet):
+        missing_columns = set(self.column_names) - set(spreadsheet.get_column_names())
         return map(lambda x: f"Missing column '{x}'", missing_columns)
 
-    def iter_filtered_data(self):
-        return compress(self.spreadsheet.iter_data(), self.rows_with_all_fields)
+    def iter_filtered_data(self, spreadsheet):
+        return compress(spreadsheet.iter_rows(), self.rows_with_all_fields(spreadsheet))
     
-    def translated_data(self):
-        for row in self.iter_filtered_data():
+    def translated_data(self, spreadsheet):
+        for row in self.iter_filtered_data(spreadsheet):
             result = {}
 
-            for cd in self.column_definition.column_definition:
+            for cd in self.column_definition:
                 result[cd.get_translated_name()] = cd.value(row)
             
             yield result
 
-    def data_validation_errors(self):
+    def data_validation_errors(self, spreadsheet):
         result = []
 
-        for i, row in enumerate(self.iter_filtered_data(), 1):
+        for i, row in enumerate(self.iter_filtered_data(spreadsheet), 1):
             row_errors = self._field_errors_for_def(row)
             result.extend(map(lambda e: f"Row {i}: {e}", row_errors))
 
         return result
     
-    @cached_property
-    def rows_with_all_fields(self):
+    def rows_with_all_fields(self, spreadsheet):
         result = []
 
-        for row in self.spreadsheet.iter_data():
-            result.append(all([d.has_value(row) or d.allow_null for d in self.column_definition.column_definition]))
+        for row in spreadsheet.iter_rows():
+            result.append(all([d.has_value(row) or d.allow_null for d in self.column_definition]))
 
         return result
 
-    @cached_property
-    def rows_with_any_fields(self):
+    def rows_with_any_fields(self, spreadsheet):
         result = []
 
-        for row in self.spreadsheet.iter_data():
-            result.append(any([d.has_value(row) for d in self.column_definition.column_definition]))
+        for row in spreadsheet.iter_rows():
+            result.append(any([d.has_value(row) for d in self.column_definition]))
 
         return result
 
     def _field_errors_for_def(self, row: dict):
         result = []
-        for col_def in self.column_definition.column_definition:
+        for col_def in self.column_definition:
             if col_def.name in row:
                 result.extend(self._field_errors(row, col_def))
         
@@ -269,3 +211,28 @@ class SpreadsheetDefinition:
             return ["Invalid value"]
         
         return []
+
+
+@dataclass
+class ColumnDefinition:
+    COLUMN_TYPE_STRING = 'str'
+    COLUMN_TYPE_INTEGER = 'int'
+    COLUMN_TYPE_DATE = 'date'
+
+    name: str
+    type: str
+    allow_null: bool = False
+    max_length: Optional[int] = None
+    translated_name: Optional[str] = None
+
+    def value(self, row: dict):
+        return row.get(self.name, None)
+
+    def stringed_value(self, row: dict):
+        return str(self.value(row) or '').strip()
+
+    def has_value(self, row: dict):
+        return len(self.stringed_value(row)) > 0
+
+    def get_translated_name(self):
+        return self.translated_name or self.name
