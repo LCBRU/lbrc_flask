@@ -1,3 +1,4 @@
+from copy import deepcopy
 import inspect
 
 
@@ -14,3 +15,10 @@ def get_concrete_classes(cls):
         result += get_concrete_classes(sub)
 
     return result
+
+
+def dictlist_remove_key(dictlist: list[dict], key):
+    def remove_key(dicts):
+        result = deepcopy(dicts)
+        result.pop(key)
+    return list(map(remove_key, dictlist))
