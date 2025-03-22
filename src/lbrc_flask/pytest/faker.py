@@ -234,7 +234,7 @@ class FakeXlsxFile():
         for d in self.data:
             row = []
             for h in self.headers:
-                row.append(d.get(h, ''))
+                row.append(d.get(h.lower(), ''))
             ws1.append(row)
 
         result = io.BytesIO()

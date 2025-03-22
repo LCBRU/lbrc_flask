@@ -317,7 +317,7 @@ body:has(.modal) {
 	box-shadow: 0px 8px 16px 0px var(--color-shadow);
 	background-color: var(--color-white);
     max-width: 700px;
-    min-width: var(--column-min-width);
+    min-width: var(--panel-min-width);
 
     padding: var(--body-paragraph-spacing);
     border-radius: var(--border-radius);

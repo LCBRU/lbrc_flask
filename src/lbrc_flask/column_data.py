@@ -22,7 +22,7 @@ class ExcelData(ColumnData):
         rows = ws.iter_rows(min_row=1, max_row=1)
         first_row = next(rows)
 
-        return [c.value for c in takewhile(lambda x: x.value, first_row)]
+        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
 
     def iter_rows(self):
         wb = load_workbook(filename=self.filepath, read_only=True)
@@ -40,7 +40,7 @@ class Excel97Data(ColumnData):
         ws = wb.sheet_by_index(0)
         first_row = ws.row(0)
 
-        return [c.value for c in takewhile(lambda x: x.value, first_row)]
+        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
 
     def iter_rows(self):
         wb = xlrd.open_workbook(filename=self.filepath, formatting_info=True)
@@ -68,13 +68,13 @@ class CsvData(ColumnData):
         with open(self.filepath, 'r', encoding=self._get_encoding()) as f:
             d_reader = csv.DictReader(f)
 
-            result = d_reader.fieldnames
+            result = [cn.lower() for cn in d_reader.fieldnames]
 
             for row in d_reader:
                 for i in range(len(result), len(row)):
-                    result.append(f'Column {i}')
+                    result.append(f'column {i}')
 
-        return result 
+        return result
 
     def _get_encoding(self):
         rawdata = open(self.filepath, 'rb').read()
