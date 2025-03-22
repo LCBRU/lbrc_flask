@@ -10,6 +10,8 @@ def get_records_found(soup):
     if count:
         if is_integer(count[0]):
             return int(count[0])
+    
+    return 0
 
 
 def get_table_row_count(soup):
