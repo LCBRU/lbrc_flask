@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.12.16"
+version = "1.13.0"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -33,12 +33,12 @@ dependencies=[
   'flask_weasyprint',
   'hatchling',
   'jsonschema',
+  'ldap3',
   'markdown',
   'openpyxl',
   'pygal',
   'python-dateutil',
   'python-dotenv',
-  'python-ldap',
   'pytz',
   'rich',
   'setuptools',
