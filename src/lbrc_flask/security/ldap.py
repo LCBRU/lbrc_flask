@@ -152,19 +152,25 @@ def get_or_create_ldap_user(username):
         ldap.login_nonpriv()
 
         ldap_user = ldap.search_username(username)
+        current_app.logger.info(f"User '{ldap_user}' found for '{username}'")
 
         if ldap_user is not None:
+            current_app.logger.info(f"LDAP user '{username}' found.  Attempting to find user in user table")
             user = _datastore.find_user(email=ldap_user['email']) or _datastore.find_user(username=ldap_user['username'])
 
             if not user:
+                current_app.logger.info(f"'{username}' not found is user table")
                 if current_app.config.get('LDAP_REQUIRE_EXISTING_USER', False):
+                    current_app.logger.info("Existing user required so not creating one")
                     return None
 
+                current_app.logger.info(f"Creating user table record for LDAP user '{username}'")
                 user = _datastore.create_user(
                     email=ldap_user['email'],
                     password=random_password(),
                 )
 
+            current_app.logger.info(f"Updating user table details from LDAP record for user '{username}'")
             user.email = ldap_user['email']
             user.username = ldap_user['username']
             user.first_name = ldap_user['given_name']
