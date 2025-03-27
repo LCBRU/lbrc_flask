@@ -56,6 +56,9 @@ class Ldap():
 
 
     def _login_bind_user(self, bind_user, password):
+        print('*'*100)
+        print(password)
+        print('*'*100)
         try:
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
