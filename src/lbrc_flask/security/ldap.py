@@ -14,8 +14,8 @@ class Ldap():
         self.URI = (current_app.config.get('LDAP_URI', None) or '').strip()
         self.BIND_WHO_FORMAT = (current_app.config.get('LDAP_BIND_WHO_FORMAT', None) or '').strip()
         self.BASEDN = (current_app.config.get('LDAP_BASEDN', None) or '').strip()
-        self.NOPRIV_USER = (current_app.config.get('LDAP_USER', None) or '').strip(),
-        self.NONPRIV_PASSWORD = (current_app.config.get('LDAP_PASSWORD', None) or '').strip(),
+        self.NOPRIV_USER = (current_app.config.get('LDAP_USER', None) or '').strip()
+        self.NONPRIV_PASSWORD = (current_app.config.get('LDAP_PASSWORD', None) or '').strip()
         self.USERNAME_SEARCH_FORMAT = (current_app.config.get('LDAP_SEARCH_FORMAT', None) or '').strip()
 
         self.FIELDNAME_FULLNAME = (current_app.config.get('LDAP_FIELDNAME_FULLNAME', None) or '').strip()
@@ -56,9 +56,6 @@ class Ldap():
 
 
     def _login_bind_user(self, bind_user, password):
-        print('*'*100)
-        print(password)
-        print('*'*100)
         try:
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
