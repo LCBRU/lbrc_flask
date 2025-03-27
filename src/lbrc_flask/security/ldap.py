@@ -111,7 +111,7 @@ class Ldap():
         result = []
 
         try:
-            self.conn.search(
+            self.connection.search(
                 self.BASEDN,
                 search_query,
                 scope=SUBTREE,
