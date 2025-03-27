@@ -114,7 +114,7 @@ class Ldap():
             self.connection.search(
                 self.BASEDN,
                 search_query,
-                scope=SUBTREE,
+                search_scope=SUBTREE,
                 attributes=[
                     self.FIELDNAME_USERID,
                     self.FIELDNAME_FULLNAME,
