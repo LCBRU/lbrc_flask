@@ -117,7 +117,6 @@ class Ldap():
                 search_scope=SUBTREE,
                 attributes=[
                     self.FIELDNAME_USERID,
-                    self.FIELDNAME_FULLNAME,
                     self.FIELDNAME_EMAIL,
                     self.FIELDNAME_GIVEN_NAME,
                     self.FIELDNAME_SURNAME,
@@ -127,7 +126,6 @@ class Ldap():
             for user in self.connection.entries:
                 current_app.logger.info(f"LDAP found {user}")
                 result.append({
-                    'cn': user[self.FIELDNAME_FULLNAME],
                     'username': user[self.FIELDNAME_USERID],
                     'email': user[self.FIELDNAME_EMAIL],
                     'given_name': user[self.FIELDNAME_GIVEN_NAME],
