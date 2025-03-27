@@ -93,10 +93,16 @@ class Ldap():
         q = self.USERNAME_SEARCH_FORMAT.format(username=username)
         users = self.search(q)
 
-        if len(users) != 1:
+        print(users)
+
+        if len(users) == 0:
+            current_app.logger.info(f"No user found for username '{username}'")
             return None
 
-        return users[0]
+        result = users[0]
+        current_app.logger.info(f"Found user '{result}' for username '{username}'")
+
+        return result
 
     def search_user(self, search_string):
         search_string = search_string.strip()
