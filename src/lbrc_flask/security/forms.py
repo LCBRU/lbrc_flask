@@ -148,5 +148,5 @@ class LbrcLoginForm(LoginForm):
                     )
                     return False
 
-        current_app.logger.info(f"'{username}' is not found for LDAP, so falling back on table based login")
+        current_app.logger.info(f"'{self.email.data}' is not found for LDAP, so falling back on table based login")
         return super().validate()
