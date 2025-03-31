@@ -124,6 +124,9 @@ def assert__select(soup, id, options, multiselect=False):
 
     found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
 
+    print(options)
+    print(found_options)
+
     assert found_options == options
 
 
@@ -149,6 +152,11 @@ def assert__input_file(soup, id):
     control = soup.find('input', id=id)
     assert control is not None
     assert control.attrs['type'] == "file"
+
+
+def assert__input_textarea(soup, id):
+    control = soup.find('textarea', id=id)
+    assert control is not None
 
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
