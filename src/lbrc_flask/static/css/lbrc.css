@@ -39,12 +39,8 @@
     --color-shadow: rgba(0, 0, 0, 0.3);
     --color-yellow: #fdcb14;
 
-    --_button_background_color: var(--color-green);
-    --_button_forground_color: var(--color-white);
-    --_pill_background_color: var(--color-dark-grey);
-    --_pill_forground_color: var(--color-white);
+    --_button_background_color: var(--color-green);                            <button class="icon {{select_icon | default_if_none('add')}}" type="submit" title="{{ add_title }}"></button>
 
-    --border-radius: 5px;
     --viewport-width: 80rem;
 
     --animation-duration: 150ms;
@@ -1021,6 +1017,9 @@ button[type="submit"]
 }
 .icon.chart {
     --_content: "\f080";
+}
+.icon.check {
+    --_content: "\f00c";
 }
 .icon.check_circle {
     --_content: "\f058";
