@@ -1,6 +1,6 @@
 {% from "lbrc/errors.html" import render_errors %}
 
-<div class="modal" _="on closeModal {% for e in closing_events %} or {{e}}{% endfor %} add .closing then wait for animationend then location.reload()">
+<div class="modal" _="on closeModal {% for e in closing_events %} or {{e}}{% endfor %} add .closing then wait for animationend then remove me then location.reload()">
     <div class="modal-underlay" _="on click trigger closeModal"></div>
 	<div class="modal-content container">
         <div class="errors">
