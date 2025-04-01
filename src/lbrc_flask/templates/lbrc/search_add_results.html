@@ -23,7 +23,7 @@
                 </td>
                 <td class="grid_stacked_right">
                     {% if r.selected %}
-                        <button class="icon {{selected_icon | default_if_none('check')}}"></button>
+                        <a class="icon {{selected_icon | default_if_none('check')}}"></a>
                     {% elif not r.not_selectable %}
                         <form hx-post="{{ add_url }}">
                             <input type="hidden" name="id" value="{{ r.id }}">
