@@ -1022,6 +1022,9 @@ button[type="submit"]
 .icon.chart {
     --_content: "\f080";
 }
+.icon.check {
+    --_content: "\f00c";
+}
 .icon.check_circle {
     --_content: "\f058";
 }
