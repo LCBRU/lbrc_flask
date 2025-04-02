@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.14.6"
+version = "1.14.8"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -20,10 +20,12 @@ dependencies=[
   'alembic',
   'arrow',
   'bcrypt',
+  'beautifulsoup4',
   'cairosvg',
   'celery',
   'chardet',
   'email_validator',
+  'Faker',
   'Flask',
   'flask_mail',
   'flask-admin',
@@ -37,12 +39,14 @@ dependencies=[
   'markdown',
   'openpyxl',
   'pygal',
+  'pymysql',
+  'pytest',
   'python-dateutil',
   'python-dotenv',
   'pytz',
   'rich',
   'setuptools',
-  'WTForms',
+  'WTForms==3.1.2',
   'xlrd',
   'lxml',
 ]

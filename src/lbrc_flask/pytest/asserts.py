@@ -105,7 +105,8 @@ def assert__requires_role(client, url, post=False):
     else:
         resp = client.get(url)
 
-    assert__redirect(resp, url='/')
+    assert resp.status_code == http.HTTPStatus.FORBIDDEN
+
 
 
 def assert__search_html(soup, clear_url):
