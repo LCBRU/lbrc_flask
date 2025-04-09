@@ -75,16 +75,22 @@ class LookupFakeCreator(FakeCreator):
 class LookupProvider(BaseProvider):
     LOOKUPS = []
 
+    class CreatorProviderMethod():
+        def __init__(self, cls):
+            self.cls = cls
+        
+        def __call__(self, *args, **kwds):
+            return LookupFakeCreator(self.cls)
+
+        def method_name(self):
+            return self().class_name().replace(' ', '_')
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         for L in self.LOOKUPS:
-            creator = LookupFakeCreator(L)
-            setattr(
-                self,
-                creator.class_name().replace(' ', '_'),
-                lambda: LookupFakeCreator(L),
-            )
+            cp = self.CreatorProviderMethod(L)
+            setattr(self, cp.method_name(), cp)
 
     def create_standard_lookups(self):
         result = {}
