@@ -11,6 +11,7 @@ from lbrc_flask.validators import (
     is_invalid_nhs_number,
     calculate_nhs_number_checksum,
 )
+from lbrc_flask.string_functions import camel_case_split
 from sqlalchemy import select
 from faker import Faker
 
@@ -68,6 +69,30 @@ class LookupFakeCreator(FakeCreator):
         for i in range(1, n+1):
             result.append(self.get_in_db(name=self.lookup_name(i)))
 
+        return result
+
+
+class LookupProvider(BaseProvider):
+    LOOKUPS = []
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for L in self.LOOKUPS:
+            creator = LookupFakeCreator(L)
+            setattr(
+                self,
+                creator.class_name().replace(' ', '_'),
+                lambda: LookupFakeCreator(L),
+            )
+
+    def create_standard_lookups(self):
+        result = {}
+
+        for L in self.LOOKUPS:
+            creator = LookupFakeCreator(L)
+            result[creator.class_name()] = creator.get_n_in_db(5)
+        
         return result
 
 
