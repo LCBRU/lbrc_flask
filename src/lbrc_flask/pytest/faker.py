@@ -38,6 +38,38 @@ class FakeCreator():
     def choices_from_db(self, k=1, **kwargs):
         return sample(list(db.session.execute(select(self.cls)).scalars()), k)
 
+    def get_value_or_get(self, source, key, from_db):
+        if key in source:
+            return source[key]
+        elif from_db:
+            return self.choice_from_db()
+        else:
+            return self.get()
+
+
+class LookupFakeCreator(FakeCreator):
+    def get(self, **kwargs):
+        result = self.cls(
+            name=kwargs.get('name', self.faker.pystr(min_chars=1, max_chars=100))
+        )
+
+        return result
+    
+    def class_name(self):
+        parts = camel_case_split(self.cls.__name__)
+        return ' '.join([p.lower() for p in parts])
+
+    def lookup_name(self, i):
+        return f"{self.class_name().title()} {i}"
+
+    def get_n_in_db(self, n):
+        result = []
+
+        for i in range(1, n+1):
+            result.append(self.get_in_db(name=self.lookup_name(i)))
+
+        return result
+
 
 class LbrcFlaskFakerProvider(BaseProvider):
     def user_details(self):

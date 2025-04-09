@@ -1,4 +1,5 @@
 from functools import lru_cache
+from re import finditer
 
 
 @lru_cache(maxsize=500, typed=False)
@@ -50,3 +51,7 @@ def encode_dictionary_string(value):
         return None
     else:
         return ','.join([f'{k}:{v}' for k, v in value.items()])
+
+def camel_case_split(identifier):
+    matches = finditer('.+?(?:(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|$)', identifier)
+    return [m.group(0) for m in matches]
