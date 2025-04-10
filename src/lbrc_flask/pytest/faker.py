@@ -100,6 +100,12 @@ class LookupProvider(BaseProvider):
             result[creator.class_name()] = creator.get_n_in_db(5)
         
         return result
+    
+    def lookup_select_choices(self, cls):
+        lookups = db.session.execute(
+            select(cls).order_by(cls.name)
+        ).scalars()
+        return [('0', '')] + [(str(l.id), l.name) for l in lookups]
 
 
 class LbrcFlaskFakerProvider(BaseProvider):

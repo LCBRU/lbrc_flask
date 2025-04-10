@@ -155,6 +155,12 @@ def assert__input_file(soup, id):
     assert control.attrs['type'] == "file"
 
 
+def assert__input_checkbox(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "checkbox"
+
+
 def assert__input_textarea(soup, id):
     control = soup.find('textarea', id=id)
     assert control is not None
