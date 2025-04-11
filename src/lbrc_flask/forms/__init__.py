@@ -5,6 +5,7 @@ from wtforms import (
     IntegerField,
     HiddenField,
     Field,
+    SelectField,
     SelectMultipleField,
     BooleanField,
     SearchField,
@@ -38,6 +39,13 @@ class SelectListWidget:
 class MultiCheckboxField(SelectMultipleField):
     widget = ListWidget(prefix_label=False)
     option_widget = CheckboxInput()
+
+
+class YesNoSelectField(SelectField):
+    def __init__(self, *args, **kwargs):
+        kwargs['coerce'] = boolean_coerce
+        kwargs['choices'] = [('', ''), ('True', 'Yes'), ('False', 'No')]
+        super().__init__(*args, **kwargs)
 
 
 class DataListField(Field):

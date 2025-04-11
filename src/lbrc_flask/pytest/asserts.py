@@ -131,6 +131,15 @@ def assert__select(soup, id, options, multiselect=False):
     assert found_options == options
 
 
+def assert__yesno_select(soup, id):
+    select = soup.find('select', id=id)
+    assert select is not None
+
+    found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
+
+    assert found_options == [('', ''), ('True', 'Yes'), ('False', 'No')]
+
+
 def assert__input_date(soup, id):
     control = soup.find('input', id=id)
     assert control is not None
