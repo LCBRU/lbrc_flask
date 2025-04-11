@@ -125,9 +125,6 @@ def assert__select(soup, id, options, multiselect=False):
 
     found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
 
-    print(options)
-    print(found_options)
-
     assert found_options == options
 
 
