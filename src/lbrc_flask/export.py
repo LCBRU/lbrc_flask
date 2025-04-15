@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font
 from tempfile import NamedTemporaryFile
-from datetime import datetime
+import datetime
 from flask_weasyprint import HTML, render_pdf
 
 

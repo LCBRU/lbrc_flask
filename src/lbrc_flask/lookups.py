@@ -13,6 +13,18 @@ class Lookup(AuditMixin, CommonMixin):
         return self.name
 
 
+class NullObject:
+    def __init__(self, object):
+        self.object = object
+    
+    def __getattr__(self, name):
+        try:
+            return self.object.__getattr__(name)
+        except AttributeError:
+            pass
+        return None
+
+
 class LookupRepository:
     def __init__(self, cls):
         self.cls = cls
