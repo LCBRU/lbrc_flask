@@ -216,6 +216,7 @@ class ColumnDefinition:
     COLUMN_TYPE_STRING = 'str'
     COLUMN_TYPE_INTEGER = 'int'
     COLUMN_TYPE_DATE = 'date'
+    COLUMN_TYPE_BOOLEAN = 'boolean'
 
     name: str
     type: str
@@ -224,7 +225,7 @@ class ColumnDefinition:
     translated_name: Optional[str] = None
 
     def value(self, row: dict):
-        return row.get(self.name, None)
+        return next(v for k,v in row.items() if k.startswith(self.name))
 
     def stringed_value(self, row: dict):
         return str(self.value(row) or '').strip()

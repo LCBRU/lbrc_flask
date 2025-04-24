@@ -55,10 +55,14 @@ class LookupFakeCreator(FakeCreator):
         )
 
         return result
-    
-    def class_name(self):
-        parts = camel_case_split(self.cls.__name__)
+
+    @staticmethod    
+    def class_name_for_class(cls):
+        parts = camel_case_split(cls.__name__)
         return ' '.join([p.lower() for p in parts])
+
+    def class_name(self):
+        return LookupFakeCreator.class_name_for_class(self.cls)
 
     def lookup_name(self, i):
         return f"{self.class_name().title()} {i}"
@@ -87,10 +91,12 @@ class LookupProvider(BaseProvider):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.creators = {}
 
         for L in self.LOOKUPS:
             cp = self.CreatorProviderMethod(L)
             setattr(self, cp.method_name(), cp)
+            self.creators[L] = cp()
 
     def create_standard_lookups(self):
         result = {}
@@ -101,6 +107,12 @@ class LookupProvider(BaseProvider):
         
         return result
     
+    def lookup_creator(self, cls):
+        return self.creators[cls]
+
+    def lookup_all(self, cls):
+        return list(db.session.execute(select(cls)).scalars())
+
     def lookup_select_choices(self, cls):
         lookups = db.session.execute(
             select(cls).order_by(cls.name)
