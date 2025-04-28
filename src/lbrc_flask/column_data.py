@@ -6,6 +6,7 @@ import xlrd
 from openpyxl import load_workbook
 from itertools import takewhile, zip_longest, compress, islice
 from lbrc_flask.validators import is_integer, parse_date_or_none
+from lbrc_flask.lookups import Lookup, LookupRepository
 
 
 class ColumnData():
@@ -114,7 +115,11 @@ class ColumnsDefinition():
         return errors
 
     def column_validation_errors(self, spreadsheet):
-        missing_columns = set(self.column_names) - set(spreadsheet.get_column_names())
+
+        def column_is_missing(column_name):
+            return not any(c for c in spreadsheet.get_column_names() if c.startswith(column_name.lower()))
+
+        missing_columns = [c for c in self.column_names if column_is_missing(c)]
         return map(lambda x: f"Missing column '{x}'", missing_columns)
 
     def iter_filtered_data(self, spreadsheet):
@@ -126,6 +131,12 @@ class ColumnsDefinition():
 
             for cd in self.column_definition:
                 result[cd.get_translated_name()] = cd.value(row)
+
+                if cd.type == ColumnDefinition.COLUMN_TYPE_LOOKUP:
+                    lr = LookupRepository(cd.lookup_class)
+
+                    if l := lr.get(cd.value(row)):
+                        result[f"{cd.get_translated_name()}_id"] = l.id
             
             yield result
 
@@ -157,7 +168,7 @@ class ColumnsDefinition():
     def _field_errors_for_def(self, row: dict):
         result = []
         for col_def in self.column_definition:
-            if col_def.name in row:
+            if col_def.is_defined_in_row(row):
                 result.extend(self._field_errors(row, col_def))
         
         return result
@@ -165,7 +176,9 @@ class ColumnsDefinition():
     def _field_errors(self, row, col_def):
         result = []
 
-        value = row[col_def.name]
+        value = col_def.value(row)
+
+        print(col_def)
 
         if not col_def.allow_null:
             is_null = value is None or str(value).strip() == ''
@@ -179,6 +192,8 @@ class ColumnsDefinition():
                 result.extend(self._is_invalid_interger(value, col_def))
             case ColumnDefinition.COLUMN_TYPE_DATE:
                 result.extend(self._is_invalid_date(value, col_def))
+            case ColumnDefinition.COLUMN_TYPE_BOOLEAN:
+                result.extend(self._is_invalid_boolean(value, col_def))
         
         return map(lambda e: f"{col_def.name}: {e}", result)
 
@@ -210,6 +225,15 @@ class ColumnsDefinition():
         
         return []
 
+    def _is_invalid_boolean(self, value, col_def):
+        if value is None:
+            return []
+
+        if not str(value).lower() in ['true', 'false']:
+            return ["Invalid value"]
+
+        return []
+
 
 @dataclass
 class ColumnDefinition:
@@ -217,18 +241,36 @@ class ColumnDefinition:
     COLUMN_TYPE_INTEGER = 'int'
     COLUMN_TYPE_DATE = 'date'
     COLUMN_TYPE_BOOLEAN = 'boolean'
+    COLUMN_TYPE_LOOKUP = 'lookup'
 
     name: str
     type: str
     allow_null: bool = False
     max_length: Optional[int] = None
     translated_name: Optional[str] = None
+    lookup_class: Optional[Lookup] = None
+
+    def is_defined_in_row(self, row: dict):
+        for k,v in row.items():
+            if k.startswith(self.name.lower()):
+                return True
+        
+        return False
 
     def value(self, row: dict):
-        return next(v for k,v in row.items() if k.startswith(self.name))
+        for k,v in row.items():
+            if k.startswith(self.name.lower()):
+                return v
+        
+        return None
 
     def stringed_value(self, row: dict):
-        return str(self.value(row) or '').strip()
+        val = self.value(row)
+
+        if val is None:
+            val = ''
+
+        return str(val).strip()
 
     def has_value(self, row: dict):
         return len(self.stringed_value(row)) > 0
