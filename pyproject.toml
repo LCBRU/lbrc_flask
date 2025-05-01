@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "1.17.2"
+version = "1.17.3"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -49,6 +49,7 @@ dependencies=[
   'rich',
   'setuptools',
   'WTForms==3.1.2',
+  'WeasyPrint==52.5',
   'xlrd',
   'lxml',
 ]

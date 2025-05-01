@@ -95,11 +95,14 @@ class CsvData(ColumnData):
 class ColumnsDefinition():
     @property
     def column_definition(self):
-        return []
+        return None
     
     @property
     def column_names(self):
         return [d.name for d in self.column_definition]
+
+    def row_filter(self, spreadsheet):
+        return None
 
     def definition_for_column_name(self, name):
         for d in self.column_definition:
@@ -123,7 +126,12 @@ class ColumnsDefinition():
         return map(lambda x: f"Missing column '{x}'", missing_columns)
 
     def iter_filtered_data(self, spreadsheet):
-        return compress(spreadsheet.iter_rows(), self.rows_with_all_fields(spreadsheet))
+        row_filter = self.row_filter(spreadsheet)
+
+        if row_filter is None:
+            return spreadsheet.iter_rows()
+        else:
+            return compress(spreadsheet.iter_rows(), row_filter)
     
     def translated_data(self, spreadsheet):
         for row in self.iter_filtered_data(spreadsheet):
@@ -183,7 +191,7 @@ class ColumnsDefinition():
         if not col_def.allow_null:
             is_null = value is None or str(value).strip() == ''
             if is_null:
-                result.append("Data is mising")
+                result.append("Data is missing")
 
         match col_def.type:
             case ColumnDefinition.COLUMN_TYPE_STRING:
