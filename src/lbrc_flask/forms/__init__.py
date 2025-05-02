@@ -237,4 +237,4 @@ def boolean_coerce(value):
     elif value in ('false', 'no'):
         return False
     else:
-        return ''
+        return None
