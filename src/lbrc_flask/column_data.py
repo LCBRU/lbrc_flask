@@ -10,14 +10,15 @@ from lbrc_flask.lookups import Lookup, LookupRepository
 
 
 class ColumnData():
-    def __init__(self, filepath, header_rows: int = 1):
+    def __init__(self, filepath, header_rows: int = 1, column_header_row: int = 1):
         self.filepath = filepath
         self.header_rows = header_rows
+        self.column_header_row = column_header_row
 
 
 class ExcelData(ColumnData):
-    def __init__(self, filepath, header_rows: int = 1, worksheet=None):
-        super().__init__(filepath, header_rows)
+    def __init__(self, filepath, header_rows: int = 1, worksheet=None, column_header_row: int = 1):
+        super().__init__(filepath, header_rows, column_header_row=column_header_row)
         self.worksheet = worksheet
 
     def get_worksheet(self):
@@ -35,10 +36,10 @@ class ExcelData(ColumnData):
         return self.worksheet in self.get_workbook().sheetnames
 
     def get_column_names(self):
-        rows = self.get_worksheet().iter_rows(min_row=1, max_row=1)
-        first_row = next(rows)
+        rows = self.get_worksheet().iter_rows(min_row=self.column_header_row, max_row=self.column_header_row)
+        header_row = next(rows)
 
-        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
+        return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
 
     def iter_rows(self):
         column_names = self.get_column_names()
@@ -51,9 +52,9 @@ class Excel97Data(ColumnData):
     def get_column_names(self):
         wb = xlrd.open_workbook(filename=self.filepath)
         ws = wb.sheet_by_index(0)
-        first_row = ws.row(0)
+        header_row = ws.row(self.column_header_row)
 
-        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
+        return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
 
     def iter_rows(self):
         wb = xlrd.open_workbook(filename=self.filepath, formatting_info=True)
