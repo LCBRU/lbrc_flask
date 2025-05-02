@@ -16,21 +16,33 @@ class ColumnData():
 
 
 class ExcelData(ColumnData):
+    def __init__(self, filepath, header_rows: int = 1, worksheet=None):
+        super().__init__(filepath, header_rows)
+        self.worksheet = worksheet
+
+    def get_worksheet(self):
+        wb = self.get_workbook()
+
+        if self.worksheet is None:
+            return wb.active
+        else:
+            return wb[self.worksheet]
+
+    def get_workbook(self):
+        return load_workbook(filename=self.filepath, read_only=True)
+    
+    def has_worksheet(self):
+        return self.worksheet in self.get_workbook().sheetnames
 
     def get_column_names(self):
-        wb = load_workbook(filename=self.filepath, read_only=True)
-        ws = wb.active
-        rows = ws.iter_rows(min_row=1, max_row=1)
+        rows = self.get_worksheet().iter_rows(min_row=1, max_row=1)
         first_row = next(rows)
 
         return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
 
     def iter_rows(self):
-        wb = load_workbook(filename=self.filepath, read_only=True)
-        ws = wb.active
-
         column_names = self.get_column_names()
-        for r in ws.iter_rows(min_row=self.header_rows + 1, values_only=True):
+        for r in self.get_worksheet().iter_rows(min_row=self.header_rows + 1, values_only=True):
             yield dict(zip(column_names, r))
 
 
@@ -138,13 +150,7 @@ class ColumnsDefinition():
             result = {}
 
             for cd in self.column_definition:
-                result[cd.get_translated_name()] = cd.value(row)
-
-                if cd.type == ColumnDefinition.COLUMN_TYPE_LOOKUP:
-                    lr = LookupRepository(cd.lookup_class)
-
-                    if l := lr.get(cd.value(row)):
-                        result[f"{cd.get_translated_name()}_id"] = l.id
+                result.update(cd.get_translated_data(row))
             
             yield result
 
@@ -176,72 +182,10 @@ class ColumnsDefinition():
     def _field_errors_for_def(self, row: dict):
         result = []
         for col_def in self.column_definition:
-            if col_def.is_defined_in_row(row):
-                result.extend(self._field_errors(row, col_def))
+            result.extend(col_def.validation_errors(row))
         
         return result
     
-    def _field_errors(self, row, col_def):
-        result = []
-
-        value = col_def.value(row)
-
-        print(col_def)
-
-        if not col_def.allow_null:
-            is_null = value is None or str(value).strip() == ''
-            if is_null:
-                result.append("Data is missing")
-
-        match col_def.type:
-            case ColumnDefinition.COLUMN_TYPE_STRING:
-                result.extend(self._is_invalid_string(value, col_def))
-            case ColumnDefinition.COLUMN_TYPE_INTEGER:
-                result.extend(self._is_invalid_interger(value, col_def))
-            case ColumnDefinition.COLUMN_TYPE_DATE:
-                result.extend(self._is_invalid_date(value, col_def))
-            case ColumnDefinition.COLUMN_TYPE_BOOLEAN:
-                result.extend(self._is_invalid_boolean(value, col_def))
-        
-        return map(lambda e: f"{col_def.name}: {e}", result)
-
-    def _is_invalid_string(self, value, col_def):
-        if value is None:
-            return []
-
-        if max_length := col_def.max_length:
-            if len(value) > max_length:
-               return [f"Text is longer than {max_length} characters"]
-
-        return []
-
-    def _is_invalid_interger(self, value, col_def):
-        if value is None:
-            return []
-
-        if not is_integer(value):
-            return ["Invalid value"]
-        
-        return []
-
-    def _is_invalid_date(self, value, col_def):
-        if value is None:
-            return []
-
-        if parse_date_or_none(value) is None:
-            return ["Invalid value"]
-        
-        return []
-
-    def _is_invalid_boolean(self, value, col_def):
-        if value is None:
-            return []
-
-        if not str(value).lower() in ['true', 'false']:
-            return ["Invalid value"]
-
-        return []
-
 
 @dataclass
 class ColumnDefinition:
@@ -252,11 +196,9 @@ class ColumnDefinition:
     COLUMN_TYPE_LOOKUP = 'lookup'
 
     name: str
-    type: str
     allow_null: bool = False
     max_length: Optional[int] = None
     translated_name: Optional[str] = None
-    lookup_class: Optional[Lookup] = None
 
     def is_defined_in_row(self, row: dict):
         for k,v in row.items():
@@ -285,3 +227,108 @@ class ColumnDefinition:
 
     def get_translated_name(self):
         return self.translated_name or self.name
+
+    def _type_validation_errors(self, row: dict):
+        return []
+
+    def validation_errors(self, row: dict):
+        result = []
+
+        if self.is_defined_in_row(row):
+            if self.allow_null or self.has_value(row):
+                result.extend(self._type_validation_errors(row))
+                pass
+            else:
+                result.append(self._format_error("Data is missing"))
+
+        return result
+    
+    def _format_error(self, error):
+        return f"{self.name}: {error}"
+
+    def get_object_value(self, obj):
+        return getattr(obj, self.translated_name)
+    
+    def get_translated_data(self, row):
+        return {self.translated_name: self.value(row)}
+
+
+@dataclass
+class StringColumnDefinition(ColumnDefinition):
+    max_length: Optional[int] = None
+
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if max_length := self.max_length:
+            if len(self.value(row)) > max_length:
+               result.append(self._format_error(f"Text is longer than {max_length} characters"))
+        
+        return result
+    
+
+@dataclass
+class IntegerColumnDefinition(ColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not is_integer(self.value(row)):
+            result.append(self._format_error("Invalid value"))
+        
+        return result
+
+
+@dataclass
+class DateColumnDefinition(ColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if parse_date_or_none(self.value(row)) is None:
+            result.append(self._format_error("Invalid value"))
+        
+        return result
+
+
+@dataclass
+class BooleanColumnDefinition(ColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not self.stringed_value(row).lower() in ['true', 'false']:
+            result.append(self._format_error("Invalid value"))
+        
+        return result
+
+
+@dataclass
+class LookupColumnDefinition(ColumnDefinition):
+    lookup_class: Optional[Lookup] = None
+
+    def _get_lookup(self, row: dict):
+        return LookupRepository(self.lookup_class).get(self.value(row))
+
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if self._get_lookup(row) is None:
+            result.append(self._format_error("Does not exist"))
+
+        return result
+
+    def get_object_value(self, obj):
+        value = super().get_object_value(obj)
+
+        if value:
+            return value.name
+
+        return None
+
+    def get_translated_data(self, row: dict):
+        result = {self.translated_name: self.value(row)}
+
+        lookup = self._get_lookup(row)
+
+        if lookup is not None:
+            result[f'{self.translated_name}_id'] = lookup.id
+        
+        return result
