@@ -39,7 +39,7 @@ class ExcelData(ColumnData):
         rows = self.get_worksheet().iter_rows(min_row=self.column_header_row, max_row=self.column_header_row)
         header_row = next(rows)
 
-        return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
+        return [str(c.value).lower() for c in takewhile(lambda x: x.value, header_row)]
 
     def iter_rows(self):
         column_names = self.get_column_names()
