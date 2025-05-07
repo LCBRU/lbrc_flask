@@ -236,10 +236,9 @@ class ColumnDefinition:
         result = []
 
         if self.is_defined_in_row(row):
-            if self.allow_null or self.has_value(row):
+            if self.has_value(row):
                 result.extend(self._type_validation_errors(row))
-                pass
-            else:
+            elif not self.allow_null:
                 result.append(self._format_error("Data is missing"))
 
         return result
@@ -262,8 +261,9 @@ class StringColumnDefinition(ColumnDefinition):
         result = []
 
         if max_length := self.max_length:
-            if len(self.value(row)) > max_length:
-               result.append(self._format_error(f"Text is longer than {max_length} characters"))
+            actual_length = len(str(self.value(row)))
+            if actual_length > max_length:
+               result.append(self._format_error(f"Text is longer than {max_length} characters ({actual_length})"))
         
         return result
     
@@ -274,7 +274,7 @@ class IntegerColumnDefinition(ColumnDefinition):
         result = []
 
         if not is_integer(self.value(row)):
-            result.append(self._format_error("Invalid value"))
+            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
         
         return result
 
@@ -285,20 +285,38 @@ class DateColumnDefinition(ColumnDefinition):
         result = []
 
         if parse_date_or_none(self.value(row)) is None:
-            result.append(self._format_error("Invalid value"))
+            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
         
         return result
 
 
 @dataclass
 class BooleanColumnDefinition(ColumnDefinition):
+    TRUE_VALUES = ['y', 'yes', 'true']
+    FALSE_VALUES = ['n', 'no', 'false']
+
     def _type_validation_errors(self, row: dict):
         result = []
 
-        if not self.stringed_value(row).lower() in ['true', 'false']:
-            result.append(self._format_error("Invalid value"))
+        if not self.stringed_value(row).lower() in BooleanColumnDefinition.TRUE_VALUES + BooleanColumnDefinition.FALSE_VALUES:
+            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
         
         return result
+
+    def get_translated_data(self, row: dict):
+        value = self.value(row)
+        translated_value = None
+
+        if value is not None:
+            if isinstance(value, bool):
+                translated_value = value
+            elif value.lower() in BooleanColumnDefinition.TRUE_VALUES:
+                translated_value = True
+            elif value.lower() in BooleanColumnDefinition.FALSE_VALUES:
+                translated_value = False
+
+
+        return {self.translated_name: translated_value}
 
 
 @dataclass
@@ -312,7 +330,7 @@ class LookupColumnDefinition(ColumnDefinition):
         result = []
 
         if self._get_lookup(row) is None:
-            result.append(self._format_error("Does not exist"))
+            result.append(self._format_error(f"Does not exist ('{self.value(row)}')"))
 
         return result
 

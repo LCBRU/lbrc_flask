@@ -301,11 +301,12 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
 
 
 class FakeXlsxFile():
-    def __init__(self, filename, headers, data, worksheet=None):
+    def __init__(self, filename, headers, data, worksheet=None, headers_on_row=1):
         self.filename = filename
         self.headers = headers
         self.data = data
         self.worksheet = worksheet
+        self.headers_on_row = headers_on_row
 
     def get_iostream(self):
         self.workbook= Workbook()
@@ -314,6 +315,9 @@ class FakeXlsxFile():
             ws1 = self.workbook.active
         else:
             ws1 = self.workbook.create_sheet(self.worksheet)
+
+        for _ in range(1, self.headers_on_row):
+            ws1.append([])
 
         ws1.append(self.headers)
 
@@ -329,11 +333,17 @@ class FakeXlsxFile():
 
 
 class LbrcFileProvider(BaseProvider):
-    def xlsx(self, headers, data, filename=None, worksheet=None):
+    def xlsx(self, headers, data, filename=None, worksheet=None, headers_on_row=1):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
 
-        return FakeXlsxFile(filename=filename, headers=headers, data=data, worksheet=worksheet)
+        return FakeXlsxFile(
+            filename=filename,
+            headers=headers,
+            data=data,
+            worksheet=worksheet,
+            headers_on_row=headers_on_row,
+        )
 
     def data_from_definition(self, columns_definition: dict, rows=10):
         data = []
