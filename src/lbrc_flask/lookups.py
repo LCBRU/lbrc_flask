@@ -35,7 +35,7 @@ class LookupRepository:
         if not name:
             return None
 
-        q = select(self.cls).where(self.cls.name == name)
+        q = select(self.cls).where(self.cls.name == name.strip('.,;'))
         result = db.session.execute(q).scalar_one_or_none()
 
         return result
