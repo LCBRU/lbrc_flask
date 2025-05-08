@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import string
 from typing import Optional
 import chardet
 import csv
@@ -190,17 +191,14 @@ class ColumnsDefinition():
 
 @dataclass
 class ColumnDefinition:
-    COLUMN_TYPE_STRING = 'str'
-    COLUMN_TYPE_INTEGER = 'int'
-    COLUMN_TYPE_DATE = 'date'
-    COLUMN_TYPE_BOOLEAN = 'boolean'
-    COLUMN_TYPE_LOOKUP = 'lookup'
-
     name: str
     allow_null: bool = False
     max_length: Optional[int] = None
     translated_name: Optional[str] = None
 
+    def _strip(self, value):
+        return value.strip()
+    
     def is_defined_in_row(self, row: dict):
         for k,v in row.items():
             if k.startswith(self.name.lower()):
@@ -220,8 +218,12 @@ class ColumnDefinition:
 
         if val is None:
             val = ''
+        
+        val = str(val)
 
-        return str(val).strip()
+        val = self._strip(val)
+
+        return val
 
     def has_value(self, row: dict):
         return len(self.stringed_value(row)) > 0
@@ -270,10 +272,13 @@ class StringColumnDefinition(ColumnDefinition):
 
 @dataclass
 class IntegerColumnDefinition(ColumnDefinition):
+    def _strip(self, value):
+        return value.strip('£$€¥' + string.whitespace)
+    
     def _type_validation_errors(self, row: dict):
         result = []
 
-        if not is_integer(self.value(row)):
+        if not is_integer(self.stringed_value(row)):
             result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
         
         return result
@@ -321,10 +326,13 @@ class BooleanColumnDefinition(ColumnDefinition):
 
 @dataclass
 class LookupColumnDefinition(ColumnDefinition):
+    def _strip(self, value):
+        return value.strip('.,;' + string.whitespace)
+    
     lookup_class: Optional[Lookup] = None
 
     def _get_lookup(self, row: dict):
-        return LookupRepository(self.lookup_class).get(self.value(row))
+        return LookupRepository(self.lookup_class).get(self.stringed_value(row))
 
     def _type_validation_errors(self, row: dict):
         result = []
