@@ -131,6 +131,7 @@ class Ldap():
 
             for user in self.connection.entries:
                 current_app.logger.info(f"LDAP found {user}")
+                print('#######', user[self.FIELDNAME_USERID])
                 result.append({
                     'username': user[self.FIELDNAME_USERID],
                     'email': user[self.FIELDNAME_EMAIL],
