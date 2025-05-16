@@ -6,7 +6,7 @@ import csv
 import xlrd
 from openpyxl import load_workbook
 from itertools import takewhile, zip_longest, compress, islice
-from lbrc_flask.validators import is_integer, parse_date_or_none
+from lbrc_flask.validators import is_integer, is_number, parse_date_or_none
 from lbrc_flask.lookups import Lookup, LookupRepository
 
 
@@ -116,7 +116,7 @@ class ColumnsDefinition():
         return [d.name for d in self.column_definition]
 
     def row_filter(self, spreadsheet):
-        return None
+        return self.rows_with_any_fields(spreadsheet)
 
     def definition_for_column_name(self, name):
         for d in self.column_definition:
@@ -137,8 +137,21 @@ class ColumnsDefinition():
             return not any(c for c in spreadsheet.get_column_names() if c.startswith(column_name.lower()))
 
         missing_columns = [c for c in self.column_names if column_is_missing(c)]
-        return map(lambda x: f"Missing column '{x}'", missing_columns)
+        return [ColumnsDefinitionValidationMessage(
+            type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
+            message=f"Missing column '{m}'"
+        ) for m in missing_columns]
 
+    def data_validation_errors(self, spreadsheet):
+        result = []
+
+        for i, row in enumerate(self.iter_filtered_data(spreadsheet), 1):
+            for e in self._field_errors_for_def(row):
+                e.row = i
+                result.append(e)
+
+        return result
+    
     def iter_filtered_data(self, spreadsheet):
         row_filter = self.row_filter(spreadsheet)
 
@@ -156,15 +169,6 @@ class ColumnsDefinition():
             
             yield result
 
-    def data_validation_errors(self, spreadsheet):
-        result = []
-
-        for i, row in enumerate(self.iter_filtered_data(spreadsheet), 1):
-            row_errors = self._field_errors_for_def(row)
-            result.extend(map(lambda e: f"Row {i}: {e}", row_errors))
-
-        return result
-    
     def rows_with_all_fields(self, spreadsheet):
         result = []
 
@@ -187,12 +191,36 @@ class ColumnsDefinition():
             result.extend(col_def.validation_errors(row))
         
         return result
-    
+
+
+@dataclass
+class ColumnsDefinitionValidationMessage:
+    TYPE__ERROR = 'Error'
+    TYPE__WARNING = 'Warning'
+
+    TYPE_NAMES = [
+        TYPE__ERROR,
+        TYPE__WARNING,
+    ]
+
+    type: str
+    message: str
+    row: Optional[int] = None
+
+    @property
+    def is_error(self):
+        return self.type == ColumnsDefinitionValidationMessage.TYPE__ERROR
+
+    def __post_init__(self):
+        if self.type not in ColumnsDefinitionValidationMessage.TYPE_NAMES:
+            raise ValueError(f"Type is '{self.type}' must be one of {', '.join(ColumnsDefinitionValidationMessage.TYPE_NAMES)}")
+
 
 @dataclass
 class ColumnDefinition:
     name: str
     allow_null: bool = False
+    skip_errors: bool = False
     max_length: Optional[int] = None
     translated_name: Optional[str] = None
 
@@ -207,11 +235,23 @@ class ColumnDefinition:
         return False
 
     def value(self, row: dict):
+        result = None
+
         for k,v in row.items():
             if k.startswith(self.name.lower()):
-                return v
+                result = v
+                break
         
-        return None
+        if str(result).startswith('='):
+            result = None
+
+        if isinstance(result, str):
+            result = self._strip(result)
+        
+        if isinstance(result, str) and len(result) == 0 and self.allow_null:
+            result = None
+
+        return result
 
     def stringed_value(self, row: dict):
         val = self.value(row)
@@ -220,7 +260,6 @@ class ColumnDefinition:
             val = ''
         
         val = str(val)
-
         val = self._strip(val)
 
         return val
@@ -241,18 +280,29 @@ class ColumnDefinition:
             if self.has_value(row):
                 result.extend(self._type_validation_errors(row))
             elif not self.allow_null:
-                result.append(self._format_error("Data is missing"))
+                result.append(self._create_message("Data is missing"))
 
         return result
     
-    def _format_error(self, error):
-        return f"{self.name}: {error}"
+    def _create_message(self, error):
+        if self.skip_errors:
+            message_type = ColumnsDefinitionValidationMessage.TYPE__WARNING
+        else:
+            message_type = ColumnsDefinitionValidationMessage.TYPE__ERROR
+
+        return ColumnsDefinitionValidationMessage(
+            type=message_type,
+            message=f"{self.name}: {error}",
+        )
 
     def get_object_value(self, obj):
         return getattr(obj, self.translated_name)
     
     def get_translated_data(self, row):
-        return {self.translated_name: self.value(row)}
+        return {self.translated_name: self.get_translated_value(row)}
+    
+    def get_translated_value(self, row):
+        return self.value(row)
 
 
 @dataclass
@@ -265,23 +315,63 @@ class StringColumnDefinition(ColumnDefinition):
         if max_length := self.max_length:
             actual_length = len(str(self.value(row)))
             if actual_length > max_length:
-               result.append(self._format_error(f"Text is longer than {max_length} characters ({actual_length})"))
+               result.append(self._create_message(f"Text is longer than {max_length} characters ({actual_length})"))
         
         return result
     
 
 @dataclass
-class IntegerColumnDefinition(ColumnDefinition):
+class NumericColumnDefinition(ColumnDefinition):
     def _strip(self, value):
-        return value.strip('£$€¥' + string.whitespace)
+        last_length = len(value)
+        current_length = 0
+
+        while last_length > current_length:
+            last_length = current_length
+            value = value.strip().strip('£$€¥').replace(',', '')
+            current_length = len(value)
+
+        return value
     
     def _type_validation_errors(self, row: dict):
         result = []
 
-        if not is_integer(self.stringed_value(row)):
-            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
+        if not is_number(self.stringed_value(row)):
+            result.append(self._create_message(f"Invalid value of '{self.stringed_value(row)}'"))
         
         return result
+
+    def get_translated_value(self, row):
+        value = self.value(row)
+
+        if value is None:
+            return None
+
+        if not is_number(self.stringed_value(row)):
+            return None
+
+        return float(value)
+
+@dataclass
+class IntegerColumnDefinition(NumericColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not is_integer(self.stringed_value(row)):
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
+        
+        return result
+
+    def get_translated_value(self, row):
+        value = self.value(row)
+
+        if value is None:
+            return None
+
+        if not is_integer(value):
+            return None
+
+        return int(value)
 
 
 @dataclass
@@ -290,9 +380,12 @@ class DateColumnDefinition(ColumnDefinition):
         result = []
 
         if parse_date_or_none(self.value(row)) is None:
-            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
         
         return result
+
+    def get_translated_value(self, row):
+        return parse_date_or_none(self.value(row))
 
 
 @dataclass
@@ -304,30 +397,36 @@ class BooleanColumnDefinition(ColumnDefinition):
         result = []
 
         if not self.stringed_value(row).lower() in BooleanColumnDefinition.TRUE_VALUES + BooleanColumnDefinition.FALSE_VALUES:
-            result.append(self._format_error(f"Invalid value of '{self.value(row)}'"))
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
         
         return result
 
-    def get_translated_data(self, row: dict):
+    def get_translated_value(self, row):
         value = self.value(row)
-        translated_value = None
+        result = None
 
         if value is not None:
             if isinstance(value, bool):
-                translated_value = value
+                result = value
             elif value.lower() in BooleanColumnDefinition.TRUE_VALUES:
-                translated_value = True
+                result = True
             elif value.lower() in BooleanColumnDefinition.FALSE_VALUES:
-                translated_value = False
-
-
-        return {self.translated_name: translated_value}
-
+                result = False
+        
+        return result
 
 @dataclass
 class LookupColumnDefinition(ColumnDefinition):
     def _strip(self, value):
-        return value.strip('.,;' + string.whitespace)
+        last_length = len(value)
+        current_length = 0
+
+        while last_length > current_length:
+            last_length = current_length
+            value = value.strip().strip('.,;')
+            current_length = len(value)
+
+        return value
     
     lookup_class: Optional[Lookup] = None
 
@@ -338,7 +437,7 @@ class LookupColumnDefinition(ColumnDefinition):
         result = []
 
         if self._get_lookup(row) is None:
-            result.append(self._format_error(f"Does not exist ('{self.value(row)}')"))
+            result.append(self._create_message(f"Does not exist ('{self.stringed_value(row)}')"))
 
         return result
 
@@ -355,7 +454,9 @@ class LookupColumnDefinition(ColumnDefinition):
 
         lookup = self._get_lookup(row)
 
-        if lookup is not None:
+        if lookup is None:
+            result[f'{self.translated_name}_id'] = None
+        else:
             result[f'{self.translated_name}_id'] = lookup.id
         
         return result
