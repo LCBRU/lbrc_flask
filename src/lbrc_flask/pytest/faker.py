@@ -300,26 +300,20 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
         return result
 
 
-class FakeXlsxFile():
-    def __init__(self, filename, headers, data, worksheet=None, headers_on_row=1):
-        self.filename = filename
+class FakeXlsxWorksheet:
+    def __init__(self, name, headers, data, headers_on_row=1):
+        self.name = name
         self.headers = headers
         self.data = data
-        self.worksheet = worksheet
         self.headers_on_row = headers_on_row
 
-    def get_iostream(self):
-        self.workbook= Workbook()
-
-        if self.worksheet is None:
-            ws1 = self.workbook.active
-        else:
-            ws1 = self.workbook.create_sheet(self.worksheet)
+    def create_worksheet(self, workbook: Workbook):
+        ws1 = workbook.create_sheet(self.name)
 
         for _ in range(1, self.headers_on_row):
             ws1.append([])
 
-        ws1.append(self.headers)
+        ws1.append(list(self.headers))
 
         for d in self.data:
             row = []
@@ -327,8 +321,21 @@ class FakeXlsxFile():
                 row.append(d.get(h.lower(), ''))
             ws1.append(row)
 
+
+class FakeXlsxFile():
+    def __init__(self, filename: str, worksheets: list[FakeXlsxWorksheet]):
+        self.filename = filename
+        self.worksheets: list[FakeXlsxWorksheet] = worksheets
+
+    def get_iostream(self):
+        workbook= Workbook()
+
+        for ws in self.worksheets:
+            ws.create_worksheet(workbook)
+
         result = io.BytesIO()
-        self.workbook.save(result)
+        workbook.save(result)
+
         return result.getvalue()
 
 
