@@ -108,6 +108,14 @@ class CsvData(ColumnData):
 
 class ColumnsDefinition():
     @property
+    def minimum_row_count(self):
+        return None
+    
+    @property
+    def maximum_row_count(self):
+        return None
+    
+    @property
     def column_definition(self):
         return None
     
@@ -128,6 +136,7 @@ class ColumnsDefinition():
 
         errors.extend(self.column_validation_errors(spreadsheet))
         errors.extend(self.data_validation_errors(spreadsheet))
+        errors.extend(self.row_validation_errors(spreadsheet))
 
         return errors
 
@@ -141,6 +150,26 @@ class ColumnsDefinition():
             type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
             message=f"Missing column '{m}'"
         ) for m in missing_columns]
+
+    def row_validation_errors(self, spreadsheet):
+        rows = len(list(spreadsheet.iter_rows()))
+
+        messages = []
+
+        if (min := self.minimum_row_count) is not None:
+            if min > rows:
+                messages.append(f"Expected a minimum of {min} rows, but {rows} were found")
+
+        if (max := self.maximum_row_count) is not None:
+            if max < rows:
+                messages.append(f"Expected a maximum of {max} rows, but {rows} were found")
+
+        return [
+            ColumnsDefinitionValidationMessage(
+                type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
+                message=m
+            )
+        for m in messages]
 
     def data_validation_errors(self, spreadsheet):
         result = []

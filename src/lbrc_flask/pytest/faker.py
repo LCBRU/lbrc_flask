@@ -121,8 +121,17 @@ class LookupProvider(BaseProvider):
 
 
 class LbrcFlaskFakerProvider(BaseProvider):
+    __provider__ = 'LbrcFlaskFakerProvider'.lower()
+
+    def __init__(self, *args, **kwargs):
+        self.user_class = User
+        super().__init__(*args, **kwargs)
+    
+    def set_userclass(self, user_class):
+        self.user_class = user_class
+
     def user_details(self):
-        u = User(
+        u = self.user_class(
             first_name=self.generator.first_name(),
             last_name=self.generator.last_name(),
             username=self.generator.pystr(min_chars=5, max_chars=10),
