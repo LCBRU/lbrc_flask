@@ -107,6 +107,10 @@ class CsvData(ColumnData):
 
 
 class ColumnsDefinition():
+    @staticmethod
+    def field_name_from_column_name(column_name: str):
+        return column_name.lower().replace(' ', '_')
+
     @property
     def minimum_row_count(self):
         return None
@@ -152,7 +156,7 @@ class ColumnsDefinition():
         ) for m in missing_columns]
 
     def row_validation_errors(self, spreadsheet):
-        rows = len(list(spreadsheet.iter_rows()))
+        rows = len(list(self.iter_filtered_data(spreadsheet)))
 
         messages = []
 
