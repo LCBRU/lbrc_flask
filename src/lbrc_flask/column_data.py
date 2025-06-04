@@ -141,8 +141,12 @@ class ColumnsDefinition():
         errors.extend(self.column_validation_errors(spreadsheet))
         errors.extend(self.data_validation_errors(spreadsheet))
         errors.extend(self.row_validation_errors(spreadsheet))
+        errors.extend(self.custom_validation_errors(spreadsheet))
 
         return errors
+
+    def custom_validation_errors(self, spreadsheet):
+        return []
 
     def column_validation_errors(self, spreadsheet):
 
