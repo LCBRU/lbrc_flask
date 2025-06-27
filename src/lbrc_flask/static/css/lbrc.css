@@ -1043,6 +1043,9 @@ button[type="submit"]
 .icon.csv {
     --_content: "\f6dd";
 }
+.icon.dashboard {
+    --_content: "\f3fd";
+}
 .icon.delete {
     --_content: "\f1f8";
 }
