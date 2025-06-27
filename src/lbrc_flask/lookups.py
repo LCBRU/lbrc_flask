@@ -7,7 +7,7 @@ from sqlalchemy import String, select
 
 class Lookup(AuditMixin, CommonMixin):
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100), index=True, unique=True)
+    name: Mapped[str] = mapped_column(String(500), index=True, unique=True)
 
     def __str__(self):
         return self.name
@@ -46,12 +46,15 @@ class LookupRepository:
         if not name:
             return None
 
-        result = self.get_lookup(name)
+        result = self.get(name)
 
         if not result:
             result = self.cls(name=name)
         
         return result
+    
+    def get_or_create_all(self, names):
+        return [self.get_or_create(n) for n in names]
 
     def get_datalist_choices(self):
         lookups = db.session.execute(

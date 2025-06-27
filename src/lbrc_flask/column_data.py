@@ -1,35 +1,50 @@
 from dataclasses import dataclass
+import string
 from typing import Optional
 import chardet
 import csv
 import xlrd
 from openpyxl import load_workbook
 from itertools import takewhile, zip_longest, compress, islice
-from lbrc_flask.validators import is_integer, parse_date_or_none
+from lbrc_flask.validators import is_integer, is_number, parse_date_or_none
+from lbrc_flask.lookups import Lookup, LookupRepository
 
 
 class ColumnData():
-    def __init__(self, filepath, header_rows: int = 1):
+    def __init__(self, filepath, header_rows: int = 1, column_header_row: int = 1):
         self.filepath = filepath
         self.header_rows = header_rows
+        self.column_header_row = column_header_row
 
 
 class ExcelData(ColumnData):
+    def __init__(self, filepath, header_rows: int = 1, worksheet=None, column_header_row: int = 1):
+        super().__init__(filepath, header_rows, column_header_row=column_header_row)
+        self.worksheet = worksheet
+
+    def get_worksheet(self):
+        wb = self.get_workbook()
+
+        if self.worksheet is None:
+            return wb.active
+        else:
+            return wb[self.worksheet]
+
+    def get_workbook(self):
+        return load_workbook(filename=self.filepath, read_only=True)
+    
+    def has_worksheet(self):
+        return self.worksheet in self.get_workbook().sheetnames
 
     def get_column_names(self):
-        wb = load_workbook(filename=self.filepath, read_only=True)
-        ws = wb.active
-        rows = ws.iter_rows(min_row=1, max_row=1)
-        first_row = next(rows)
+        rows = self.get_worksheet().iter_rows(min_row=self.column_header_row, max_row=self.column_header_row)
+        header_row = next(rows)
 
-        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
+        return [str(c.value).lower() for c in takewhile(lambda x: x.value, header_row)]
 
     def iter_rows(self):
-        wb = load_workbook(filename=self.filepath, read_only=True)
-        ws = wb.active
-
         column_names = self.get_column_names()
-        for r in ws.iter_rows(min_row=self.header_rows + 1, values_only=True):
+        for r in self.get_worksheet().iter_rows(min_row=self.header_rows + 1, values_only=True):
             yield dict(zip(column_names, r))
 
 
@@ -38,9 +53,9 @@ class Excel97Data(ColumnData):
     def get_column_names(self):
         wb = xlrd.open_workbook(filename=self.filepath)
         ws = wb.sheet_by_index(0)
-        first_row = ws.row(0)
+        header_row = ws.row(self.column_header_row)
 
-        return [c.value.lower() for c in takewhile(lambda x: x.value, first_row)]
+        return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
 
     def iter_rows(self):
         wb = xlrd.open_workbook(filename=self.filepath, formatting_info=True)
@@ -92,13 +107,28 @@ class CsvData(ColumnData):
 
 
 class ColumnsDefinition():
+    @staticmethod
+    def field_name_from_column_name(column_name: str):
+        return column_name.lower().replace(' ', '_')
+
+    @property
+    def minimum_row_count(self):
+        return None
+    
+    @property
+    def maximum_row_count(self):
+        return None
+    
     @property
     def column_definition(self):
-        return []
+        return None
     
     @property
     def column_names(self):
         return [d.name for d in self.column_definition]
+
+    def row_filter(self, spreadsheet):
+        return self.rows_with_any_fields(spreadsheet)
 
     def definition_for_column_name(self, name):
         for d in self.column_definition:
@@ -110,34 +140,72 @@ class ColumnsDefinition():
 
         errors.extend(self.column_validation_errors(spreadsheet))
         errors.extend(self.data_validation_errors(spreadsheet))
+        errors.extend(self.row_validation_errors(spreadsheet))
+        errors.extend(self.custom_validation_errors(spreadsheet))
 
         return errors
 
-    def column_validation_errors(self, spreadsheet):
-        missing_columns = set(self.column_names) - set(spreadsheet.get_column_names())
-        return map(lambda x: f"Missing column '{x}'", missing_columns)
+    def custom_validation_errors(self, spreadsheet):
+        return []
 
+    def column_validation_errors(self, spreadsheet):
+
+        def column_is_missing(column_name):
+            return not any(c for c in spreadsheet.get_column_names() if c.startswith(column_name.lower()))
+
+        missing_columns = [c for c in self.column_names if column_is_missing(c)]
+        return [ColumnsDefinitionValidationMessage(
+            type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
+            message=f"Missing column '{m}'"
+        ) for m in missing_columns]
+
+    def row_validation_errors(self, spreadsheet):
+        rows = len(list(self.iter_filtered_data(spreadsheet)))
+
+        messages = []
+
+        if (min := self.minimum_row_count) is not None:
+            if min > rows:
+                messages.append(f"Expected a minimum of {min} rows, but {rows} were found")
+
+        if (max := self.maximum_row_count) is not None:
+            if max < rows:
+                messages.append(f"Expected a maximum of {max} rows, but {rows} were found")
+
+        return [
+            ColumnsDefinitionValidationMessage(
+                type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
+                message=m
+            )
+        for m in messages]
+
+    def data_validation_errors(self, spreadsheet):
+        result = []
+
+        for i, row in enumerate(self.iter_filtered_data(spreadsheet), 1):
+            for e in self._field_errors_for_def(row):
+                e.row = i
+                result.append(e)
+
+        return result
+    
     def iter_filtered_data(self, spreadsheet):
-        return compress(spreadsheet.iter_rows(), self.rows_with_all_fields(spreadsheet))
+        row_filter = self.row_filter(spreadsheet)
+
+        if row_filter is None:
+            return spreadsheet.iter_rows()
+        else:
+            return compress(spreadsheet.iter_rows(), row_filter)
     
     def translated_data(self, spreadsheet):
         for row in self.iter_filtered_data(spreadsheet):
             result = {}
 
             for cd in self.column_definition:
-                result[cd.get_translated_name()] = cd.value(row)
+                result.update(cd.get_translated_data(row))
             
             yield result
 
-    def data_validation_errors(self, spreadsheet):
-        result = []
-
-        for i, row in enumerate(self.iter_filtered_data(spreadsheet), 1):
-            row_errors = self._field_errors_for_def(row)
-            result.extend(map(lambda e: f"Row {i}: {e}", row_errors))
-
-        return result
-    
     def rows_with_all_fields(self, spreadsheet):
         result = []
 
@@ -157,80 +225,275 @@ class ColumnsDefinition():
     def _field_errors_for_def(self, row: dict):
         result = []
         for col_def in self.column_definition:
-            if col_def.name in row:
-                result.extend(self._field_errors(row, col_def))
+            result.extend(col_def.validation_errors(row))
         
         return result
-    
-    def _field_errors(self, row, col_def):
-        result = []
 
-        value = row[col_def.name]
 
-        if not col_def.allow_null:
-            is_null = value is None or str(value).strip() == ''
-            if is_null:
-                result.append("Data is mising")
+@dataclass
+class ColumnsDefinitionValidationMessage:
+    TYPE__ERROR = 'Error'
+    TYPE__WARNING = 'Warning'
 
-        match col_def.type:
-            case ColumnDefinition.COLUMN_TYPE_STRING:
-                result.extend(self._is_invalid_string(value, col_def))
-            case ColumnDefinition.COLUMN_TYPE_INTEGER:
-                result.extend(self._is_invalid_interger(value, col_def))
-            case ColumnDefinition.COLUMN_TYPE_DATE:
-                result.extend(self._is_invalid_date(value, col_def))
-        
-        return map(lambda e: f"{col_def.name}: {e}", result)
+    TYPE_NAMES = [
+        TYPE__ERROR,
+        TYPE__WARNING,
+    ]
 
-    def _is_invalid_string(self, value, col_def):
-        if value is None:
-            return []
+    type: str
+    message: str
+    row: Optional[int] = None
 
-        if max_length := col_def.max_length:
-            if len(value) > max_length:
-               return [f"Text is longer than {max_length} characters"]
+    @property
+    def is_error(self):
+        return self.type == ColumnsDefinitionValidationMessage.TYPE__ERROR
 
-        return []
-
-    def _is_invalid_interger(self, value, col_def):
-        if value is None:
-            return []
-
-        if not is_integer(value):
-            return ["Invalid value"]
-        
-        return []
-
-    def _is_invalid_date(self, value, col_def):
-        if value is None:
-            return []
-
-        if parse_date_or_none(value) is None:
-            return ["Invalid value"]
-        
-        return []
+    def __post_init__(self):
+        if self.type not in ColumnsDefinitionValidationMessage.TYPE_NAMES:
+            raise ValueError(f"Type is '{self.type}' must be one of {', '.join(ColumnsDefinitionValidationMessage.TYPE_NAMES)}")
 
 
 @dataclass
 class ColumnDefinition:
-    COLUMN_TYPE_STRING = 'str'
-    COLUMN_TYPE_INTEGER = 'int'
-    COLUMN_TYPE_DATE = 'date'
-
     name: str
-    type: str
     allow_null: bool = False
+    skip_errors: bool = False
     max_length: Optional[int] = None
     translated_name: Optional[str] = None
 
+    def _strip(self, value):
+        return value.strip()
+    
+    def is_defined_in_row(self, row: dict):
+        for k,v in row.items():
+            if k.startswith(self.name.lower()):
+                return True
+        
+        return False
+
     def value(self, row: dict):
-        return row.get(self.name, None)
+        result = None
+
+        for k,v in row.items():
+            if k.startswith(self.name.lower()):
+                result = v
+                break
+        
+        if str(result).startswith('='):
+            result = None
+
+        if isinstance(result, str):
+            result = self._strip(result)
+        
+        if isinstance(result, str) and len(result) == 0 and self.allow_null:
+            result = None
+
+        return result
 
     def stringed_value(self, row: dict):
-        return str(self.value(row) or '').strip()
+        val = self.value(row)
+
+        if val is None:
+            val = ''
+        
+        val = str(val)
+        val = self._strip(val)
+
+        return val
 
     def has_value(self, row: dict):
         return len(self.stringed_value(row)) > 0
 
     def get_translated_name(self):
         return self.translated_name or self.name
+
+    def _type_validation_errors(self, row: dict):
+        return []
+
+    def validation_errors(self, row: dict):
+        result = []
+
+        if self.is_defined_in_row(row):
+            if self.has_value(row):
+                result.extend(self._type_validation_errors(row))
+            elif not self.allow_null:
+                result.append(self._create_message("Data is missing"))
+
+        return result
+    
+    def _create_message(self, error):
+        if self.skip_errors:
+            message_type = ColumnsDefinitionValidationMessage.TYPE__WARNING
+        else:
+            message_type = ColumnsDefinitionValidationMessage.TYPE__ERROR
+
+        return ColumnsDefinitionValidationMessage(
+            type=message_type,
+            message=f"{self.name}: {error}",
+        )
+
+    def get_object_value(self, obj):
+        return getattr(obj, self.translated_name)
+    
+    def get_translated_data(self, row):
+        return {self.translated_name: self.get_translated_value(row)}
+    
+    def get_translated_value(self, row):
+        return self.value(row)
+
+
+@dataclass
+class StringColumnDefinition(ColumnDefinition):
+    max_length: Optional[int] = None
+
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if max_length := self.max_length:
+            actual_length = len(str(self.value(row)))
+            if actual_length > max_length:
+               result.append(self._create_message(f"Text is longer than {max_length} characters ({actual_length})"))
+        
+        return result
+    
+
+@dataclass
+class NumericColumnDefinition(ColumnDefinition):
+    def _strip(self, value):
+        last_length = len(value)
+        current_length = 0
+
+        while last_length > current_length:
+            last_length = current_length
+            value = value.strip().strip('£$€¥').replace(',', '')
+            current_length = len(value)
+
+        return value
+    
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not is_number(self.stringed_value(row)):
+            result.append(self._create_message(f"Invalid value of '{self.stringed_value(row)}'"))
+        
+        return result
+
+    def get_translated_value(self, row):
+        value = self.value(row)
+
+        if value is None:
+            return None
+
+        if not is_number(self.stringed_value(row)):
+            return None
+
+        return float(value)
+
+@dataclass
+class IntegerColumnDefinition(NumericColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not is_integer(self.stringed_value(row)):
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
+        
+        return result
+
+    def get_translated_value(self, row):
+        value = self.value(row)
+
+        if value is None:
+            return None
+
+        if not is_integer(value):
+            return None
+
+        return int(value)
+
+
+@dataclass
+class DateColumnDefinition(ColumnDefinition):
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if parse_date_or_none(self.value(row)) is None:
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
+        
+        return result
+
+    def get_translated_value(self, row):
+        return parse_date_or_none(self.value(row))
+
+
+@dataclass
+class BooleanColumnDefinition(ColumnDefinition):
+    TRUE_VALUES = ['y', 'yes', 'true']
+    FALSE_VALUES = ['n', 'no', 'false']
+
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if not self.stringed_value(row).lower() in BooleanColumnDefinition.TRUE_VALUES + BooleanColumnDefinition.FALSE_VALUES:
+            result.append(self._create_message(f"Invalid value of '{self.value(row)}'"))
+        
+        return result
+
+    def get_translated_value(self, row):
+        value = self.value(row)
+        result = None
+
+        if value is not None:
+            if isinstance(value, bool):
+                result = value
+            elif value.lower() in BooleanColumnDefinition.TRUE_VALUES:
+                result = True
+            elif value.lower() in BooleanColumnDefinition.FALSE_VALUES:
+                result = False
+        
+        return result
+
+@dataclass
+class LookupColumnDefinition(ColumnDefinition):
+    def _strip(self, value):
+        last_length = len(value)
+        current_length = 0
+
+        while last_length > current_length:
+            last_length = current_length
+            value = value.strip().strip('.,;')
+            current_length = len(value)
+
+        return value
+    
+    lookup_class: Optional[Lookup] = None
+
+    def _get_lookup(self, row: dict):
+        return LookupRepository(self.lookup_class).get(self.stringed_value(row))
+
+    def _type_validation_errors(self, row: dict):
+        result = []
+
+        if self._get_lookup(row) is None:
+            result.append(self._create_message(f"Does not exist ('{self.stringed_value(row)}')"))
+
+        return result
+
+    def get_object_value(self, obj):
+        value = super().get_object_value(obj)
+
+        if value:
+            return value.name
+
+        return None
+
+    def get_translated_data(self, row: dict):
+        result = {self.translated_name: self.value(row)}
+
+        lookup = self._get_lookup(row)
+
+        if lookup is None:
+            result[f'{self.translated_name}_id'] = None
+        else:
+            result[f'{self.translated_name}_id'] = lookup.id
+        
+        return result

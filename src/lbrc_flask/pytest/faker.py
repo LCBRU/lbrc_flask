@@ -55,10 +55,14 @@ class LookupFakeCreator(FakeCreator):
         )
 
         return result
-    
-    def class_name(self):
-        parts = camel_case_split(self.cls.__name__)
+
+    @staticmethod    
+    def class_name_for_class(cls):
+        parts = camel_case_split(cls.__name__)
         return ' '.join([p.lower() for p in parts])
+
+    def class_name(self):
+        return LookupFakeCreator.class_name_for_class(self.cls)
 
     def lookup_name(self, i):
         return f"{self.class_name().title()} {i}"
@@ -87,10 +91,12 @@ class LookupProvider(BaseProvider):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.creators = {}
 
         for L in self.LOOKUPS:
             cp = self.CreatorProviderMethod(L)
             setattr(self, cp.method_name(), cp)
+            self.creators[L] = cp()
 
     def create_standard_lookups(self):
         result = {}
@@ -101,6 +107,12 @@ class LookupProvider(BaseProvider):
         
         return result
     
+    def lookup_creator(self, cls):
+        return self.creators[cls]
+
+    def lookup_all(self, cls):
+        return list(db.session.execute(select(cls)).scalars())
+
     def lookup_select_choices(self, cls):
         lookups = db.session.execute(
             select(cls).order_by(cls.name)
@@ -109,8 +121,17 @@ class LookupProvider(BaseProvider):
 
 
 class LbrcFlaskFakerProvider(BaseProvider):
+    __provider__ = 'LbrcFlaskFakerProvider'.lower()
+
+    def __init__(self, *args, **kwargs):
+        self.user_class = User
+        super().__init__(*args, **kwargs)
+    
+    def set_userclass(self, user_class):
+        self.user_class = user_class
+
     def user_details(self):
-        u = User(
+        u = self.user_class(
             first_name=self.generator.first_name(),
             last_name=self.generator.last_name(),
             username=self.generator.pystr(min_chars=5, max_chars=10),
@@ -288,17 +309,20 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
         return result
 
 
-class FakeXlsxFile():
-    def __init__(self, filename, headers, data):
-        self.filename = filename
+class FakeXlsxWorksheet:
+    def __init__(self, name, headers, data, headers_on_row=1):
+        self.name = name
         self.headers = headers
         self.data = data
+        self.headers_on_row = headers_on_row
 
-    def get_iostream(self):
-        self.workbook= Workbook()
-        ws1 = self.workbook.active
+    def create_worksheet(self, workbook: Workbook):
+        ws1 = workbook.create_sheet(self.name)
 
-        ws1.append(self.headers)
+        for _ in range(1, self.headers_on_row):
+            ws1.append([])
+
+        ws1.append(list(self.headers))
 
         for d in self.data:
             row = []
@@ -306,17 +330,36 @@ class FakeXlsxFile():
                 row.append(d.get(h.lower(), ''))
             ws1.append(row)
 
+
+class FakeXlsxFile():
+    def __init__(self, filename: str, worksheets: list[FakeXlsxWorksheet]):
+        self.filename = filename
+        self.worksheets: list[FakeXlsxWorksheet] = worksheets
+
+    def get_iostream(self):
+        workbook= Workbook()
+
+        for ws in self.worksheets:
+            ws.create_worksheet(workbook)
+
         result = io.BytesIO()
-        self.workbook.save(result)
+        workbook.save(result)
+
         return result.getvalue()
 
 
 class LbrcFileProvider(BaseProvider):
-    def xlsx(self, headers, data, filename=None):
+    def xlsx(self, headers, data, filename=None, worksheet=None, headers_on_row=1):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
 
-        return FakeXlsxFile(filename, headers, data)
+        return FakeXlsxFile(
+            filename=filename,
+            headers=headers,
+            data=data,
+            worksheet=worksheet,
+            headers_on_row=headers_on_row,
+        )
 
     def data_from_definition(self, columns_definition: dict, rows=10):
         data = []

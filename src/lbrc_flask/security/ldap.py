@@ -132,10 +132,10 @@ class Ldap():
             for user in self.connection.entries:
                 current_app.logger.info(f"LDAP found {user}")
                 result.append({
-                    'username': user[self.FIELDNAME_USERID],
-                    'email': user[self.FIELDNAME_EMAIL],
-                    'given_name': user[self.FIELDNAME_GIVEN_NAME],
-                    'surname': user[self.FIELDNAME_SURNAME],
+                    'username': str(user[self.FIELDNAME_USERID]),
+                    'email': str(user[self.FIELDNAME_EMAIL]),
+                    'given_name': str(user[self.FIELDNAME_GIVEN_NAME]),
+                    'surname': str(user[self.FIELDNAME_SURNAME]),
                 })
 
         except Exception as e:
