@@ -1088,6 +1088,9 @@ button[type="submit"]
 .icon.folder_open {
     --_content: "\f07c";
 }
+.icon.hand {
+    --_content: "\f256";
+}
 .icon.hide {
     --_content: "\f070";
 }
