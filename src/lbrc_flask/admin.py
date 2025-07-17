@@ -41,7 +41,6 @@ def init_admin(app, title, views, url=None, endpoint=None):
         name="{} {}".format(current_app.config["ORGANISATION_NAME"], title),
         url=url,
         endpoint=endpoint,
-        theme=Bootstrap4Theme(swatch='cerulean')
         index_view=AdminHomeView()
     )
 
