@@ -44,13 +44,65 @@ def _assert_basic_navigation(soup, user):
 
 
 def assert__error__message(soup, message):
-    errors = "\n".join([d.text for d in soup.find_all("div", "alert")])
+    error_list = soup.find("ul", class_="errors")
+    errors = "\n".join([d.text for d in error_list.find_all("li")])
     rx = re.compile(message, re.IGNORECASE)
     assert rx.search(errors) is not None
 
 
 def assert__error__required_field(soup, field_name):
     assert__error__message(soup, "Error in the {} field - This field is required.".format(field_name))
+
+
+def assert__modal_create_button(soup, text=None, url=None, class_=None):
+    params = {}
+
+    if text:
+        params['string'] = text
+
+    if class_:
+        params['class_'] = class_
+
+    assert__modal_button(soup.find('a', **params), url)
+
+
+def assert__modal_button(button, url):
+    assert button is not None
+    assert button.attrs['hx-get'] == url
+    assert button.attrs['hx-target'] == "body"
+    assert button.attrs['hx-swap'] == "beforeend"
+    assert button.attrs['href'] == "javascript:;"
+
+
+def assert__htmx_post_button(soup, text, url, has_confirm=True):
+    button = soup.find('a', string=text)
+    assert button is not None
+    assert button.attrs['hx-post'] == url
+
+    if has_confirm:
+        assert 'hx-confirm' in button.attrs
+
+    assert button.attrs['href'] == "javascript:;"
+
+
+def assert__modal_cancel(soup):
+    button = soup.find('a', string='Cancel')
+    assert button is not None
+    assert button.attrs['href'] == "javascript:;"
+
+
+def assert__modal_save(soup):
+    button = soup.find('button', string='Save', type='submit')
+    assert button is not None
+
+
+def assert__formaction_button(soup, text, url, method=None):
+    button = soup.find('button', string=text)
+    assert button is not None
+    assert button.attrs['formaction'] == url
+
+    if method:
+        assert button.attrs['formmethod'] == method
 
 
 def assert__redirect(response, endpoint=None, url=None, **kwargs):
@@ -212,14 +264,14 @@ def assert__page_navigation(client, endpoint, parameters, items, page_size=5, fo
         assert__page_navigation__pages(url, client, page_count, form)
     else:
         resp = client.get(url)
-        paginator = resp.soup.find('ul', 'pagination')
+        paginator = resp.soup.find('nav', 'pagination')
         assert paginator is None
 
 
 def assert__page_navigation__pages(url, client, page_count, form):
     for current_page in range(1, page_count + 1):
         resp = client.get(update_querystring(url, {'page': current_page}))
-        paginator = resp.soup.find('ul', 'pagination')
+        paginator = resp.soup.find('nav', 'pagination')
 
         assert__page_navigation__page(url, paginator, page_count, current_page)
 
@@ -238,24 +290,18 @@ def assert__page_navigation__page(url, paginator, page_count, current_page):
 
 
 def assert__page_navigation__link_exists(paginator, string, url, page, current_page, page_count):
-    link = paginator.find('a', 'page-link', string=string)
+    if page == current_page:
+        assert paginator.find('span', string=string) is not None
+        return
+
+    link = paginator.find('a', string=string)
 
     assert link is not None
 
-    if 0 < page <= page_count and page != current_page:
+    if 0 < page <= page_count:
         assert__urls_the_same(update_querystring(url, {'page': page}), link['href'])
     else:
         assert 'href' not in link
-
-    if 0 < page <= page_count:
-        assert 'disabled' not in link.parent['class']
-    else:
-        assert 'disabled' in link.parent['class']
-
-    if page == current_page:
-        assert 'active' in link.parent['class']
-    else:
-        assert 'active' not in link.parent['class']
 
 
 def assert__urls_the_same(url1, url2):

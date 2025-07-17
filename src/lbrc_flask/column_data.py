@@ -144,7 +144,7 @@ class ColumnsDefinition():
         errors.extend(self.custom_validation_errors(spreadsheet))
 
         return errors
-
+    
     def custom_validation_errors(self, spreadsheet):
         return []
 
@@ -154,6 +154,7 @@ class ColumnsDefinition():
             return not any(c for c in spreadsheet.get_column_names() if c.startswith(column_name.lower()))
 
         missing_columns = [c for c in self.column_names if column_is_missing(c)]
+
         return [ColumnsDefinitionValidationMessage(
             type=ColumnsDefinitionValidationMessage.TYPE__ERROR,
             message=f"Missing column '{m}'"
@@ -225,7 +226,10 @@ class ColumnsDefinition():
     def _field_errors_for_def(self, row: dict):
         result = []
         for col_def in self.column_definition:
-            result.extend(col_def.validation_errors(row))
+            messages = col_def.validation_errors(row)
+            if (messages):
+                print(row)
+            result.extend(messages)
         
         return result
 
