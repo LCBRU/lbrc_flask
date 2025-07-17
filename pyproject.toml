@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "2.0.0"
+version = "2.0.1"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
 description = "NIHR Leicester BRC Flask Components and Theme"
 readme = "README.md"
-requires-python = "== 3.13"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -28,7 +28,7 @@ dependencies=[
   'Faker',
   'Flask',
   'flask_mail',
-  'flask-admin',
+  'flask-admin==2.0.0a4',
   'flask-security-too[fsqla,common]',
   'flask_sqlalchemy',
   'flask_wtf',
