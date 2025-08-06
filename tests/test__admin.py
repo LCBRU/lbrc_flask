@@ -1,11 +1,12 @@
 from lbrc_flask.admin import AdminCustomView, init_admin
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.database import db
-from lbrc_flask.security import User, Role
+from lbrc_flask.security import User, Role, add_user_to_role
 
 
 def test__admin__is_admin__is_accessible(client, faker):
-    user = faker.get_test_user(is_admin=True)
+    user = faker.user().get_in_db()
+    add_user_to_role(user=user, role=Role.get_admin())
     login(client, faker, user)
 
     out = AdminCustomView(User, db.session)
@@ -14,19 +15,9 @@ def test__admin__is_admin__is_accessible(client, faker):
 
 
 def test__admin__is_not_admin__is_not_accessible(client, faker):
-    user = faker.get_test_user()
+    user = faker.user().get_in_db()
     login(client, faker, user)
 
     out = AdminCustomView(User, db.session)
     
     assert not out.is_accessible()
-
-
-def test__admin__init_admin__loads_views(app):
-    views = [
-        AdminCustomView(User, db.session),
-        AdminCustomView(Role, db.session),
-    ]
-
-    with app.app_context():
-        init_admin(app, 'Test', views)

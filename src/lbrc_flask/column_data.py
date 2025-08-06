@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import string
 from typing import Optional
 import chardet
 import csv
@@ -50,10 +49,16 @@ class ExcelData(ColumnData):
 
 class Excel97Data(ColumnData):
 
+    def __init__(self, filepath, header_rows: int = 1, worksheet=None, column_header_row: int = 0):
+        print('A'*100)
+        super().__init__(filepath, header_rows, column_header_row=column_header_row)
+
     def get_column_names(self):
         wb = xlrd.open_workbook(filename=self.filepath)
         ws = wb.sheet_by_index(0)
         header_row = ws.row(self.column_header_row)
+
+        print(self.column_header_row)
 
         return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
 

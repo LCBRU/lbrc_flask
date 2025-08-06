@@ -1,4 +1,3 @@
-import pytest
 import xlwt
 from openpyxl import Workbook
 from lbrc_flask.column_data import CsvData, Excel97Data, ExcelData
@@ -10,7 +9,7 @@ def test__column_data__csv(tmp_path):
 
     out = CsvData(csv_file)
 
-    assert out.get_column_names() == ['fred', 'mary', 'ed', 'Column 3']
+    assert out.get_column_names() == ['fred', 'mary', 'ed', 'column 3']
 
     d = list(out.iter_rows())
     assert len(d) == 1
@@ -19,7 +18,7 @@ def test__column_data__csv(tmp_path):
         assert x['fred'] == 'soup'
         assert x['mary'] == 'fish'
         assert x['ed'] == '2000-01-02'
-        assert x['Column 3'] == 'pie'
+        assert x['column 3'] == 'pie'
 
 
 def test__column_data__xls(tmp_path):

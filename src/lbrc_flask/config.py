@@ -84,6 +84,7 @@ class BaseConfig:
 class BaseTestConfig(BaseConfig):
     # Environment
     TESTING = True
+    SECRET_KEY = 'Thts right.  I killed a goblin!'
 
     # Database
     SQLALCHEMY_DATABASE_URI = "sqlite://"

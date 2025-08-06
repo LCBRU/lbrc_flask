@@ -87,9 +87,3 @@ def faker():
     result.add_provider(LbrcDynaicFormFakerProvider)
 
     yield result
-
-
-@pytest.fixture(scope="function")
-def ldap_initialize():
-    with patch('lbrc_flask.security.ldap.initialize') as mock:
-        yield mock

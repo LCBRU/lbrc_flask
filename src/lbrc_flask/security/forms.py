@@ -104,6 +104,7 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
     submit = SubmitField(get_form_field_label("change_password"))
 
     def validate(self, **kwargs):
+        print('S'*1000)
         if not super(LbrcChangePasswordForm, self).validate(**fix_kwargs(kwargs)):
             return False
 

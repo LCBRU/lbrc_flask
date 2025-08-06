@@ -1,7 +1,7 @@
 import datetime
 from flask import url_for
 from lbrc_flask.pytest.helpers import login
-from flask_api import status
+import http
 
 
 def test__json__posting(client, faker):
@@ -16,7 +16,7 @@ def test__json__posting(client, faker):
         'date': datetime.datetime.now().date(),
     })
     assert resp.get_json()['result'] == expected
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http.HTTPStatus.OK
 
 def test__json__error(client, faker):
     u = login(client, faker)
@@ -29,4 +29,4 @@ def test__json__error(client, faker):
         'datetime': datetime.datetime.now(),
         'date': datetime.datetime.now().date(),
     })
-    assert resp.status_code == status.HTTP_400_BAD_REQUEST
+    assert resp.status_code == http.HTTPStatus.BAD_REQUEST

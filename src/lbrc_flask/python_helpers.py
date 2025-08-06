@@ -22,3 +22,15 @@ def dictlist_remove_key(dictlist: list[dict], key):
         result = deepcopy(dicts)
         result.pop(key)
     return list(map(remove_key, dictlist))
+
+
+class sort_descending:
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __eq__(self, other):
+        return other.obj == self.obj
+
+    def __lt__(self, other):
+        return other.obj < self.obj    
+

@@ -378,3 +378,123 @@ class LbrcFileProvider(BaseProvider):
             data.append(row)
 
         return data
+
+
+class UserCreator(FakeCreator):
+    def __init__(self):
+        super().__init__(User)
+
+    def get(self, **kwargs):
+        if (first_name := kwargs.get('first_name')) is None:
+            first_name = self.faker.first_name()
+
+        if (last_name := kwargs.get('last_name')) is None:
+            last_name = self.faker.last_name()
+
+        if (username := kwargs.get('username')) is None:
+            username = self.faker.pystr(min_chars=5, max_chars=10).lower()
+
+        if (email := kwargs.get('email')) is None:
+            email = self.faker.email()
+
+        if (active := kwargs.get('active')) is None:
+            active = True
+
+        return User(
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            email=email,
+            active=active,
+        )
+
+
+class UserProvider(BaseProvider):
+    def user(self):
+        return UserCreator()
+
+
+class RoleCreator(FakeCreator):
+    def __init__(self):
+        super().__init__(Role)
+
+    def get(self, **kwargs):
+        if (name := kwargs.get('name')) is None:
+            name = self.faker.pystr(min_chars=5, max_chars=10).lower()
+
+        return Role(
+            name=name,
+        )
+
+
+class RoleProvider(BaseProvider):
+    def role(self):
+        return RoleCreator()
+
+
+class FieldGroupCreator(FakeCreator):
+    def __init__(self):
+        super().__init__(FieldGroup)
+
+    def get(self, **kwargs):
+        if (name := kwargs.get('name')) is None:
+            name = self.faker.pystr(min_chars=5, max_chars=10).upper()
+
+        return FieldGroup(name=name.upper())
+
+
+class FieldGroupProvider(BaseProvider):
+    def field_group(self):
+        return FieldGroupCreator()
+
+
+class FieldCreator(FakeCreator):
+    def __init__(self):
+        super().__init__(FieldGroup)
+
+    def get(self, **kwargs):        
+        self.faker.add_provider(FieldGroupProvider)
+
+        if (field_group := kwargs.get('field_group')) is None:
+            field_group = self.faker.field_group().get()
+
+        if (field_type := kwargs.get('field_type')) is None:
+            field_type = choice(FieldType.all_field_types())
+
+        if (field_name := kwargs.get('field_name')) is None:
+            field_name = self.faker.pystr(min_chars=5, max_chars=10)
+
+        if (allowed_file_extensions := kwargs.get('allowed_file_extensions')) is None:
+            allowed_file_extensions = self.faker.file_extension()
+
+        if (required := kwargs.get('required')) is None:
+            required = False
+
+        f = Field(
+            field_group=field_group,
+            field_type=field_type,
+            field_name=field_name,
+            allowed_file_extensions=allowed_file_extensions,
+            required=required,
+        )
+
+        if (order := kwargs.get('order')) is not None:
+            f.order = order
+        else:
+            f.order = 1
+
+        if (choices := kwargs.get('choices')) is not None:
+            f.choices = choices
+
+        if (max_length := kwargs.get('max_length')) is not None:
+            f.max_length = max_length
+
+        if (allowed_file_extensions := kwargs.get('allowed_file_extensions')) is not None:
+            f.allowed_file_extensions = allowed_file_extensions
+
+        return f
+
+
+class FieldProvider(BaseProvider):
+    def field(self):
+        return FieldCreator()

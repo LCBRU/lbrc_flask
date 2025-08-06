@@ -51,9 +51,16 @@ dependencies=[
   'WTForms',
   'WeasyPrint',
   'xlrd',
+  'xlwt',
   'lxml',
 ]
 
 [project.urls]
 Homepage = "https://github.com/LCBRU/lbrc_flask"
 Issues = "https://github.com/LCBRU/lbrc_flask/issues"
+
+[tool.pytest.ini_options]
+pythonpath = "src/"
+markers = [
+    'app_crsf',
+]

@@ -1,7 +1,8 @@
 import datetime
+from lbrc_flask.pytest.faker import FieldGroupProvider, FieldProvider, RoleProvider, UserProvider
 from lbrc_flask.requests import get_value_from_all_arguments
 from lbrc_flask.forms import DataListField, FlashingForm, SearchForm, FileField, Unique
-from lbrc_flask.forms.dynamic import Field, FieldGroup, FormBuilder, init_dynamic_forms
+from lbrc_flask.forms.dynamic import Field, FieldGroup, FormBuilder, create_field_types, init_dynamic_forms
 import pytest
 from flask import Flask, Blueprint, render_template_string, url_for, redirect, request, abort
 from flask_login import login_required
@@ -13,6 +14,7 @@ from wtforms import StringField
 from lbrc_flask.pytest.fixtures import *
 from lbrc_flask.export import excel_download, csv_download, pdf_download
 from lbrc_flask.json import validate_json
+from lbrc_flask.security import init_roles, init_users
 
 
 class TestForm(FlashingForm):
@@ -37,6 +39,28 @@ class TestForm(FlashingForm):
         self.name_options.choices = ['One', 'Two', 'Tree']
 
 
+@pytest.fixture(scope="function", autouse=True)
+def standard_lookups(client, faker):
+    return create_field_types()
+
+
+@pytest.fixture(scope="function", autouse=True)
+def init_security_stuff(client, faker):
+    init_roles([])
+    init_users()
+
+
+@pytest.fixture(scope="function")
+def faker():
+    result = Faker("en_GB")
+    result.add_provider(RoleProvider)
+    result.add_provider(UserProvider)
+    result.add_provider(FieldProvider)
+    result.add_provider(FieldGroupProvider)
+
+    yield result
+
+
 @pytest.fixture(scope="function")
 def app():
     app = Flask(__name__)
@@ -47,7 +71,39 @@ def app():
     @ui_blueprint.route('/')
     @login_required
     def index():
-        return render_template_string('{% extends "lbrc_flask/page.html" %}')
+        return render_template_string('''
+            {% extends "lbrc/page.html" %}
+            
+            {% block page_content %}
+                <nav class="main_menu">
+                    <div class="container">
+                    <menu>
+                        <li><a href="{{url_for('ui.index')}}">Home</a></li>
+                    </menu>
+                    <menu>
+                        {% if current_user.is_admin %}
+                        <li>
+                            <a>Admin</a>
+                            <menu>
+                            <li><a href="{{url_for('admin.index')}}">Maintenance</a></li>
+                            <li><a href="{{url_for('ui.refresh_file_size')}}">Refresh File Size</a></li>
+                            </menu>
+                        </li>
+                        {% endif %}
+                        <li>
+                        <a>{{ current_user.full_name }}</a>
+                        <menu>
+                            {% if not current_user.ldap_user %}
+                                <li><a href="{{ url_for_security('change_password') }}">Change Password</a></li>
+                            {% endif %}
+                            <li><a href="{{ url_for_security('logout') }}">Log Out</a></li>
+                        </menu>
+                        </li>
+                    </menu>
+                    </div>
+                </nav>
+            {% endblock %}
+        ''')
 
     with app.app_context():
         init_lbrc_flask(app, title='LBRC Flask')
@@ -68,15 +124,15 @@ def app():
 
         return render_template_string('''
         
-        {% extends "lbrc_flask/page.html" %}
-        {% from "lbrc_flask/form_macros.html" import render_field %}
+        {% extends "lbrc/page.html" %}
+        {% from "lbrc/form_macros.html" import render_form_fields %}
 
-        {% block content %}
+        {% block page_content %}
 
             <form>
-                {% for f in form %}
-                    {{ render_field(f) }}
-                {% endfor %}
+                <fieldset>
+                    {{ render_form_fields(form) }}
+                </fieldset>
             </form>
 
         {% endblock %}
@@ -89,13 +145,15 @@ def app():
 
         return render_template_string('''
         
-        {% extends "lbrc_flask/page.html" %}
-        {% from "lbrc_flask/form_macros.html" import render_search %}
+        {% extends "lbrc/page.html" %}
+        {% from "lbrc/form_macros.html" import render_form_fields %}
 
-        {% block content %}
-
-            {{ render_search(search_form, 'search', placeholder='enter search text - searches names') }}
-
+        {% block page_content %}
+            <form action="{{ url_for('search') }}" method="GET" enctype="multipart/form-data">
+                <fieldset>
+                    {{ render_form_fields(search_form) }}
+                </fieldset>    
+            </form>    
         {% endblock %}
 
         ''', search_form=search_form)
@@ -114,10 +172,10 @@ def app():
 
         return render_template_string('''
         
-        {% extends "lbrc_flask/page.html" %}
-        {% from "lbrc_flask/form_macros.html" import render_button_bar, render_field %}
+        {% extends "lbrc/page.html" %}
+        {% from "lbrc/form_macros.html" import render_form_fields, render_button_bar %}
 
-        {% block content %}
+        {% block page_content %}
 
             <h1 id="has_a_name">{{has_a_name}}</h1>
             <h1 id="not_exists">{{not_exists}}</h1>
@@ -125,11 +183,7 @@ def app():
 
             <form action="test_form" method="POST" enctype="multipart/form-data">
             <fieldset>
-                {{ form.hidden_tag() }}
-
-                {% for f in form %}
-                    {{ render_field(f) }}
-                {% endfor %}
+                {{ render_form_fields(form) }}
 
                 {{ render_button_bar(cancel_url=request.full_path, submit_label="Save") }}
             </fieldset>
@@ -151,12 +205,16 @@ def app():
 
         return render_template_string('''
         
-        {% extends "lbrc_flask/page.html" %}
-        {% from "lbrc_flask/form_macros.html" import render_pagination, render_search %}
+        {% extends "lbrc/page.html" %}
+        {% from "lbrc/form_macros.html" import render_form_fields %}
+        {% from "lbrc/pagination.html" import render_pagination %}
 
-        {% block content %}
-
-            {{ render_search(search_form, 'search', placeholder='enter search text - searches names') }}
+        {% block page_content %}
+            <form action="{{ url_for('search') }}" method="GET" enctype="multipart/form-data">
+                <fieldset>
+                    {{ render_form_fields(search_form) }}
+                </fieldset>    
+            </form>    
 
             {{ render_pagination(items, 'pages_of_fields', form=search_form) }}
 

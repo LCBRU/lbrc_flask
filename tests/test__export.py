@@ -10,15 +10,15 @@ def test__export__excel__matches(app, client, faker, tmp_path):
 
     out = ExcelData(p)
 
-    assert out.get_column_names() == ['Fred', 'Mary', 'Ed']
+    assert out.get_column_names() == ['fred', 'mary', 'ed']
 
     d = list(out.iter_rows())
     assert len(d) == 1
 
     for x in out.iter_rows():
-        assert x['Fred'] == 'soup'
-        assert x['Mary'] == 'fish'
-        assert x['Ed'] == '2000-01-02'
+        assert x['fred'] == 'soup'
+        assert x['mary'] == 'fish'
+        assert x['ed'] == '2000-01-02'
 
 
 def test__export__csv__matches(app, client, faker, tmp_path):

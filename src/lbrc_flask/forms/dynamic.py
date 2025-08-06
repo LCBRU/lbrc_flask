@@ -65,6 +65,8 @@ class FieldType(db.Model):
     def html_input_type(self):
         if self.name == FieldType.BOOLEAN:
             return 'checkbox'
+        elif self.name == FieldType.DATE:
+            return 'date'
         elif self.name == FieldType.INTEGER:
             return 'number'
         elif self.name == FieldType.STRING:

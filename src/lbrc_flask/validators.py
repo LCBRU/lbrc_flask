@@ -1,5 +1,5 @@
 import re
-from datetime import datetime, date
+from datetime import datetime, date, UTC
 from dateutil.parser import parse
 from dateutil.relativedelta import relativedelta
 
@@ -81,7 +81,7 @@ def is_invalid_dob(dob):
     if isinstance(dob, datetime):
         dob = dob.date()
 
-    return dob < (datetime.datetime.now(datetime.UTC).date() - relativedelta(years=130)) or dob > datetime.datetime.now(datetime.UTC).date()
+    return dob < (datetime.now(UTC).date() - relativedelta(years=130)) or dob > datetime.now(UTC).date()
 
 
 def standardise_postcode(postcode):

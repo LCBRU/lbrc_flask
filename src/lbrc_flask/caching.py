@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 import functools
 
 # This is called with the values for lru_cache and timedelta.  For example:
@@ -13,7 +13,7 @@ def timed_cache(**timedelta_kwargs):
         maxsize = timedelta_kwargs.pop('maxsize', 128)
         typed = timedelta_kwargs.pop('typed', False)
         update_delta = timedelta(**timedelta_kwargs)
-        next_update = datetime.datetime.now(datetime.UTC) - update_delta
+        next_update = datetime.now(UTC) - update_delta
 
         # Apply @lru_cache to f
         f = functools.lru_cache(maxsize=maxsize, typed=typed)(f)
@@ -21,7 +21,7 @@ def timed_cache(**timedelta_kwargs):
         @functools.wraps(f)
         def _wrapped(*args, **kwargs):
             nonlocal next_update
-            now = datetime.datetime.now(datetime.UTC)
+            now = datetime.now(UTC)
             if now >= next_update:
                 f.cache_clear()
                 next_update = now + update_delta

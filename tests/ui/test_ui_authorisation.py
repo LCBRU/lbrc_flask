@@ -1,13 +1,13 @@
+import http
 from flask.helpers import url_for
 import pytest
 from lbrc_flask.pytest.asserts import assert__redirect, assert__requires_login
-from flask_api import status
 from lbrc_flask.pytest.helpers import login
 
 
 def test__missing_route(client):
     resp = client.get("/uihfihihf")
-    assert resp.status_code == status.HTTP_404_NOT_FOUND
+    assert resp.status_code == http.HTTPStatus.NOT_FOUND
 
 
 @pytest.mark.parametrize(
@@ -25,7 +25,7 @@ def test__missing_route(client):
 def test__get__without_login(client, path, filename):
     resp = client.get(url_for(path, filename=filename))
 
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http.HTTPStatus.OK
 
 
 def test__get__requires_login__not(client):
@@ -35,7 +35,7 @@ def test__get__requires_login__is(client, faker):
     login(client, faker)
     resp = client.get(url_for("get_with_login"))
 
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http.HTTPStatus.OK
 
 
 def test__post__requires_login__not(client):
@@ -46,7 +46,7 @@ def test__post__requires_login__is(client, faker):
     login(client, faker)
     resp = client.post(url_for("post_with_login"))
 
-    assert resp.status_code == status.HTTP_200_OK
+    assert resp.status_code == http.HTTPStatus.OK
 
 
 def test__post__no_login(client):
