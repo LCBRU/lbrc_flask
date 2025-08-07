@@ -43,11 +43,11 @@ def _assert_basic_navigation(soup, user):
     assert soup.nav.find("a", href="/logout") is not None
 
 
-# def assert__error__message(soup, message):
-#     error_list = soup.find("ul", class_="errors")
-#     errors = "\n".join([d.text for d in error_list.find_all("li")])
-#     rx = re.compile(message, re.IGNORECASE)
-#     assert rx.search(errors) is not None
+def assert__error__message_modal(soup, message):
+    error_list = soup.find("ul", class_="errors")
+    errors = "\n".join([d.text for d in error_list.find_all("li")])
+    rx = re.compile(message, re.IGNORECASE)
+    assert rx.search(errors) is not None
 
 
 def assert__error__message(soup, message):
@@ -232,8 +232,6 @@ def assert__input_textarea(soup, id):
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
     resp = client.get(url)
-
-    print(resp.soup)
 
     _assert_html_standards(resp.soup)
 
