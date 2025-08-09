@@ -317,7 +317,10 @@ class FakeXlsxWorksheet:
         self.headers_on_row = headers_on_row
 
     def create_worksheet(self, workbook: Workbook):
-        ws1 = workbook.create_sheet(self.name)
+        if self.name is None:
+            ws1 = workbook.active
+        else:
+            ws1 = workbook.create_sheet(self.name)
 
         for _ in range(1, self.headers_on_row):
             ws1.append([])
@@ -353,12 +356,13 @@ class LbrcFileProvider(BaseProvider):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
 
-        worksheet = FakeXlsxWorksheet(
-            name='worksheet',
-            headers=headers,
-            data=data,
-            headers_on_row=headers_on_row,
-        )
+        if worksheet is None:
+            worksheet = FakeXlsxWorksheet(
+                name=None,
+                headers=headers,
+                data=data,
+                headers_on_row=headers_on_row,
+            )
 
         return FakeXlsxFile(
             filename=filename,

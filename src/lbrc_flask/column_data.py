@@ -50,15 +50,12 @@ class ExcelData(ColumnData):
 class Excel97Data(ColumnData):
 
     def __init__(self, filepath, header_rows: int = 1, worksheet=None, column_header_row: int = 0):
-        print('A'*100)
         super().__init__(filepath, header_rows, column_header_row=column_header_row)
 
     def get_column_names(self):
         wb = xlrd.open_workbook(filename=self.filepath)
         ws = wb.sheet_by_index(0)
         header_row = ws.row(self.column_header_row)
-
-        print(self.column_header_row)
 
         return [c.value.lower() for c in takewhile(lambda x: x.value, header_row)]
 
@@ -232,8 +229,6 @@ class ColumnsDefinition():
         result = []
         for col_def in self.column_definition:
             messages = col_def.validation_errors(row)
-            if (messages):
-                print(row)
             result.extend(messages)
         
         return result
@@ -260,6 +255,13 @@ class ColumnsDefinitionValidationMessage:
     def __post_init__(self):
         if self.type not in ColumnsDefinitionValidationMessage.TYPE_NAMES:
             raise ValueError(f"Type is '{self.type}' must be one of {', '.join(ColumnsDefinitionValidationMessage.TYPE_NAMES)}")
+
+    @property
+    def full_message(self):
+        if self.row is None:
+            return self.message
+        else:
+            return f"Row {self.row}: {self.message}"
 
 
 @dataclass
@@ -345,7 +347,7 @@ class ColumnDefinition:
         return getattr(obj, self.translated_name)
     
     def get_translated_data(self, row):
-        return {self.translated_name: self.get_translated_value(row)}
+        return {self.get_translated_name(): self.get_translated_value(row)}
     
     def get_translated_value(self, row):
         return self.value(row)
@@ -496,13 +498,13 @@ class LookupColumnDefinition(ColumnDefinition):
         return None
 
     def get_translated_data(self, row: dict):
-        result = {self.translated_name: self.value(row)}
+        result = {self.get_translated_name(): self.value(row)}
 
         lookup = self._get_lookup(row)
 
         if lookup is None:
-            result[f'{self.translated_name}_id'] = None
+            result[f'{self.get_translated_name()}_id'] = None
         else:
-            result[f'{self.translated_name}_id'] = lookup.id
+            result[f'{self.get_translated_name()}_id'] = lookup.id
         
         return result
