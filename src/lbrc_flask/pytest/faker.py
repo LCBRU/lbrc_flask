@@ -353,12 +353,16 @@ class LbrcFileProvider(BaseProvider):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
 
-        return FakeXlsxFile(
-            filename=filename,
+        worksheet = FakeXlsxWorksheet(
+            name='worksheet',
             headers=headers,
             data=data,
-            worksheet=worksheet,
             headers_on_row=headers_on_row,
+        )
+
+        return FakeXlsxFile(
+            filename=filename,
+            worksheets=[worksheet],
         )
 
     def data_from_definition(self, columns_definition: dict, rows=10):
