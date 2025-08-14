@@ -39,7 +39,7 @@ class FakeCreator():
     def choices_from_db(self, k=1, **kwargs):
         return sample(list(db.session.execute(select(self.cls)).scalars()), k)
 
-    def get_value_or_get(self, source, key, from_db):
+    def get_value_or_get(self, source, key, from_db=False):
         if key in source:
             return source[key]
         elif from_db:

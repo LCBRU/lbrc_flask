@@ -240,7 +240,7 @@ def assert__input_textarea(soup, id):
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
     resp = client.get(url)
-    assert_html_page_standards(resp, has_form=has_form, has_navigation=has_navigation)
+    assert_html_page_standards(resp, user, has_form=has_form, has_navigation=has_navigation)
 
     return resp
 
@@ -252,7 +252,7 @@ def get_and_assert_standards_modal(client, url, has_form=False, has_navigation=T
     return resp
 
 
-def assert_html_page_standards(resp, has_form=False, has_navigation=True):
+def assert_html_page_standards(resp, user, has_form=False, has_navigation=True):
     _assert_html_standards(resp.soup)
 
     if has_navigation:
