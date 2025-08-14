@@ -44,6 +44,7 @@ def _assert_basic_navigation(soup, user):
 
 
 def assert__error__message_modal(soup, message):
+    print(soup)
     error_list = soup.find("ul", class_="errors")
     errors = "\n".join([d.text for d in error_list.find_all("li")])
     rx = re.compile(message, re.IGNORECASE)
@@ -51,6 +52,7 @@ def assert__error__message_modal(soup, message):
 
 
 def assert__error__message(soup, message):
+    print(soup)
     errors = "\n".join([d.text for d in soup.find_all("div", class_="flash")])
     rx = re.compile(message, re.IGNORECASE)
     assert rx.search(errors) is not None
@@ -58,6 +60,10 @@ def assert__error__message(soup, message):
 
 def assert__error__required_field(soup, field_name):
     assert__error__message(soup, "Error in the {} field - This field is required.".format(field_name))
+
+
+def assert__error__required_field_modal(soup, field_name):
+    assert__error__message_modal(soup, "Error in the {} field - This field is required.".format(field_name))
 
 
 def assert__modal_create_button(soup, text=None, url=None, class_=None):
@@ -183,6 +189,8 @@ def assert__select(soup, id, options, multiselect=False):
 
     found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
 
+    options = [(str(id), value) for id, value in options]
+
     assert found_options == options
 
 
@@ -232,7 +240,19 @@ def assert__input_textarea(soup, id):
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):
     resp = client.get(url)
+    assert_html_page_standards(resp, has_form=has_form, has_navigation=has_navigation)
 
+    return resp
+
+
+def get_and_assert_standards_modal(client, url, has_form=False, has_navigation=True):
+    resp = client.get(url)
+    assert_modal_standards(resp, has_form=has_form, has_navigation=has_navigation)
+
+    return resp
+
+
+def assert_html_page_standards(resp, has_form=False, has_navigation=True):
     _assert_html_standards(resp.soup)
 
     if has_navigation:
@@ -241,18 +261,12 @@ def get_and_assert_standards(client, url, user, has_form=False, has_navigation=T
     if has_form:
         _assert_csrf_token(resp.soup)
 
-    return resp
 
-
-def get_and_assert_standards_modal(client, url, user, has_form=False, has_navigation=True):
-    resp = client.get(url)
-
+def assert_modal_standards(resp, has_form=False):
     _assert_modal_boilerplate(resp.soup)
 
     if has_form:
         _assert_csrf_token(resp.soup)
-
-    return resp
 
 
 def assert__page_navigation(client, endpoint, parameters, items, page_size=5, form=None):

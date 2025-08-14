@@ -389,8 +389,9 @@ class LbrcFileProvider(BaseProvider):
 
 
 class UserCreator(FakeCreator):
-    def __init__(self):
-        super().__init__(User)
+    def __init__(self, cls=None):
+        cls = cls or User
+        super().__init__(cls)
 
     def get(self, **kwargs):
         if (first_name := kwargs.get('first_name')) is None:
@@ -408,7 +409,7 @@ class UserCreator(FakeCreator):
         if (active := kwargs.get('active')) is None:
             active = True
 
-        return User(
+        return self.cls(
             first_name=first_name,
             last_name=last_name,
             username=username,
