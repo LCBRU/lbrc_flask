@@ -21,13 +21,13 @@ def _assert_html_standards(soup):
     assert soup.body is not None
 
 
-def _assert_csrf_token(soup):
+def assert_csrf_token(soup):
     assert (
         soup.find("input", {"name": "csrf_token"}, type="hidden", id="csrf_token") is not None
     )
 
 
-def _assert_modal_boilerplate(soup):
+def assert_modal_boilerplate(soup):
     modal = soup.find(class_="modal") 
     assert modal is not None
     assert modal.find(class_="modal-underlay") is not None
@@ -259,14 +259,14 @@ def assert_html_page_standards(resp, user, has_form=False, has_navigation=True):
         _assert_basic_navigation(resp.soup, user)
 
     if has_form:
-        _assert_csrf_token(resp.soup)
+        assert_csrf_token(resp.soup)
 
 
 def assert_modal_standards(resp, has_form=False):
-    _assert_modal_boilerplate(resp.soup)
+    assert_modal_boilerplate(resp.soup)
 
     if has_form:
-        _assert_csrf_token(resp.soup)
+        assert_csrf_token(resp.soup)
 
 
 def assert__page_navigation(client, endpoint, parameters, items, page_size=5, form=None):

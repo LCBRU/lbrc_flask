@@ -18,7 +18,7 @@ class LbrcSQLAlchemy(SQLAlchemy):
         return super().paginate(**kwargs)
 
 
-db = LbrcSQLAlchemy()
+db: LbrcSQLAlchemy = LbrcSQLAlchemy()
 
 
 # See https://docs.sqlalchemy.org/en/13/core/custom_types.html#backend-agnostic-guid-type

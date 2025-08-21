@@ -33,6 +33,17 @@ class FakeCreator():
 
         return x
 
+    def get_list_in_db(self, item_count, **kwargs):
+        results = []
+
+        for _ in range(item_count):
+            results.append(self.get(**kwargs))
+
+        db.session.add_all(results)
+        db.session.commit()
+
+        return results
+
     def choice_from_db(self, **kwargs):
         return choice(list(db.session.execute(select(self.cls)).scalars()))
 
