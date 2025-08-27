@@ -44,7 +44,6 @@ def _assert_basic_navigation(soup, user):
 
 
 def assert__error__message_modal(soup, message):
-    print(soup)
     error_list = soup.find("ul", class_="errors")
     errors = "\n".join([d.text for d in error_list.find_all("li")])
     rx = re.compile(message, re.IGNORECASE)
@@ -64,6 +63,14 @@ def assert__error__required_field(soup, field_name):
 
 def assert__error__required_field_modal(soup, field_name):
     assert__error__message_modal(soup, "Error in the {} field - This field is required.".format(field_name))
+
+
+def assert__error__string_too_long(soup, field_name):
+    assert__error__message(soup, "Error in the {} field - Field cannot be longer than".format(field_name))
+
+
+def assert__error__string_too_long__modal(soup, field_name):
+    assert__error__message_modal(soup, "Error in the {} field - Field cannot be longer than".format(field_name))
 
 
 def assert__modal_create_button(soup, text=None, url=None, class_=None):
