@@ -58,6 +58,12 @@ class FakeCreator():
         else:
             return self.get()
 
+    def get_value_or_default(self, source, key, default=None):
+        if key in source:
+            return source[key]
+        else:
+            return default
+
 
 class LookupFakeCreator(FakeCreator):
     def get(self, **kwargs):

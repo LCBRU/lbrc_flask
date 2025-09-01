@@ -1,5 +1,6 @@
 import http
 import re
+from collections import OrderedDict
 from urllib.parse import urlparse, parse_qs
 from flask import url_for
 from lbrc_flask.url_helpers import update_querystring
@@ -179,11 +180,14 @@ def assert__requires_role(client, url, post=False):
     assert resp.status_code == http.HTTPStatus.FORBIDDEN
 
 
-
-def assert__search_html(soup, clear_url):
+def assert__search_html(soup):
     assert soup.find('input', id="search") is not None
     assert soup.find('a', string="Clear Search", href='?') is not None
     assert soup.find('button', type="submit", string="Search") is not None
+
+
+def assert__search_modal_html(soup):
+    assert soup.find('input', id="search_string") is not None
 
 
 def assert__select(soup, id, options, multiselect=False):
@@ -238,6 +242,23 @@ def assert__input_checkbox(soup, id):
     control = soup.find('input', id=id)
     assert control is not None
     assert control.attrs['type'] == "checkbox"
+
+
+def assert__input_radio(soup, id: str, options: dict):
+    radio_list = soup.find('ul', id=id)
+    assert radio_list is not None
+
+    found_inputs = [(o.attrs['value'], o.attrs['id']) for o in radio_list.select("input[type='radio']")]
+
+    found_options = {}
+    for value, id in found_inputs:
+        label = radio_list.select_one(f"label[for='{id}']")
+        found_options[label.text] = value
+
+    expected = OrderedDict(sorted(options.items()))
+    actual = OrderedDict(sorted(found_options.items()))
+
+    assert actual == expected
 
 
 def assert__input_textarea(soup, id):

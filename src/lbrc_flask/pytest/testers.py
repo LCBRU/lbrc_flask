@@ -1,7 +1,8 @@
 import pytest
+from copy import deepcopy
 from dataclasses import dataclass
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__search_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert__requires_role, assert_modal_boilerplate, assert__error__required_field_modal
+from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert__requires_role, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token
 from lbrc_flask.pytest.html_content import get_records_found, get_table_row_count
 from enum import Enum
 
@@ -9,6 +10,15 @@ from enum import Enum
 class ModelTesterField_DataType(Enum):
     STRING = 1
     TEXT = 2
+    DATE = 3
+    RADIO = 4
+    INTEGER = 5
+
+
+class ResultHtmlType(Enum):
+    PAGE = 1
+    MODAL = 2
+    FRAGMENT = 3
 
 
 @dataclass
@@ -24,8 +34,12 @@ class ModelTesterFields:
         self.fields = fields
     
     @property
-    def mandatory_fields(self):
+    def mandatory_fields_add(self):
         return list(filter(lambda x: x.is_mandatory, self.fields))
+
+    @property
+    def mandatory_fields_edit(self):
+        return list(filter(lambda x: x.is_mandatory and x.data_type != ModelTesterField_DataType.RADIO, self.fields))
 
     @property
     def string_fields(self):
@@ -33,9 +47,11 @@ class ModelTesterFields:
 
 
 class FlaskViewTester:
+    parameters = None
+
     @property
-    def is_modal(self):
-        return False
+    def result_html_type(self) -> ResultHtmlType:
+        return ResultHtmlType.PAGE
 
     @property
     def endpoint(self):
@@ -44,15 +60,26 @@ class FlaskViewTester:
         # for example, 'ui.index'
         raise NotImplementedError()
 
+    def assert_form(self, resp):
+        # Test classes must implement an endpoint property that
+        # returns an endpoint as used by the Flask url_for function
+        # for example, 'ui.index'
+        raise NotImplementedError()
+
     def url(self, external=True, **kwargs):
-        return url_for(self.endpoint, _external=external, **kwargs)
+        parameters: dict = deepcopy(self.parameters or {})
+        parameters.update(kwargs)
+        return url_for(self.endpoint, _external=external, **parameters)
 
     def assert_standards(self, resp):
-        if self.is_modal:
-            assert_modal_boilerplate(resp.soup)
-        else:
+        if self.result_html_type == ResultHtmlType.PAGE:
             assert_html_page_standards(resp, self.loggedin_user)
-
+        elif self.result_html_type == ResultHtmlType.MODAL:
+            assert_modal_boilerplate(resp.soup)
+        elif self.result_html_type == ResultHtmlType.FRAGMENT:
+            pass # Everything dows
+        else:
+            raise ValueError("Result HTML Type is not known")
 
 
 class FlaskGetViewTester(FlaskViewTester):
@@ -74,6 +101,14 @@ class FlaskGetViewTester(FlaskViewTester):
         return resp
 
 
+class FlaskFormGetViewTester(FlaskGetViewTester):
+    @pytest.mark.app_crsf(True)
+    def test__get__has_form(self):
+        resp = self.get_and_assert_standards()
+        assert_csrf_token(resp.soup)
+        self.assert_form(resp)
+
+
 class FlaskPostViewTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
     def set_fixtures(self, client, faker, loggedin_user):
@@ -84,11 +119,8 @@ class FlaskPostViewTester(FlaskViewTester):
     def assert__error__required_field(self, resp, field_title):
         assert__error__required_field_modal(resp.soup, field_title)
 
-    def get_data_from_object(self, object, skip_fields=None):
-        skip_fields = skip_fields or {}
-
-        return {k: v for k, v in object.__dict__.items()
-                if not k.startswith('_') and k not in skip_fields}
+    def get_data_from_object(self, object):
+        return {k: v for k, v in object.__dict__.items() if not k.startswith('_')}
 
     def post_object(self, object, parameters=None):
         return self.post(
@@ -106,7 +138,7 @@ class FlaskPostViewTester(FlaskViewTester):
         )
 
 
-class IndexTester(FlaskGetViewTester):
+class ResultsTester(FlaskGetViewTester):
     # Redefine in instance classes for different page sizes
     PAGE_SIZE = 5
 
@@ -129,10 +161,13 @@ class IndexTester(FlaskGetViewTester):
 
     def get_and_assert_standards(self, expected_count, parameters=None):
         resp = self.get(parameters=parameters)
+
         self.assert_standards(resp, expected_count, parameters)
 
         return resp
-    
+
+
+class IndexTester(ResultsTester):
     def assert_standards(self, resp, expected_count, parameters):
         parameters = parameters or {}
 
@@ -140,7 +175,7 @@ class IndexTester(FlaskGetViewTester):
 
         super().assert_standards(resp)
 
-        assert__search_html(resp.soup, clear_url=self.url(**parameters))
+        assert__search_html(resp.soup)
 
         assert expected_count == get_records_found(resp.soup)
         assert expected_count_on_page == get_table_row_count(resp.soup)
@@ -153,16 +188,51 @@ class IndexTester(FlaskGetViewTester):
             page_size=self.page_size,
         )
 
+
+class SearchResultsModalTester(ResultsTester):
+    def assert_standards(self, resp, expected_count, parameters):
+        parameters = parameters or {}
+
+        expected_count_on_page = min([expected_count, self.page_size])
+
+        super().assert_standards(resp)
+
+        assert expected_count == get_records_found(resp.soup)
+        assert expected_count_on_page == get_table_row_count(resp.soup)
+
+
+class SearchModalTester(FlaskGetViewTester):
+    def get_and_assert_standards(self):
+        resp = self.get()
+
+        self.assert_standards(resp)
+
+        return resp
+    
+    def assert_standards(self, resp):
+        super().assert_standards(resp)
+
+        assert__search_modal_html(resp.soup)
+
         return resp
 
 
-class RequiresLoginTester(FlaskViewTester):
+class RequiresLoginGetTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
     def set_fixtures(self, client):
         self.client = client
 
     def test__get__requires_login(self):
         assert__requires_login(self.client, self.url(external=False))
+
+
+class RequiresLoginPostTester(FlaskViewTester):
+    @pytest.fixture(autouse=True)
+    def set_fixtures(self, client):
+        self.client = client
+
+    def test__get__requires_login(self):
+        assert__requires_login(self.client, self.url(external=False), post=True)
 
 
 class RequiresRoleTester(FlaskViewTester):
