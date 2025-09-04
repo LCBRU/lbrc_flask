@@ -167,6 +167,17 @@ class ResultsTester(FlaskGetViewTester):
         return resp
 
 
+class IndexUnpaginatedTester(ResultsTester):
+    def assert_standards(self, resp, expected_count, parameters):
+        parameters = parameters or {}
+
+        super().assert_standards(resp)
+
+        assert__search_html(resp.soup)
+
+        assert expected_count == get_table_row_count(resp.soup)
+
+
 class IndexTester(ResultsTester):
     def assert_standards(self, resp, expected_count, parameters):
         parameters = parameters or {}

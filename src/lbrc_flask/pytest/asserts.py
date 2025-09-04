@@ -4,6 +4,7 @@ from collections import OrderedDict
 from urllib.parse import urlparse, parse_qs
 from flask import url_for
 from lbrc_flask.url_helpers import update_querystring
+from lbrc_flask.response import REFRESH_RESULTS_TRIGGER, REFRESH_DETAILS_TRIGGER
 
 
 def _assert_html_standards(soup):
@@ -148,6 +149,20 @@ def assert__refresh_response(response):
     assert response.status_code == http.HTTPStatus.OK
     assert 'HX-Refresh' in response.headers
     assert response.headers['HX-Refresh'] == 'true'
+
+
+def assert__refresh_results(response):
+    assert__trigger_response(response, REFRESH_RESULTS_TRIGGER)
+
+
+def assert__refresh_details(response):
+    assert__trigger_response(response, REFRESH_DETAILS_TRIGGER)
+
+
+def assert__trigger_response(response, trigger_name):
+    assert response.status_code == http.HTTPStatus.OK
+    assert 'HX-Trigger' in response.headers
+    assert response.headers['HX-Trigger'] == trigger_name
 
 
 def assert__requires_login(client, url, post=False):
