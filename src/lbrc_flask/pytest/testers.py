@@ -3,7 +3,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 from flask import url_for
 from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert__requires_role, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token
-from lbrc_flask.pytest.html_content import get_records_found, get_table_row_count
+from lbrc_flask.pytest.html_content import get_records_found, get_table_row_count, get_panel_list_row_count
 from enum import Enum
 
 
@@ -178,7 +178,21 @@ class IndexUnpaginatedTester(ResultsTester):
         assert expected_count == get_table_row_count(resp.soup)
 
 
+class TableRowResultsTester:
+    def row_count(self, soup):
+        return get_table_row_count(soup)
+
+
+class PanelListRowResultsTester:
+    def row_count(self, soup):
+        return get_panel_list_row_count(soup)
+
+
 class IndexTester(ResultsTester):
+    @property
+    def row_results_tester(self):
+        return TableRowResultsTester()
+
     def assert_standards(self, resp, expected_count, parameters):
         parameters = parameters or {}
 
@@ -189,7 +203,7 @@ class IndexTester(ResultsTester):
         assert__search_html(resp.soup)
 
         assert expected_count == get_records_found(resp.soup)
-        assert expected_count_on_page == get_table_row_count(resp.soup)
+        assert expected_count_on_page == self.row_results_tester.row_count(resp.soup)
 
         assert__page_navigation(
             client=self.client,

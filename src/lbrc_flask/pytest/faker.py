@@ -421,7 +421,7 @@ class UserCreator(FakeCreator):
             username = self.faker.pystr(min_chars=5, max_chars=10).lower()
 
         if (email := kwargs.get('email')) is None:
-            email = self.faker.email()
+            email = self.faker.unique.email()
 
         if (active := kwargs.get('active')) is None:
             active = True
