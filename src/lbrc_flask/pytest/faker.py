@@ -37,10 +37,10 @@ class FakeCreator():
         results = []
 
         for _ in range(item_count):
-            results.append(self.get(**kwargs))
-
-        db.session.add_all(results)
-        db.session.commit()
+            result = self.get(**kwargs)
+            results.append(result)
+            db.session.add(result)
+            db.session.commit()
 
         return results
 

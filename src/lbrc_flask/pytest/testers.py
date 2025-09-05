@@ -1,49 +1,15 @@
 import pytest
 from copy import deepcopy
-from dataclasses import dataclass
 from flask import url_for
 from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert__requires_role, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token
 from lbrc_flask.pytest.html_content import get_records_found, get_table_row_count, get_panel_list_row_count
 from enum import Enum
 
 
-class ModelTesterField_DataType(Enum):
-    STRING = 1
-    TEXT = 2
-    DATE = 3
-    RADIO = 4
-    INTEGER = 5
-
-
 class ResultHtmlType(Enum):
     PAGE = 1
     MODAL = 2
     FRAGMENT = 3
-
-
-@dataclass
-class ModelTesterField:
-    field_name: str
-    field_title: str
-    data_type: ModelTesterField_DataType
-    is_mandatory: bool = False
-
-
-class ModelTesterFields:
-    def __init__(self, fields):
-        self.fields = fields
-    
-    @property
-    def mandatory_fields_add(self):
-        return list(filter(lambda x: x.is_mandatory, self.fields))
-
-    @property
-    def mandatory_fields_edit(self):
-        return list(filter(lambda x: x.is_mandatory and x.data_type != ModelTesterField_DataType.RADIO, self.fields))
-
-    @property
-    def string_fields(self):
-        return list(filter(lambda x: x.data_type == ModelTesterField_DataType.STRING, self.fields))
 
 
 class FlaskViewTester:
