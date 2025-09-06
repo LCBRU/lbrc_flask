@@ -26,7 +26,7 @@ class FlaskViewTester:
         # for example, 'ui.index'
         raise NotImplementedError()
 
-    def assert_form(self, resp):
+    def assert_form(self, soup):
         # Test classes must implement an endpoint property that
         # returns an endpoint as used by the Flask url_for function
         # for example, 'ui.index'
@@ -72,7 +72,7 @@ class FlaskFormGetViewTester(FlaskGetViewTester):
     def test__get__has_form(self):
         resp = self.get_and_assert_standards()
         assert_csrf_token(resp.soup)
-        self.assert_form(resp)
+        self.assert_form(resp.soup)
 
 
 class FlaskPostViewTester(FlaskViewTester):

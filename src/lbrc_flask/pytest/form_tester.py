@@ -40,6 +40,8 @@ class FormTesterDateField(FormTesterField):
 
 @dataclass(kw_only=True)
 class FormTesterRadioField(FormTesterField):
+    options: dict[str: str] = field(default_factory=dict)
+
     def assert_input(self, soup):
         assert__input_radio(soup, self.field_name, self.options)
 
