@@ -1,6 +1,8 @@
 import csv
 from fileinput import filename
-from flask import send_file, render_template
+import subprocess
+import shlex
+from flask import send_file, render_template, current_app
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font
@@ -60,8 +62,14 @@ def pdf_download(template, title="report", path=None, **kwargs):
         tmp_html.flush()
         tmp_html.seek(0)
 
-        weasy_html = HTML(filename=tmp_html.name, base_url=path)
-        weasy_html.write_pdf(tmp_pdf.name)
+        if (external_html2pdf := current_app.config.get("EXTERNAL_HTML2PDF_COMMAND")) is not None:
+            args = shlex.split(external_html2pdf)
+            args.extend([path, tmp_html.name, tmp_pdf.name])
+
+            subprocess.run(args)
+        else:
+            weasy_html = HTML(filename=tmp_html.name, base_url=path)
+            weasy_html.write_pdf(tmp_pdf.name)
 
         tmp_pdf.flush()
         tmp_pdf.seek(0)
