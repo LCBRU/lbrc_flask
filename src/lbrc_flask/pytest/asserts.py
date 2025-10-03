@@ -288,9 +288,9 @@ def get_and_assert_standards(client, url, user, has_form=False, has_navigation=T
     return resp
 
 
-def get_and_assert_standards_modal(client, url, has_form=False, has_navigation=True):
+def get_and_assert_standards_modal(client, url, has_form=False):
     resp = client.get(url)
-    assert_modal_standards(resp, has_form=has_form, has_navigation=has_navigation)
+    assert_modal_standards(resp, has_form=has_form)
 
     return resp
 

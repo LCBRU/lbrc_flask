@@ -1,8 +1,12 @@
 import pytest
-from copy import deepcopy
+import http
+import csv
+from io import StringIO
+from itertools import zip_longest
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert__requires_role, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token
-from lbrc_flask.pytest.html_content import get_records_found, get_table_row_count, get_panel_list_row_count
+from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token, assert__page_navigation__page
+from lbrc_flask.pytest.html_content import get_records_found
+from lbrc_flask.pytest.helpers import login
 from enum import Enum
 
 
@@ -12,8 +16,126 @@ class ResultHtmlType(Enum):
     FRAGMENT = 3
 
 
+class PageCountHelper:
+    def __init__(self, page: int, page_size: int, results_count: int):
+        self.page_size = page_size
+        self.page = page
+        self.results_count = results_count
+
+    @property
+    def page_count(self):
+        return ((self.results_count - 1) // self.page_size) + 1
+
+    @property
+    def expected_results_on_current_page(self):
+        if self.page < self.page_count:
+            return self.page_size
+        else:
+            return self.results_count - ((self.page - 1) * self.page_size)
+
+
+class HtmlPageContentAsserter:
+    def __init__(self, loggedin_user):
+        self.loggedin_user = loggedin_user
+
+    def assert_all(self, resp):
+        assert_html_page_standards(resp, self.loggedin_user)
+
+
+class SearchContentAsserter:
+    def assert_all(self, resp):
+        assert__search_html(resp.soup)
+
+
+class PageContentAsserter:
+    def __init__(self, url: str, page_count_helper: PageCountHelper):
+        self.url=url
+        self.page_count_helper = page_count_helper
+
+    def assert_all(self, resp):
+        assert self.page_count_helper.results_count == get_records_found(resp.soup)
+
+        self.assert_paginator(resp)
+    
+    def assert_paginator(self, resp):
+        paginator = resp.soup.find('nav', 'pagination')
+
+        if self.page_count_helper.page_count > 1:
+            assert paginator is not None
+            assert__page_navigation__page(self.url, paginator, self.page_count_helper.page_count, self.page_count_helper.page)
+        else:
+            assert paginator is None
+
+
+class RowContentAsserter:
+    def __init__(self, expected_results: list, expected_result_count: int):
+        self.expected_results = expected_results
+        self.expected_result_count = expected_result_count
+
+    def row_count(self, resp) -> int:
+        return len(self.get_rows(resp))
+
+    def assert_all(self, resp):
+        assert self.expected_result_count == self.row_count(resp)
+        self.assert_rows_details(resp)
+
+    def assert_rows_details(self, resp):
+        for er, row in zip_longest(self.expected_results, self.get_rows(resp)):
+            self.assert_row_details(row, er)
+
+    def assert_row_details(self, row, expected_result):
+        ...
+
+
+class CsvDownloadContentAsserter(RowContentAsserter):
+    def __init__(self, expected_results: list, expected_headings: list[str]):
+        super().__init__(expected_results, len(expected_results))
+        self.expected_headings = expected_headings
+
+    def row_count(self, resp) -> int:
+        return len(self.get_rows(resp))
+
+    def assert_all(self, resp):
+        self.assert_headers(resp)
+        self.assert_rows_details(resp)
+
+    def assert_rows_details(self, resp):
+        for er, row in zip_longest(self.expected_results, self.get_rows(resp)):
+            self.assert_row_details(row, er)
+
+    def assert_headers(self, resp):
+        assert self.get_rows_including_headers(resp)[0] == self.expected_headings
+
+    def get_rows_including_headers(self, resp) -> list:
+        decoded_content = resp.data.decode("utf-8")
+        print(decoded_content)
+        return list(csv.reader(StringIO(decoded_content), delimiter=","))
+
+    def get_rows(self, resp) -> list:
+        return self.get_rows_including_headers(resp)[1:]
+
+
+class TableContentAsserter(RowContentAsserter):
+    def get_rows(self, resp) -> list:
+        tbody = resp.soup.find_all('tbody')[0]
+        return tbody.find_all('tr')
+
+
+class PanelListContentAsserter(RowContentAsserter):
+    def get_rows(self, resp) -> list:
+        panel_list = resp.soup.find_all(class_='panel_list')[0]
+        return panel_list.find_all('li')
+
+
 class FlaskViewTester:
-    parameters = None
+    @classmethod
+    def setup_class(cls):
+        cls.parameters = {}
+    
+    @pytest.fixture(autouse=True)
+    def set_flask_view_tester_fixtures(self, client, faker):
+        self.client = client
+        self.faker = faker
 
     @property
     def result_html_type(self) -> ResultHtmlType:
@@ -32,10 +154,8 @@ class FlaskViewTester:
         # for example, 'ui.index'
         raise NotImplementedError()
 
-    def url(self, external=True, **kwargs):
-        parameters: dict = deepcopy(self.parameters or {})
-        parameters.update(kwargs)
-        return url_for(self.endpoint, _external=external, **parameters)
+    def url(self, external=True):
+        return url_for(self.endpoint, _external=external, **self.parameters)
 
     def assert_standards(self, resp):
         if self.result_html_type == ResultHtmlType.PAGE:
@@ -43,25 +163,21 @@ class FlaskViewTester:
         elif self.result_html_type == ResultHtmlType.MODAL:
             assert_modal_boilerplate(resp.soup)
         elif self.result_html_type == ResultHtmlType.FRAGMENT:
-            pass # Everything dows
+            pass # Everything goes
         else:
             raise ValueError("Result HTML Type is not known")
 
 
 class FlaskGetViewTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
-    def set_fixtures(self, client, faker, loggedin_user):
-        self.client = client
-        self.faker = faker
+    def set_flask_get_view_tester_fixtures(self, loggedin_user):
         self.loggedin_user = loggedin_user
 
-    def get(self, parameters=None):
-        parameters = parameters or {}
-
-        return self.client.get(self.url(**parameters))
+    def get(self):
+        return self.client.get(self.url())
     
-    def get_and_assert_standards(self, parameters=None):
-        resp = self.get(parameters)
+    def get_and_assert_standards(self):
+        resp = self.get()
         self.assert_standards(resp)
 
         return resp
@@ -77,9 +193,7 @@ class FlaskFormGetViewTester(FlaskGetViewTester):
 
 class FlaskPostViewTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
-    def set_fixtures(self, client, faker, loggedin_user):
-        self.client = client
-        self.faker = faker
+    def set_flask_post_view_tester_fixtures(self, loggedin_user):
         self.loggedin_user = loggedin_user
 
     def assert__error__required_field(self, resp, field_title):
@@ -88,18 +202,14 @@ class FlaskPostViewTester(FlaskViewTester):
     def get_data_from_object(self, object):
         return {k: v for k, v in object.__dict__.items() if not k.startswith('_')}
 
-    def post_object(self, object, parameters=None):
-        return self.post(
-            data=self.get_data_from_object(object),
-            parameters=parameters,
-        )
+    def post_object(self, object):
+        return self.post(data=self.get_data_from_object(object))
 
-    def post(self, data=None, parameters=None):
-        parameters = parameters or {}
+    def post(self, data=None):
         data = data or {}
 
         return self.client.post(
-            self.url(**parameters),
+            self.url(),
             data=data,
         )
 
@@ -125,71 +235,30 @@ class ResultsTester(FlaskGetViewTester):
     def page_size(self):
         return self.PAGE_SIZE
 
-    def get_and_assert_standards(self, expected_count, parameters=None):
-        resp = self.get(parameters=parameters)
+    def get_and_assert_standards(self):
+        resp = self.get()
 
-        self.assert_standards(resp, expected_count, parameters)
+        self.assert_standards(resp)
 
         return resp
 
 
 class IndexUnpaginatedTester(ResultsTester):
-    def assert_standards(self, resp, expected_count, parameters):
-        parameters = parameters or {}
-
+    def assert_standards(self, resp, expected_count, expected_results=None):
         super().assert_standards(resp)
 
         assert__search_html(resp.soup)
 
-        assert expected_count == get_table_row_count(resp.soup)
-
-
-class TableRowResultsTester:
-    def row_count(self, soup):
-        return get_table_row_count(soup)
-
-
-class PanelListRowResultsTester:
-    def row_count(self, soup):
-        return get_panel_list_row_count(soup)
-
-
-class IndexTester(ResultsTester):
-    @property
-    def row_results_tester(self):
-        return TableRowResultsTester()
-
-    def assert_standards(self, resp, expected_count, parameters):
-        parameters = parameters or {}
-
-        expected_count_on_page = min([expected_count, self.page_size])
-
-        super().assert_standards(resp)
-
-        assert__search_html(resp.soup)
-
-        assert expected_count == get_records_found(resp.soup)
-        assert expected_count_on_page == self.row_results_tester.row_count(resp.soup)
-
-        assert__page_navigation(
-            client=self.client,
-            endpoint=self.endpoint,
-            parameters=parameters,
-            items=expected_count,
-            page_size=self.page_size,
-        )
+        assert expected_count == self.row_results_tester.row_count(resp)
 
 
 class SearchResultsModalTester(ResultsTester):
-    def assert_standards(self, resp, expected_count, parameters):
-        parameters = parameters or {}
-
+    def assert_standards(self, resp, expected_count, expected_results=None):
         expected_count_on_page = min([expected_count, self.page_size])
 
         super().assert_standards(resp)
 
         assert expected_count == get_records_found(resp.soup)
-        assert expected_count_on_page == get_table_row_count(resp.soup)
 
 
 class SearchModalTester(FlaskGetViewTester):
@@ -209,27 +278,37 @@ class SearchModalTester(FlaskGetViewTester):
 
 
 class RequiresLoginGetTester(FlaskViewTester):
-    @pytest.fixture(autouse=True)
-    def set_fixtures(self, client):
-        self.client = client
-
     def test__get__requires_login(self):
         assert__requires_login(self.client, self.url(external=False))
 
 
 class RequiresLoginPostTester(FlaskViewTester):
-    @pytest.fixture(autouse=True)
-    def set_fixtures(self, client):
-        self.client = client
-
     def test__get__requires_login(self):
         assert__requires_login(self.client, self.url(external=False), post=True)
 
 
 class RequiresRoleTester(FlaskViewTester):
-    @pytest.fixture(autouse=True)
-    def _set_fixtures(self, client):
-        self.client = client
+    @property
+    def user_with_required_role(self):
+        # Test classes must implement an user_with_required_role property that
+        # returns a user with the required rights
+        raise NotImplementedError()
 
-    def test__get__requires_login(self):
-        assert__requires_role(client, _url(external=False))
+    @property
+    def user_without_required_role(self):
+        # Test classes must implement an user_with_required_role property that
+        # returns a user without the required rights
+        raise NotImplementedError()
+
+    def test__get__logged_in_user_without_required_role__permission_denied(self):
+        login(self.client, self.faker, self.user_without_required_role)
+        resp = self.client.get(self.url(external=False))
+        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+
+    def test__get__logged_in_user_with_required_role__allowed(self):
+        login(self.client, self.faker, self.user_with_required_role)
+        resp = self.client.get(self.url(external=False))
+        assert resp.status_code == http.HTTPStatus.OK
+
+
+
