@@ -8,6 +8,7 @@ from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
 from enum import Enum
+from lbrc_flask.model import CommonMixin
 
 
 class ResultHtmlType(Enum):
@@ -16,9 +17,35 @@ class ResultHtmlType(Enum):
     FRAGMENT = 3
 
 
-class PageCountHelper:
-    def __init__(self, page: int, page_size: int, results_count: int):
-        self.page_size = page_size
+class PageCountHelper(CommonMixin):
+    # Redefine in instance classes for different page sizes
+    PAGE_SIZE = 5
+    TEST_PAGE_COUNT = 3
+
+    @staticmethod
+    # Pass the redefined PAGE_SIZE as argument to this method
+    def test_current_pages(test_page_count=TEST_PAGE_COUNT):
+        return range(1, test_page_count+1)
+
+    @staticmethod
+    # Pass the redefined PAGE_SIZE as argument to this method
+    def test_page_edges(page_size=PAGE_SIZE, test_page_count=TEST_PAGE_COUNT):
+        result = []
+
+        for page in range(test_page_count):
+            item_count_for_full_page = page * page_size
+
+            result.extend([item_count_for_full_page, item_count_for_full_page + 1])
+        
+        result.append(test_page_count * page_size)
+
+        return result
+
+    @property
+    def page_size(self):
+        return self.PAGE_SIZE
+
+    def __init__(self, page: int, results_count: int):
         self.page = page
         self.results_count = results_count
 
@@ -27,11 +54,20 @@ class PageCountHelper:
         return ((self.results_count - 1) // self.page_size) + 1
 
     @property
+    def items_on_previous_pages(self):
+        return ((self.page - 1) * self.page_size)
+
+    @property
     def expected_results_on_current_page(self):
         if self.page < self.page_count:
             return self.page_size
+        elif self.page > self.page_count:
+            return 0
         else:
-            return self.results_count - ((self.page - 1) * self.page_size)
+            return self.results_count - self.items_on_previous_pages
+        
+    def get_current_page_from_results(self, results: list):
+        return results[self.items_on_previous_pages:self.items_on_previous_pages + self.expected_results_on_current_page]
 
 
 class HtmlPageContentAsserter:
@@ -45,6 +81,11 @@ class HtmlPageContentAsserter:
 class SearchContentAsserter:
     def assert_all(self, resp):
         assert__search_html(resp.soup)
+
+
+class SearchModalContentAsserter:
+    def assert_all(self, resp):
+        assert__search_modal_html(resp.soup)
 
 
 class PageContentAsserter:
@@ -108,7 +149,6 @@ class CsvDownloadContentAsserter(RowContentAsserter):
 
     def get_rows_including_headers(self, resp) -> list:
         decoded_content = resp.data.decode("utf-8")
-        print(decoded_content)
         return list(csv.reader(StringIO(decoded_content), delimiter=","))
 
     def get_rows(self, resp) -> list:
@@ -217,10 +257,11 @@ class FlaskPostViewTester(FlaskViewTester):
 class ResultsTester(FlaskGetViewTester):
     # Redefine in instance classes for different page sizes
     PAGE_SIZE = 5
+    PAGES = 10
 
     @staticmethod
     # Pass the redefined PAGE_SIZE as argument to this method
-    def page_edges(page_size=PAGE_SIZE, pages=10):
+    def page_edges(page_size=PAGE_SIZE, pages=PAGES):
         result = []
 
         for page in range(pages):
@@ -230,6 +271,11 @@ class ResultsTester(FlaskGetViewTester):
         
         result.append(pages * page_size)
         return result
+
+    @staticmethod
+    # Pass the redefined PAGE_SIZE as argument to this method
+    def pages(pages=PAGES):
+        return range(1, pages+1)
 
     @property
     def page_size(self):
