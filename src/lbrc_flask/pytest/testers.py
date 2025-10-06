@@ -4,17 +4,11 @@ import csv
 from io import StringIO
 from itertools import zip_longest
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token, assert__page_navigation__page
+from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token, assert__page_navigation__page, assert__error__string_too_long__modal
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
 from enum import Enum
 from lbrc_flask.model import CommonMixin
-
-
-class ResultHtmlType(Enum):
-    PAGE = 1
-    MODAL = 2
-    FRAGMENT = 3
 
 
 class PageCountHelper(CommonMixin):
@@ -76,6 +70,19 @@ class HtmlPageContentAsserter:
 
     def assert_all(self, resp):
         assert_html_page_standards(resp, self.loggedin_user)
+
+
+class ModalContentAsserter:
+    def assert_all(self, resp):
+        assert_modal_boilerplate(resp.soup)
+
+
+class ModalFormErrorContentAsserter:
+    def assert_missing_required_field(self, resp, field_title):
+        assert__error__required_field_modal(resp.soup, field_title)
+
+    def assert__error__string_too_long(self, resp, field_title):
+        assert__error__string_too_long__modal(resp.soup, field_title)
 
 
 class SearchContentAsserter:
@@ -178,17 +185,7 @@ class FlaskViewTester:
         self.faker = faker
 
     @property
-    def result_html_type(self) -> ResultHtmlType:
-        return ResultHtmlType.PAGE
-
-    @property
     def endpoint(self):
-        # Test classes must implement an endpoint property that
-        # returns an endpoint as used by the Flask url_for function
-        # for example, 'ui.index'
-        raise NotImplementedError()
-
-    def assert_form(self, soup):
         # Test classes must implement an endpoint property that
         # returns an endpoint as used by the Flask url_for function
         # for example, 'ui.index'
@@ -197,47 +194,8 @@ class FlaskViewTester:
     def url(self, external=True):
         return url_for(self.endpoint, _external=external, **self.parameters)
 
-    def assert_standards(self, resp):
-        if self.result_html_type == ResultHtmlType.PAGE:
-            assert_html_page_standards(resp, self.loggedin_user)
-        elif self.result_html_type == ResultHtmlType.MODAL:
-            assert_modal_boilerplate(resp.soup)
-        elif self.result_html_type == ResultHtmlType.FRAGMENT:
-            pass # Everything goes
-        else:
-            raise ValueError("Result HTML Type is not known")
-
-
-class FlaskGetViewTester(FlaskViewTester):
-    @pytest.fixture(autouse=True)
-    def set_flask_get_view_tester_fixtures(self, loggedin_user):
-        self.loggedin_user = loggedin_user
-
     def get(self):
         return self.client.get(self.url())
-    
-    def get_and_assert_standards(self):
-        resp = self.get()
-        self.assert_standards(resp)
-
-        return resp
-
-
-class FlaskFormGetViewTester(FlaskGetViewTester):
-    @pytest.mark.app_crsf(True)
-    def test__get__has_form(self):
-        resp = self.get_and_assert_standards()
-        assert_csrf_token(resp.soup)
-        self.assert_form(resp.soup)
-
-
-class FlaskPostViewTester(FlaskViewTester):
-    @pytest.fixture(autouse=True)
-    def set_flask_post_view_tester_fixtures(self, loggedin_user):
-        self.loggedin_user = loggedin_user
-
-    def assert__error__required_field(self, resp, field_title):
-        assert__error__required_field_modal(resp.soup, field_title)
 
     def get_data_from_object(self, object):
         return {k: v for k, v in object.__dict__.items() if not k.startswith('_')}
@@ -254,73 +212,10 @@ class FlaskPostViewTester(FlaskViewTester):
         )
 
 
-class ResultsTester(FlaskGetViewTester):
-    # Redefine in instance classes for different page sizes
-    PAGE_SIZE = 5
-    PAGES = 10
-
-    @staticmethod
-    # Pass the redefined PAGE_SIZE as argument to this method
-    def page_edges(page_size=PAGE_SIZE, pages=PAGES):
-        result = []
-
-        for page in range(pages):
-            item_count_for_full_page = page * page_size
-
-            result.extend([item_count_for_full_page, item_count_for_full_page + 1])
-        
-        result.append(pages * page_size)
-        return result
-
-    @staticmethod
-    # Pass the redefined PAGE_SIZE as argument to this method
-    def pages(pages=PAGES):
-        return range(1, pages+1)
-
-    @property
-    def page_size(self):
-        return self.PAGE_SIZE
-
-    def get_and_assert_standards(self):
-        resp = self.get()
-
-        self.assert_standards(resp)
-
-        return resp
-
-
-class IndexUnpaginatedTester(ResultsTester):
-    def assert_standards(self, resp, expected_count, expected_results=None):
-        super().assert_standards(resp)
-
-        assert__search_html(resp.soup)
-
-        assert expected_count == self.row_results_tester.row_count(resp)
-
-
-class SearchResultsModalTester(ResultsTester):
-    def assert_standards(self, resp, expected_count, expected_results=None):
-        expected_count_on_page = min([expected_count, self.page_size])
-
-        super().assert_standards(resp)
-
-        assert expected_count == get_records_found(resp.soup)
-
-
-class SearchModalTester(FlaskGetViewTester):
-    def get_and_assert_standards(self):
-        resp = self.get()
-
-        self.assert_standards(resp)
-
-        return resp
-    
-    def assert_standards(self, resp):
-        super().assert_standards(resp)
-
-        assert__search_modal_html(resp.soup)
-
-        return resp
+class FlaskViewLoggedInTester(FlaskViewTester):
+    @pytest.fixture(autouse=True)
+    def set_flask_get_view_tester_fixtures(self, loggedin_user):
+        self.loggedin_user = loggedin_user
 
 
 class RequiresLoginGetTester(FlaskViewTester):
