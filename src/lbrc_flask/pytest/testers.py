@@ -194,22 +194,28 @@ class FlaskViewTester:
     def url(self, external=True):
         return url_for(self.endpoint, _external=external, **self.parameters)
 
-    def get(self):
-        return self.client.get(self.url())
+    def get(self, expected_status_code=http.HTTPStatus.OK):
+        result = self.client.get(self.url())
+        assert result.status_code == expected_status_code
+        return result
 
     def get_data_from_object(self, object):
         return {k: v for k, v in object.__dict__.items() if not k.startswith('_')}
 
-    def post_object(self, object):
-        return self.post(data=self.get_data_from_object(object))
+    def post_object(self, object, expected_status_code=http.HTTPStatus.OK):
+        return self.post(data=self.get_data_from_object(object), expected_status_code=expected_status_code)
 
-    def post(self, data=None):
+    def post(self, data=None, expected_status_code=http.HTTPStatus.OK):
         data = data or {}
 
-        return self.client.post(
+        result = self.client.post(
             self.url(),
             data=data,
         )
+
+        assert result.status_code == expected_status_code
+
+        return result
 
 
 class FlaskViewLoggedInTester(FlaskViewTester):
@@ -243,13 +249,11 @@ class RequiresRoleTester(FlaskViewTester):
 
     def test__get__logged_in_user_without_required_role__permission_denied(self):
         login(self.client, self.faker, self.user_without_required_role)
-        resp = self.client.get(self.url(external=False))
-        assert resp.status_code == http.HTTPStatus.FORBIDDEN
+        self.get(http.HTTPStatus.FORBIDDEN)
 
     def test__get__logged_in_user_with_required_role__allowed(self):
         login(self.client, self.faker, self.user_with_required_role)
-        resp = self.client.get(self.url(external=False))
-        assert resp.status_code == http.HTTPStatus.OK
+        self.get()
 
 
 
