@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from lbrc_flask.pytest.asserts import assert__input_date, assert__input_radio, assert__input_text, assert__input_textarea
+from lbrc_flask.pytest.asserts import assert__input_date, assert__input_radio, assert__input_text, assert__input_textarea, assert_csrf_token
 
 
 @dataclass(kw_only=True)
@@ -51,8 +51,9 @@ class FormTesterRadioField(FormTesterField):
 
 
 class FormTester:
-    def __init__(self, fields: list[FormTesterField]):
+    def __init__(self, fields: list[FormTesterField], has_csrf=False):
         self.fields: dict[str, FormTesterField] = {f.field_name: f for f in fields}
+        self.has_csrf = has_csrf
     
     @property
     def mandatory_fields_add(self):
@@ -69,3 +70,10 @@ class FormTester:
     def assert_inputs(self, soup):
         for f in self.fields.values():
             f.assert_input(soup)
+
+    def assert_all(self, resp):
+        if self.has_csrf:
+            assert_csrf_token(resp.soup)
+        self.assert_inputs(resp.soup)
+
+

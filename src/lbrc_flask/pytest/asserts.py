@@ -288,9 +288,9 @@ def get_and_assert_standards(client, url, user, has_form=False, has_navigation=T
     return resp
 
 
-def get_and_assert_standards_modal(client, url, has_form=False, has_navigation=True):
+def get_and_assert_standards_modal(client, url, has_form=False):
     resp = client.get(url)
-    assert_modal_standards(resp, has_form=has_form, has_navigation=has_navigation)
+    assert_modal_standards(resp, has_form=has_form)
 
     return resp
 
@@ -348,12 +348,12 @@ def assert__page_navigation__page(url, paginator, page_count, current_page):
     assert__page_navigation__link_exists(paginator, 1, url, 1, current_page, page_count)
     assert__page_navigation__link_exists(paginator, page_count, url, page_count, current_page, page_count)
 
-    for page in range(max(current_page - 2, 2), min(current_page + 3, page_count - 1)):
-        assert__page_navigation__link_exists(paginator, page, url, page, current_page, page_count)
+    for link_page in range(max(current_page - 2, 2), min(current_page + 3, page_count - 1)):
+        assert__page_navigation__link_exists(paginator, link_page, url, link_page, current_page, page_count)
 
 
-def assert__page_navigation__link_exists(paginator, string, url, page, current_page, page_count):
-    if page == current_page:
+def assert__page_navigation__link_exists(paginator, string, url, link_page, current_page, page_count):
+    if link_page == current_page:
         assert paginator.find('span', string=string) is not None
         return
 
@@ -361,8 +361,13 @@ def assert__page_navigation__link_exists(paginator, string, url, page, current_p
 
     assert link is not None
 
-    if 0 < page <= page_count:
-        assert__urls_the_same(update_querystring(url, {'page': page}), link['href'])
+    if 0 < link_page <= page_count:
+        if 'hx-get' in link.attrs:
+            link_href = link['hx-get']
+        else:
+            link_href = link['href']
+
+        assert__urls_the_same(update_querystring(url, {'page': link_page}), link_href)
     else:
         assert 'href' not in link
 

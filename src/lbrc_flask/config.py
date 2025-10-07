@@ -79,6 +79,8 @@ class BaseConfig:
     CELERY_DEFAULT_QUEUE = os.getenv("CELERY_DEFAULT_QUEUE", '')
     CELERY_LOG_DIRECTORY = os.getenv("CELERY_LOG_DIRECTORY", ".")
 
+    EXTERNAL_HTML2PDF_COMMAND = os.getenv("EXTERNAL_HTML2PDF_COMMAND")
+
 
 
 class BaseTestConfig(BaseConfig):
