@@ -9,7 +9,7 @@ import datetime
 from flask_weasyprint import HTML, render_pdf
 
 
-def excel_download(title, headers, details):
+def excel_download(title: str, headers: list[str], details: list[dict]):
     wb = Workbook()
     ws = wb.active
     ws.title = title
@@ -35,7 +35,7 @@ def excel_download(title, headers, details):
         )
 
 
-def csv_download(title, headers, details):
+def csv_download(title: str, headers: list[str], details: list[dict]):
     with NamedTemporaryFile(mode='w+', delete=True, encoding='utf-8') as tmp:
         writer = csv.DictWriter(tmp, fieldnames=list(headers))
 
@@ -49,6 +49,7 @@ def csv_download(title, headers, details):
 
         return send_file(
             tmp.name,
+            mimetype='text/csv',
             as_attachment=True,
             download_name=f'{title}_{datetime.datetime.now(datetime.UTC):%Y%m%d_%H%M%S}.csv',
         )
