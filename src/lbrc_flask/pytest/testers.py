@@ -204,6 +204,7 @@ class FlaskViewTester:
 
     def get(self, expected_status_code=http.HTTPStatus.OK):
         result = self.client.get(self.url())
+        print(result.status_code, expected_status_code)
         assert result.status_code == expected_status_code
         return result
 
@@ -230,6 +231,22 @@ class FlaskViewLoggedInTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
     def set_flask_get_view_tester_fixtures(self, loggedin_user):
         self.loggedin_user = loggedin_user
+
+
+class IndexTester(FlaskViewLoggedInTester):
+    def assert_all(self, page_count_helper: PageCountHelper, expected_results: list, resp):
+        PageContentAsserter(
+            url=self.url(external=False),
+            page_count_helper=page_count_helper,
+        ).assert_all(resp)
+
+        TableContentAsserter(
+            expected_results=page_count_helper.get_current_page_from_results(expected_results),
+            page_count_helper=page_count_helper,
+        ).assert_all(resp)
+
+        SearchContentAsserter().assert_all(resp)
+        HtmlPageContentAsserter(loggedin_user=self.loggedin_user).assert_all(resp)
 
 
 class RequiresLoginGetTester(FlaskViewTester):
