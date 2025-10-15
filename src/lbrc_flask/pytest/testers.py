@@ -106,6 +106,10 @@ class PageContentAsserter:
         self.assert_paginator(resp)
     
     def assert_paginator(self, resp):
+        if self.page_count_helper.page > self.page_count_helper.page_count:
+            # No point checking paginator if current page is out of range
+            return
+
         paginator = resp.soup.find('nav', 'pagination')
 
         if self.page_count_helper.page_count > 1:
@@ -116,15 +120,19 @@ class PageContentAsserter:
 
 
 class RowContentAsserter:
-    def __init__(self, expected_results: list, expected_result_count: int):
+    def __init__(self, expected_results: list, page_count_helper: PageCountHelper):
+        self.page_count_helper = page_count_helper
         self.expected_results = expected_results
-        self.expected_result_count = expected_result_count
 
     def row_count(self, resp) -> int:
         return len(self.get_rows(resp))
 
     def assert_all(self, resp):
-        assert self.expected_result_count == self.row_count(resp)
+        if self.page_count_helper.page > self.page_count_helper.page_count:
+            # No point checking rows if current page is out of range
+            return
+
+        assert self.page_count_helper.expected_results_on_current_page == self.row_count(resp)
         self.assert_rows_details(resp)
 
     def assert_rows_details(self, resp):
