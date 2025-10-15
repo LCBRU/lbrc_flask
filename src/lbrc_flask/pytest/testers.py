@@ -4,17 +4,37 @@ import csv
 from io import StringIO
 from itertools import zip_longest
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert__page_navigation, assert_modal_boilerplate, assert__error__required_field_modal, assert_csrf_token, assert__page_navigation__page, assert__error__string_too_long__modal
+from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert_modal_boilerplate, assert__error__required_field_modal, assert__page_navigation__page, assert__error__string_too_long__modal
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
-from enum import Enum
 from lbrc_flask.model import CommonMixin
 
 
-class PageCountHelper(CommonMixin):
+class ResultSet(CommonMixin):
+    def __init__(self, expected_results: list):
+        self.expected_results = expected_results
+        self.results_count = len(expected_results)
+
+    @property
+    def results(self):
+        return self.expected_results
+
+    @property
+    def expected_results_on_current_page(self):
+        return self.results_count
+            
+    def get_expected_results_for_current_page(self):
+        return self.expected_results
+
+
+class PagedResultSet(ResultSet):
     # Redefine in instance classes for different page sizes
     PAGE_SIZE = 5
     TEST_PAGE_COUNT = 3
+
+    def __init__(self, page: int, expected_results: list):
+        self.page = page
+        super().__init__(expected_results)
 
     @staticmethod
     # Pass the redefined PAGE_SIZE as argument to this method
@@ -39,10 +59,6 @@ class PageCountHelper(CommonMixin):
     def page_size(self):
         return self.PAGE_SIZE
 
-    def __init__(self, page: int, results_count: int):
-        self.page = page
-        self.results_count = results_count
-
     @property
     def page_count(self):
         return ((self.results_count - 1) // self.page_size) + 1
@@ -60,8 +76,8 @@ class PageCountHelper(CommonMixin):
         else:
             return self.results_count - self.items_on_previous_pages
         
-    def get_current_page_from_results(self, results: list):
-        return results[self.items_on_previous_pages:self.items_on_previous_pages + self.expected_results_on_current_page]
+    def get_expected_results_for_current_page(self):
+        return self.expected_results[self.items_on_previous_pages:self.items_on_previous_pages + self.expected_results_on_current_page]
 
 
 class HtmlPageContentAsserter:
@@ -84,7 +100,6 @@ class ModalFormErrorContentAsserter:
     def assert__error__string_too_long(self, resp, field_title):
         assert__error__string_too_long__modal(resp.soup, field_title)
 
-
 class SearchContentAsserter:
     def assert_all(self, resp):
         assert__search_html(resp.soup)
@@ -96,9 +111,9 @@ class SearchModalContentAsserter:
 
 
 class PageContentAsserter:
-    def __init__(self, url: str, page_count_helper: PageCountHelper):
+    def __init__(self, url: str, paged_result_set: PagedResultSet):
         self.url=url
-        self.page_count_helper = page_count_helper
+        self.page_count_helper = paged_result_set
 
     def assert_all(self, resp):
         assert self.page_count_helper.results_count == get_records_found(resp.soup)
@@ -120,23 +135,22 @@ class PageContentAsserter:
 
 
 class RowContentAsserter:
-    def __init__(self, expected_results: list, page_count_helper: PageCountHelper):
-        self.page_count_helper = page_count_helper
-        self.expected_results = expected_results
+    def __init__(self, result_set: ResultSet):
+        self.result_set = result_set
 
     def row_count(self, resp) -> int:
         return len(self.get_rows(resp))
 
     def assert_all(self, resp):
-        if self.page_count_helper.page > self.page_count_helper.page_count:
+        if self.result_set.page > self.result_set.page_count:
             # No point checking rows if current page is out of range
             return
 
-        assert self.page_count_helper.expected_results_on_current_page == self.row_count(resp)
+        assert self.result_set.expected_results_on_current_page == self.row_count(resp)
         self.assert_rows_details(resp)
 
     def assert_rows_details(self, resp):
-        for er, row in zip_longest(self.expected_results, self.get_rows(resp)):
+        for er, row in zip_longest(self.result_set.get_expected_results_for_current_page(), self.get_rows(resp)):
             self.assert_row_details(row, er)
 
     def assert_row_details(self, row, expected_result):
@@ -145,7 +159,7 @@ class RowContentAsserter:
 
 class CsvDownloadContentAsserter(RowContentAsserter):
     def __init__(self, expected_results: list, expected_headings: list[str]):
-        super().__init__(expected_results, len(expected_results))
+        super().__init__(ResultSet(expected_results=expected_results))
         self.expected_headings = expected_headings
 
     def row_count(self, resp) -> int:
@@ -156,7 +170,7 @@ class CsvDownloadContentAsserter(RowContentAsserter):
         self.assert_rows_details(resp)
 
     def assert_rows_details(self, resp):
-        for er, row in zip_longest(self.expected_results, self.get_rows(resp)):
+        for er, row in zip_longest(self.result_set.expected_results, self.get_rows(resp)):
             self.assert_row_details(row, er)
 
     def assert_headers(self, resp):
@@ -234,15 +248,18 @@ class FlaskViewLoggedInTester(FlaskViewTester):
 
 
 class IndexTester(FlaskViewLoggedInTester):
-    def assert_all(self, page_count_helper: PageCountHelper, expected_results: list, resp):
+    @property
+    def content_asserter(self) -> RowContentAsserter:
+        return TableContentAsserter
+    
+    def assert_all(self, page_count_helper: PagedResultSet, resp):
         PageContentAsserter(
             url=self.url(external=False),
-            page_count_helper=page_count_helper,
+            paged_result_set=page_count_helper,
         ).assert_all(resp)
 
-        TableContentAsserter(
-            expected_results=page_count_helper.get_current_page_from_results(expected_results),
-            page_count_helper=page_count_helper,
+        self.content_asserter(
+            result_set=page_count_helper,
         ).assert_all(resp)
 
         SearchContentAsserter().assert_all(resp)
