@@ -20,10 +20,10 @@ class ResultSet(CommonMixin):
         return self.expected_results
 
     @property
-    def expected_results_on_current_page(self):
+    def effective_result_count(self):
         return self.results_count
             
-    def get_expected_results_for_current_page(self):
+    def effective_results(self):
         return self.expected_results
 
 
@@ -62,13 +62,17 @@ class PagedResultSet(ResultSet):
     @property
     def page_count(self):
         return ((self.results_count - 1) // self.page_size) + 1
+    
+    @property
+    def page_in_range(self):
+        return 1 <= self.page <= self.page_count
 
     @property
     def items_on_previous_pages(self):
         return ((self.page - 1) * self.page_size)
 
     @property
-    def expected_results_on_current_page(self):
+    def effective_result_count(self):
         if self.page < self.page_count:
             return self.page_size
         elif self.page > self.page_count:
@@ -76,8 +80,8 @@ class PagedResultSet(ResultSet):
         else:
             return self.results_count - self.items_on_previous_pages
         
-    def get_expected_results_for_current_page(self):
-        return self.expected_results[self.items_on_previous_pages:self.items_on_previous_pages + self.expected_results_on_current_page]
+    def effective_results(self):
+        return self.expected_results[self.items_on_previous_pages:self.items_on_previous_pages + self.effective_result_count]
 
 
 class HtmlPageContentAsserter:
@@ -113,25 +117,22 @@ class SearchModalContentAsserter:
 class PageContentAsserter:
     def __init__(self, url: str, paged_result_set: PagedResultSet):
         self.url=url
-        self.page_count_helper = paged_result_set
+        self.paged_result_set = paged_result_set
 
     def assert_all(self, resp):
-        assert self.page_count_helper.results_count == get_records_found(resp.soup)
+        assert self.paged_result_set.results_count == get_records_found(resp.soup)
 
         self.assert_paginator(resp)
     
     def assert_paginator(self, resp):
-        if self.page_count_helper.page > self.page_count_helper.page_count:
-            # No point checking paginator if current page is out of range
-            return
+        if self.paged_result_set.page_in_range:
+            paginator = resp.soup.find('nav', 'pagination')
 
-        paginator = resp.soup.find('nav', 'pagination')
-
-        if self.page_count_helper.page_count > 1:
-            assert paginator is not None
-            assert__page_navigation__page(self.url, paginator, self.page_count_helper.page_count, self.page_count_helper.page)
-        else:
-            assert paginator is None
+            if self.paged_result_set.page_count > 1:
+                assert paginator is not None
+                assert__page_navigation__page(self.url, paginator, self.paged_result_set.page_count, self.paged_result_set.page)
+            else:
+                assert paginator is None
 
 
 class RowContentAsserter:
@@ -142,15 +143,12 @@ class RowContentAsserter:
         return len(self.get_rows(resp))
 
     def assert_all(self, resp):
-        if self.result_set.page > self.result_set.page_count:
-            # No point checking rows if current page is out of range
-            return
-
-        assert self.result_set.expected_results_on_current_page == self.row_count(resp)
-        self.assert_rows_details(resp)
+        if self.result_set.page_in_range:
+            assert self.result_set.effective_result_count == self.row_count(resp)
+            self.assert_rows_details(resp)
 
     def assert_rows_details(self, resp):
-        for er, row in zip_longest(self.result_set.get_expected_results_for_current_page(), self.get_rows(resp)):
+        for er, row in zip_longest(self.result_set.effective_results(), self.get_rows(resp)):
             self.assert_row_details(row, er)
 
     def assert_row_details(self, row, expected_result):
