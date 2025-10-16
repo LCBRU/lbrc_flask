@@ -26,6 +26,10 @@ class ResultSet(CommonMixin):
     def effective_results(self):
         return self.expected_results
 
+    @property
+    def page_in_range(self):
+        return True
+
 
 class PagedResultSet(ResultSet):
     # Redefine in instance classes for different page sizes
@@ -182,16 +186,35 @@ class CsvDownloadContentAsserter(RowContentAsserter):
         return self.get_rows_including_headers(resp)[1:]
 
 
-class TableContentAsserter(RowContentAsserter):
+class HtmlListContentAsserter(RowContentAsserter):
+    def get_container(self, resp):
+        raise NotImplementedError()
+    
+    @property
+    def row_selector(self):
+        raise NotImplementedError()
+    
     def get_rows(self, resp) -> list:
-        tbody = resp.soup.find_all('tbody')[0]
-        return tbody.find_all('tr')
+        container = self.get_container(resp)
+        return container.select(self.row_selector)
 
 
-class PanelListContentAsserter(RowContentAsserter):
-    def get_rows(self, resp) -> list:
-        panel_list = resp.soup.find_all(class_='panel_list')[0]
-        return panel_list.find_all('li')
+class TableContentAsserter(HtmlListContentAsserter):
+    def get_container(self, resp):
+        return resp.soup.find_all('tbody')[0]
+
+    @property
+    def row_selector(self):
+        return 'tr'
+
+
+class PanelListContentAsserter(HtmlListContentAsserter):
+    def get_container(self, resp):
+        return resp.soup.find_all(class_='panel_list')[0]
+
+    @property
+    def row_selector(self):
+        return 'li'
 
 
 class FlaskViewTester:
@@ -234,6 +257,7 @@ class FlaskViewTester:
             data=data,
         )
 
+        print(result.status_code, expected_status_code)
         assert result.status_code == expected_status_code
 
         return result
@@ -276,6 +300,10 @@ class RequiresLoginPostTester(FlaskViewTester):
 
 class RequiresRoleTester(FlaskViewTester):
     @property
+    def request_method(self):
+        return self.get
+    
+    @property
     def user_with_required_role(self):
         # Test classes must implement an user_with_required_role property that
         # returns a user with the required rights
@@ -289,11 +317,8 @@ class RequiresRoleTester(FlaskViewTester):
 
     def test__get__logged_in_user_without_required_role__permission_denied(self):
         login(self.client, self.faker, self.user_without_required_role)
-        self.get(http.HTTPStatus.FORBIDDEN)
+        self.request_method(http.HTTPStatus.FORBIDDEN)
 
     def test__get__logged_in_user_with_required_role__allowed(self):
         login(self.client, self.faker, self.user_with_required_role)
-        self.get()
-
-
-
+        self.request_method()
