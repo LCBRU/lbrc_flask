@@ -5,6 +5,7 @@ from urllib.parse import urlparse, parse_qs
 from flask import url_for
 from lbrc_flask.url_helpers import update_querystring
 from lbrc_flask.response import REFRESH_RESULTS_TRIGGER, REFRESH_DETAILS_TRIGGER
+from lbrc_flask.forms.dynamic import FieldType
 
 
 def _assert_html_standards(soup):
@@ -205,21 +206,6 @@ def assert__search_modal_html(soup):
     assert soup.find('input', id="search_string") is not None
 
 
-def assert__select(soup, id, options, multiselect=False):
-    select = soup.find('select', id=id)
-    assert select is not None
-    if multiselect:
-        assert 'multiple' in select.attrs
-    else:
-        assert 'multiple' not in select.attrs
-
-    found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
-
-    options = [(str(id), value) for id, value in options]
-
-    assert found_options == options
-
-
 def assert__yesno_select(soup, id):
     select = soup.find('select', id=id)
     assert select is not None
@@ -259,6 +245,21 @@ def assert__input_checkbox(soup, id):
     assert control.attrs['type'] == "checkbox"
 
 
+def assert__select(soup, id: str, options: dict, multiselect: bool=False):
+    select = soup.find('select', id=id)
+    assert select is not None
+    if multiselect:
+        assert 'multiple' in select.attrs
+    else:
+        assert 'multiple' not in select.attrs
+
+    found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
+
+    options = [(str(id), value) for id, value in options.items()]
+
+    assert found_options == options
+
+
 def assert__input_radio(soup, id: str, options: dict):
     radio_list = soup.find('ul', id=id)
     assert radio_list is not None
@@ -279,6 +280,36 @@ def assert__input_radio(soup, id: str, options: dict):
 def assert__input_textarea(soup, id):
     control = soup.find('textarea', id=id)
     assert control is not None
+
+
+def assert__input(soup, field_type: str, id: str):
+    match field_type:
+        case FieldType.BOOLEAN:
+            assert__input_checkbox(soup, id)
+        case FieldType.FILE:
+            assert__input_file(soup, id)
+        case FieldType.INTEGER:
+            assert__input_number(soup, id)
+        case FieldType.MULTIPLE_FILE:
+            assert__input_file(soup, id)
+        case FieldType.STRING:
+            assert__input_text(soup, id)
+        case FieldType.TEXTAREA:
+            assert__input_textarea(soup, id)
+        case FieldType.DATE:
+            assert__input_date(soup, id)
+        case _:
+            raise ValueError(f"Unknown field type: {field_type}")
+
+
+def assert__input_with_options(soup, field_type: str, id: str, options: dict, multiselect: bool=False):
+    match field_type:
+        case FieldType.SELECT:
+            assert__select(soup, id, options, multiselect=multiselect)
+        case FieldType.RADIO:
+            assert__input_radio(soup, id, options)
+        case _:
+            raise ValueError(f"Unknown field type: {field_type}")
 
 
 def get_and_assert_standards(client, url, user, has_form=False, has_navigation=True):

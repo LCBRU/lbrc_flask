@@ -107,6 +107,25 @@ class FieldType(db.Model):
             # FieldType.MULTISELECT,
             FieldType.DATE,
         ]
+    
+    @staticmethod
+    def all_non_choices_field_types():
+        return [
+            FieldType.BOOLEAN,
+            FieldType.FILE,
+            FieldType.INTEGER,
+            FieldType.MULTIPLE_FILE,
+            FieldType.STRING,
+            FieldType.TEXTAREA,
+            FieldType.DATE,
+        ]
+
+    @staticmethod
+    def all_choices_field_types():
+        return [
+            FieldType.SELECT,
+            FieldType.RADIO,
+        ]
 
     @staticmethod
     def all_field_types():

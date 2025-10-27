@@ -4,11 +4,12 @@ import csv
 from io import StringIO
 from itertools import zip_longest
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert__requires_login, assert_html_page_standards, assert_modal_boilerplate, assert__error__required_field_modal, assert__page_navigation__page, assert__error__string_too_long__modal
+from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_html, assert_html_page_standards, assert_modal_boilerplate, assert__error__required_field_modal, assert__page_navigation__page, assert__error__string_too_long__modal, assert__modal_cancel, assert__modal_save
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.model import CommonMixin
 from urllib.parse import urlparse, parse_qs
+from dataclasses import dataclass
 
 
 class ResultSet(CommonMixin):
@@ -97,9 +98,18 @@ class HtmlPageContentAsserter:
         assert_html_page_standards(resp, self.loggedin_user)
 
 
+@dataclass
 class ModalContentAsserter:
+    has_save_button: bool = False
+    has_cancel_button: bool = True
+
     def assert_all(self, resp):
         assert_modal_boilerplate(resp.soup)
+
+        if self.has_save_button:
+            assert__modal_save(resp.soup)
+        if self.has_cancel_button:
+            assert__modal_cancel(resp.soup)
 
 
 class ModalFormErrorContentAsserter:
@@ -108,6 +118,7 @@ class ModalFormErrorContentAsserter:
 
     def assert__error__string_too_long(self, resp, field_title):
         assert__error__string_too_long__modal(resp.soup, field_title)
+
 
 class SearchContentAsserter:
     def assert_all(self, resp):
@@ -235,6 +246,13 @@ class FlaskViewTester:
         # for example, 'ui.index'
         raise NotImplementedError()
 
+    @property
+    def request_aserters(self):
+        return []
+
+    def login(self, user):
+        login(self.client, self.faker, user)
+
     def url(self, external=True):
         return url_for(self.endpoint, _external=external, **self.parameters)
 
@@ -242,6 +260,10 @@ class FlaskViewTester:
         result = self.client.get(self.url())
         print(result.status_code, expected_status_code)
         assert result.status_code == expected_status_code
+
+        for a in self.request_aserters:
+            a.assert_all(result)
+
         return result
 
     def get_data_from_object(self, object):
@@ -260,6 +282,9 @@ class FlaskViewTester:
 
         print(result.status_code, expected_status_code)
         assert result.status_code == expected_status_code
+
+        for a in self.request_aserters:
+            a.assert_all(result)
 
         return result
 
@@ -329,9 +354,9 @@ class RequiresRoleTester(FlaskViewTester):
         raise NotImplementedError()
 
     def test__get__logged_in_user_without_required_role__permission_denied(self):
-        login(self.client, self.faker, self.user_without_required_role)
-        self.request_method(http.HTTPStatus.FORBIDDEN)
+        self.login(self.user_without_required_role)
+        self.request_method(expected_status_code=http.HTTPStatus.FORBIDDEN)
 
     def test__get__logged_in_user_with_required_role__allowed(self):
-        login(self.client, self.faker, self.user_with_required_role)
+        self.login(self.user_with_required_role)
         self.request_method()
