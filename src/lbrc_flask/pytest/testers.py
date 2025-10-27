@@ -8,6 +8,7 @@ from lbrc_flask.pytest.asserts import assert__search_html, assert__search_modal_
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.model import CommonMixin
+from urllib.parse import urlparse, parse_qs
 
 
 class ResultSet(CommonMixin):
@@ -288,14 +289,26 @@ class IndexTester(FlaskViewLoggedInTester):
         HtmlPageContentAsserter(loggedin_user=self.loggedin_user).assert_all(resp)
 
 
-class RequiresLoginGetTester(FlaskViewTester):
-    def test__get__requires_login(self):
-        assert__requires_login(self.client, self.url(external=False))
+class RequiresLoginTester(FlaskViewTester):
+    @property
+    def request_method(self):
+        return self.get
+    
+    def test__requires_login(self):
+        self.assert_response()
 
+    def assert_response(self):
+        # This should be a call to assert__redirect, but
+        # flask_login or flask_security is adding the
+        # endpoint parameters as querystring arguments as well
+        # as having them in the `next` parameter  
+        response = self.request_method(expected_status_code=http.HTTPStatus.FOUND)
 
-class RequiresLoginPostTester(FlaskViewTester):
-    def test__get__requires_login(self):
-        assert__requires_login(self.client, self.url(external=False), post=True)
+        login_loc = urlparse(url_for('security.login', next=self.url(external=False)))
+        resp_loc = urlparse(response.location)
+
+        assert resp_loc.path == login_loc.path
+        assert parse_qs(resp_loc.query).get('next') == parse_qs(login_loc.query).get('next')
 
 
 class RequiresRoleTester(FlaskViewTester):
