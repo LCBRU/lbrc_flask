@@ -47,7 +47,7 @@ Endpoint
 
 The parsed URL parameters (the part in the URL after the question mark).
 
-{% for key, value in request.args.items() %}
+{% for key, value in (request.args or {}).items() %}
 {{ key }}
 : {{ value }}
 {% endfor %}
@@ -56,7 +56,7 @@ The parsed URL parameters (the part in the URL after the question mark).
 
 A dict of view arguments that matched the request. If an exception happened when matching, this will be None.
 
-{% for key, value in request.view_args.items() %}
+{% for key, value in (request.view_args or {}).items() %}
 {{ key }}
 : {{ value }}
 {% endfor %}
@@ -64,7 +64,7 @@ A dict of view arguments that matched the request. If an exception happened when
 ### Form
 The form parameters.  Except files
 
-{% for key, value in request.form.items() %}
+{% for key, value in (request.form or {}).items() %}
 {{ key }}
 : {{ value }}
 {% endfor %}
@@ -75,7 +75,7 @@ Files uploaded in input fields of type "file".
 
 *Note that files will only contain data if the request method was POST, PUT or PATCH and the form that posted to the request had enctype="multipart/form-data". It will be empty otherwise.*
 
-{% for key, value in request.files.items() %}
+{% for key, value in (request.files or {}).items() %}
 #### key
 Filename
 : {{value.filename}}

@@ -128,6 +128,16 @@ class FieldType(db.Model):
         ]
 
     @staticmethod
+    def all_simple_field_types():
+        return [
+            FieldType.BOOLEAN,
+            FieldType.INTEGER,
+            FieldType.STRING,
+            FieldType.TEXTAREA,
+            FieldType.DATE,
+        ]
+
+    @staticmethod
     def all_field_types():
         return [
             FieldType._get_field_type(n)
