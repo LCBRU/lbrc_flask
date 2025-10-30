@@ -187,15 +187,21 @@ class CsvDownloadContentAsserter(RowContentAsserter):
         for er, row in zip_longest(self.result_set.expected_results, self.get_rows(resp)):
             self.assert_row_details(row, er)
 
+    def actual_headers(self, resp) -> list:
+        return self.get_rows_including_headers(resp)[0]
+    
     def assert_headers(self, resp):
-        assert self.get_rows_including_headers(resp)[0] == self.expected_headings
+        assert self.actual_headers(resp) == self.expected_headings
 
     def get_rows_including_headers(self, resp) -> list:
         decoded_content = resp.data.decode("utf-8")
         return list(csv.reader(StringIO(decoded_content), delimiter=","))
 
     def get_rows(self, resp) -> list:
-        return self.get_rows_including_headers(resp)[1:]
+        headers = self.actual_headers(resp)
+
+        for v in self.get_rows_including_headers(resp)[1:]:
+            yield dict(zip(headers, v))
 
 
 class HtmlListContentAsserter(RowContentAsserter):
