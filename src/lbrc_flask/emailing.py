@@ -11,7 +11,16 @@ def init_mail(app):
     mail.init_app(app)
 
 
-def email(subject, message, recipients, html_template=None, attachements: list[Path]=None, **kwargs):
+def email(
+        subject,
+        recipients,
+        message=None,
+        message_template=None,
+        html_template=None,
+        attachements: list[Path]=None,
+        **kwargs,
+    ):
+
     attachements = attachements or []
 
     if len(recipients) < 1:
@@ -19,6 +28,9 @@ def email(subject, message, recipients, html_template=None, attachements: list[P
         return
 
     if current_app.config["SMTP_SERVER"] is not None:
+
+        if message is None and message_template is not None:
+            message = render_template(message_template, **kwargs)
 
         msg: Message = Message(
             subject=subject,
