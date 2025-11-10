@@ -1,6 +1,6 @@
 from lbrc_flask.security.ldap import Ldap, get_or_create_ldap_user, standardize_username
 import string
-from flask import current_app
+from flask import current_app, flash
 from flask_security.forms import (
     EqualTo,
     password_required,
@@ -15,6 +15,8 @@ from flask_security.utils import verify_and_update_password, get_message, _datas
 from flask_login import current_user
 from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
+from passlib.exc import MissingBackendError
+from lbrc_flask.logging import log_exception
 
 
 def fix_kwargs(kwargs):
@@ -119,35 +121,47 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 
 class LbrcLoginForm(LoginForm):
     def validate(self, **kwargs):
-        if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
-            return False
+        try:
+            if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
+                return False
 
-        ldap = Ldap()
+            ldap = Ldap()
 
-        if ldap.is_enabled():
-            username = standardize_username(self.email.data)
+            if ldap.is_enabled():
+                username = standardize_username(self.email.data)
 
-            ldap.login_nonpriv()
+                ldap.login_nonpriv()
 
-            ldap_user = get_or_create_ldap_user(username)
+                ldap_user = get_or_create_ldap_user(username)
 
-            current_app.logger.info(f"User '{ldap_user}' found for '{username}'")
+                current_app.logger.info(f"User '{ldap_user}' found for '{username}'")
 
-            if ldap_user is not None:
-                current_app.logger.info(f"Attempting LDAP login for '{username}'")
-                if ldap.login(username, self.password.data):
-                    current_app.logger.info(f"LDAP login SUCCESS for '{username}'")
-                    self.user = ldap_user
+                if ldap_user is not None:
+                    current_app.logger.info(f"Attempting LDAP login for '{username}'")
+                    if ldap.login(username, self.password.data):
+                        current_app.logger.info(f"LDAP login SUCCESS for '{username}'")
+                        self.user = ldap_user
 
-                    return True
-                else:
-                    current_app.logger.info(f"LDAP login FAILURE for '{username}'")
-                    self.password.errors.append(
-                        'Invalid password - use the username and password that you use to log into your {} PC'.format(
-                            current_app.config.get('LDAP_NETWORK_NAME', None)
+                        return True
+                    else:
+                        current_app.logger.info(f"LDAP login FAILURE for '{username}'")
+                        self.password.errors.append(
+                            'Invalid password - use the username and password that you use to log into your {} PC'.format(
+                                current_app.config.get('LDAP_NETWORK_NAME', None)
+                            )
                         )
-                    )
-                    return False
+                        return False
 
-        current_app.logger.info(f"'{self.email.data}' is not found for LDAP, so falling back on table based login")
-        return super().validate()
+            current_app.logger.info(f"'{self.email.data}' is not found for LDAP, so falling back on table based login")
+            return super().validate()
+        except MissingBackendError as e:
+            current_app.logger.error(f"Password hashing backend error during login for '{self.email.data}': {e}")
+            self.password.errors = self.password.errors + ('Your password has expired and must be reset. Please use the "Forgotten Password" link to reset your password.',)
+            flash('Your password has expired and must be reset. Please use the "Forgotten Password" link to reset your password.', 'error')
+            return False
+        except Exception as e:
+            current_app.logger.error(f"Error during login for '{self.email.data}': {e}")
+            self.password.errors = self.password.errors + ('An error occurred during login. Please try again later.', )
+            flash('An error occurred during login. Please try again later.', 'error')
+            log_exception(e)
+            return False

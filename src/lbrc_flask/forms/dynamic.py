@@ -285,8 +285,8 @@ class Field(db.Model):
             self.field_name, self.order, self.field_type.name
         )
 
-class FormBuilder:
 
+class FormBuilder:
     def __init__(self, field_group=None):
         self._fields = {}
 
@@ -352,8 +352,8 @@ class FormBuilder:
     def add_form_field(self, field_name, form_field):
         self._fields[field_name] = form_field
 
-# Initialisation
 
+# Initialisation
 def init_dynamic_forms(app):
     pass
 
@@ -364,7 +364,6 @@ def create_field_types():
 
 
 # Admin Forms
-
 class FieldlineView(InlineFormAdmin):
     form_args = dict(
         field_name=dict(validators=[validators.DataRequired()]),
