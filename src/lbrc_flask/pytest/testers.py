@@ -136,6 +136,9 @@ class PageContentAsserter:
         self.paged_result_set = paged_result_set
 
     def assert_all(self, resp):
+        print(self.paged_result_set.results_count)
+        print(get_records_found(resp.soup))
+        # print(resp.soup)
         assert self.paged_result_set.results_count == get_records_found(resp.soup)
 
         self.assert_paginator(resp)
@@ -237,7 +240,7 @@ class PanelListContentAsserter(HtmlListContentAsserter):
 
 class FlaskViewTester:
     @classmethod
-    def setup_class(cls):
+    def setup_method(cls):
         cls.parameters = {}
     
     @pytest.fixture(autouse=True)
