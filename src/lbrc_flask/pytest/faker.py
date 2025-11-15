@@ -12,15 +12,18 @@ from lbrc_flask.validators import (
     calculate_nhs_number_checksum,
 )
 from lbrc_flask.string_functions import camel_case_split
-from sqlalchemy import select
+from sqlalchemy import select, func
 from faker import Faker
 
 
 class FakeCreator():
-    def __init__(self, cls):
-        self.cls = cls
-        self.faker = Faker("en_GB")
-        self.faker.add_provider(LbrcFlaskFakerProvider)
+    @property
+    def cls(self):
+        raise NotImplementedError
+
+    def __init__(self, provider):
+        self.provider = provider
+        self.faker = Faker(generator=provider.generator)
 
     def get(self, **kwargs):
         return None
@@ -32,6 +35,9 @@ class FakeCreator():
         db.session.commit()
 
         return x
+    
+    def count_in_db(self):
+        return db.session.execute(select(func.count(self.cls.id))).scalar()
 
     def get_list_in_db(self, item_count, **kwargs):
         results = []
@@ -66,6 +72,10 @@ class FakeCreator():
     
 
 class LookupFakeCreator(FakeCreator):
+    def __init__(self, provider, cls):
+        self.cls = cls
+        super().__init__(provider)
+
     def get(self, **kwargs):
         result = self.cls(
             name=kwargs.get('name', self.faker.pystr(min_chars=1, max_chars=100))
@@ -101,7 +111,7 @@ class LookupProvider(BaseProvider):
             self.cls = cls
         
         def __call__(self, *args, **kwds):
-            return LookupFakeCreator(self.cls)
+            return LookupFakeCreator(self, self.cls)
 
         def method_name(self):
             return self().class_name().replace(' ', '_')
@@ -119,7 +129,7 @@ class LookupProvider(BaseProvider):
         result = {}
 
         for L in self.LOOKUPS:
-            creator = LookupFakeCreator(L)
+            creator = LookupFakeCreator(self, L)
             result[creator.class_name()] = creator.get_n_in_db(5)
         
         return result
@@ -274,6 +284,7 @@ class LbrcFlaskFakerProvider(BaseProvider):
 
 
 class LbrcDynaicFormFakerProvider(BaseProvider):
+    __provider__ = 'LbrcDynaicFormFakerProvider'.lower()
 
     def field_group_details(self, name=None):
         if name is None:
@@ -369,6 +380,8 @@ class FakeXlsxFile():
 
 
 class LbrcFileProvider(BaseProvider):
+    __provider__ = 'LbrcFileProvider'.lower()
+
     def xlsx(self, headers, data, filename=None, worksheet=None, headers_on_row=1):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
@@ -406,9 +419,9 @@ class LbrcFileProvider(BaseProvider):
 
 
 class UserCreator(FakeCreator):
-    def __init__(self, cls=None):
-        cls = cls or User
-        super().__init__(cls)
+    @property
+    def cls(self):
+        return User    
 
     def get(self, **kwargs):
         if (first_name := kwargs.get('first_name')) is None:
@@ -436,13 +449,16 @@ class UserCreator(FakeCreator):
 
 
 class UserProvider(BaseProvider):
+    __provider__ = 'UserProvider'.lower()
+
     def user(self):
         return UserCreator()
 
 
 class RoleCreator(FakeCreator):
-    def __init__(self):
-        super().__init__(Role)
+    @property
+    def cls(self):
+        return Role
 
     def get(self, **kwargs):
         if (name := kwargs.get('name')) is None:
@@ -454,13 +470,16 @@ class RoleCreator(FakeCreator):
 
 
 class RoleProvider(BaseProvider):
+    __provider__ = 'RoleProvider'.lower()
+
     def role(self):
         return RoleCreator()
 
 
 class FieldGroupCreator(FakeCreator):
-    def __init__(self):
-        super().__init__(FieldGroup)
+    @property
+    def cls(self):
+        return FieldGroup
 
     def get(self, **kwargs):
         if (name := kwargs.get('name')) is None:
@@ -475,8 +494,9 @@ class FieldGroupProvider(BaseProvider):
 
 
 class FieldCreator(FakeCreator):
-    def __init__(self):
-        super().__init__(FieldGroup)
+    @property
+    def cls(self):
+        return Field
 
     def get(self, **kwargs):        
         self.faker.add_provider(FieldGroupProvider)
@@ -522,5 +542,7 @@ class FieldCreator(FakeCreator):
 
 
 class FieldProvider(BaseProvider):
+    __provider__ = 'FieldProvider'.lower()
+
     def field(self):
         return FieldCreator()

@@ -136,8 +136,8 @@ class PageContentAsserter:
         self.paged_result_set = paged_result_set
 
     def assert_all(self, resp):
-        print(self.paged_result_set.results_count)
-        print(get_records_found(resp.soup))
+        print('Expected results', self.paged_result_set.results_count)
+        print('Record Found', get_records_found(resp.soup))
         # print(resp.soup)
         assert self.paged_result_set.results_count == get_records_found(resp.soup)
 
