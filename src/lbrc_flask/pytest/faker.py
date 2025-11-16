@@ -148,8 +148,6 @@ class LookupProvider(BaseProvider):
 
 
 class LbrcFlaskFakerProvider(BaseProvider):
-    __provider__ = 'LbrcFlaskFakerProvider'.lower()
-
     def __init__(self, *args, **kwargs):
         self.user_class = User
         super().__init__(*args, **kwargs)
@@ -284,8 +282,6 @@ class LbrcFlaskFakerProvider(BaseProvider):
 
 
 class LbrcDynaicFormFakerProvider(BaseProvider):
-    __provider__ = 'LbrcDynaicFormFakerProvider'.lower()
-
     def field_group_details(self, name=None):
         if name is None:
             name = self.generator.pystr(min_chars=5, max_chars=10)
@@ -380,8 +376,6 @@ class FakeXlsxFile():
 
 
 class LbrcFileProvider(BaseProvider):
-    __provider__ = 'LbrcFileProvider'.lower()
-
     def xlsx(self, headers, data, filename=None, worksheet=None, headers_on_row=1):
         headers = list(headers)
         filename = filename or self.generator.file_name(extension='xlsx')
@@ -419,9 +413,7 @@ class LbrcFileProvider(BaseProvider):
 
 
 class UserCreator(FakeCreator):
-    @property
-    def cls(self):
-        return User    
+    cls = User
 
     def get(self, **kwargs):
         if (first_name := kwargs.get('first_name')) is None:
@@ -449,16 +441,12 @@ class UserCreator(FakeCreator):
 
 
 class UserProvider(BaseProvider):
-    __provider__ = 'UserProvider'.lower()
-
     def user(self):
-        return UserCreator()
+        return UserCreator(self)
 
 
 class RoleCreator(FakeCreator):
-    @property
-    def cls(self):
-        return Role
+    cls = Role
 
     def get(self, **kwargs):
         if (name := kwargs.get('name')) is None:
@@ -470,16 +458,12 @@ class RoleCreator(FakeCreator):
 
 
 class RoleProvider(BaseProvider):
-    __provider__ = 'RoleProvider'.lower()
-
     def role(self):
-        return RoleCreator()
+        return RoleCreator(self)
 
 
 class FieldGroupCreator(FakeCreator):
-    @property
-    def cls(self):
-        return FieldGroup
+    cls = FieldGroup
 
     def get(self, **kwargs):
         if (name := kwargs.get('name')) is None:
@@ -488,19 +472,10 @@ class FieldGroupCreator(FakeCreator):
         return FieldGroup(name=name.upper())
 
 
-class FieldGroupProvider(BaseProvider):
-    def field_group(self):
-        return FieldGroupCreator()
-
-
 class FieldCreator(FakeCreator):
-    @property
-    def cls(self):
-        return Field
+    cls = Field
 
     def get(self, **kwargs):        
-        self.faker.add_provider(FieldGroupProvider)
-
         if (field_group := kwargs.get('field_group')) is None:
             field_group = self.faker.field_group().get()
 
@@ -541,8 +516,11 @@ class FieldCreator(FakeCreator):
         return f
 
 
-class FieldProvider(BaseProvider):
-    __provider__ = 'FieldProvider'.lower()
-
+class FieldsProvider(BaseProvider):
     def field(self):
-        return FieldCreator()
+        return FieldCreator(self)
+
+    def field_group(self):
+        return FieldGroupCreator(self)
+
+
