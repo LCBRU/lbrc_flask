@@ -156,12 +156,12 @@ class LbrcLoginForm(LoginForm):
             return super().validate()
         except MissingBackendError as e:
             current_app.logger.error(f"Password hashing backend error during login for '{self.email.data}': {e}")
-            self.password.errors = [e for e in self.password.errors] + ['Your password has expired and must be reset. Please use the "Forgotten Password" link to reset your password.']
+            # self.password.errors = [e for e in self.password.errors] + ['Your password has expired and must be reset. Please use the "Forgotten Password" link to reset your password.']
             flash('Your password has expired and must be reset. Please use the "Forgotten Password" link to reset your password.', 'error')
             return False
         except Exception as e:
             current_app.logger.error(f"Error during login for '{self.email.data}': {e}")
-            self.password.errors = self.password.errors + ('An error occurred during login. Please try again later.', )
+            # self.password.errors = self.password.errors + ('An error occurred during login. Please try again later.', )
             flash('An error occurred during login. Please try again later.', 'error')
             log_exception(e)
             return False
