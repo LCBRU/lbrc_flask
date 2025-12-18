@@ -138,7 +138,6 @@ class PageContentAsserter:
     def assert_all(self, resp):
         print('Expected results', self.paged_result_set.results_count)
         print('Record Found', get_records_found(resp.soup))
-        # print(resp.soup)
         assert self.paged_result_set.results_count == get_records_found(resp.soup)
 
         self.assert_paginator(resp)
