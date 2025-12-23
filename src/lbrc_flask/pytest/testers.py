@@ -303,6 +303,12 @@ class FlaskViewLoggedInTester(FlaskViewTester):
         self.loggedin_user = loggedin_user
 
 
+class ReportsPageTester(FlaskViewLoggedInTester):
+    def assert_all(self, resp):
+        SearchContentAsserter().assert_all(resp)
+        HtmlPageContentAsserter(loggedin_user=self.loggedin_user).assert_all(resp)
+
+
 class IndexTester(FlaskViewLoggedInTester):
     @property
     def content_asserter(self) -> RowContentAsserter:

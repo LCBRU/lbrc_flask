@@ -70,11 +70,6 @@ class BarChart:
                           for b in self.buckets}
 
             chart.add(
-                # {
-                #     'title': series_name,
-                #     'xlink': 'http://google.com',
-                #     'style': 'fill: red',
-                # },
                 series_name,
                 all_values.values(),
                 formatter=self.value_formatter,
