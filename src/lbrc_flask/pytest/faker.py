@@ -23,7 +23,10 @@ class FakeCreator():
 
     def __init__(self, provider):
         self.provider = provider
-        self.faker = Faker(generator=provider.generator)
+        # The line below causes unique to fail because a
+        # different faker is created each time, despite being for the
+        # same generator.  Use singleton instead?
+        self.faker = Faker("en_GB", generator=provider.generator)
 
     def get(self, **kwargs):
         return None
