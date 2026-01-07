@@ -138,7 +138,6 @@ class PageContentAsserter:
     def assert_all(self, resp):
         print('Expected results', self.paged_result_set.results_count)
         print('Record Found', get_records_found(resp.soup))
-        # print(resp.soup)
         assert self.paged_result_set.results_count == get_records_found(resp.soup)
 
         self.assert_paginator(resp)
@@ -302,6 +301,12 @@ class FlaskViewLoggedInTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
     def set_flask_get_view_tester_fixtures(self, loggedin_user):
         self.loggedin_user = loggedin_user
+
+
+class ReportsPageTester(FlaskViewLoggedInTester):
+    def assert_all(self, resp):
+        SearchContentAsserter().assert_all(resp)
+        HtmlPageContentAsserter(loggedin_user=self.loggedin_user).assert_all(resp)
 
 
 class IndexTester(FlaskViewLoggedInTester):

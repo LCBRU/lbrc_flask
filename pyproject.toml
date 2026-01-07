@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lbrc_flask"
-version = "2.11.3"
+version = "2.13.1"
 authors = [
   {name="Richard Bramley", email="rabramley@gmail.com" },
 ]
@@ -39,7 +39,7 @@ dependencies=[
   'ldap3',
   'markdown',
   'openpyxl',
-  'pygal',
+  'pygal<3.1.0',
   'pymysql',
   'pytest',
   'pytest-xdist',
@@ -48,6 +48,7 @@ dependencies=[
   'python-dotenv',
   'pytz',
   'rich',
+  'setproctitle',
   'setuptools',
   'WTForms',
   'WeasyPrint',

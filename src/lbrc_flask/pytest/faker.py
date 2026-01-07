@@ -486,7 +486,7 @@ class FieldCreator(FakeCreator):
             field_type = choice(FieldType.all_field_types())
 
         if (field_name := kwargs.get('field_name')) is None:
-            field_name = self.faker.pystr(min_chars=5, max_chars=10)
+            field_name = self.faker.sentence(nb_words=randint(1, 5)).rstrip('.').title()
 
         if (allowed_file_extensions := kwargs.get('allowed_file_extensions')) is None:
             allowed_file_extensions = self.faker.file_extension()
@@ -494,12 +494,16 @@ class FieldCreator(FakeCreator):
         if (required := kwargs.get('required')) is None:
             required = False
 
+        if (reportable := kwargs.get('reportable')) is None:
+            reportable = choice([True, False, False, False, False, False])
+
         f = Field(
             field_group=field_group,
             field_type=field_type,
             field_name=field_name,
             allowed_file_extensions=allowed_file_extensions,
             required=required,
+            reportable=reportable,
         )
 
         if (order := kwargs.get('order')) is not None:

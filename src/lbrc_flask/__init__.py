@@ -5,6 +5,7 @@ from .standard_views import init_standard_views
 from .template_filters import init_template_filters
 from .logging import init_logging
 from rich.traceback import install
+from setproctitle import setproctitle
 
 
 install(show_locals=True)
@@ -14,7 +15,7 @@ blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", stati
 
 
 def init_lbrc_flask(app, title):
-
+    setproctitle(f'{title}-Flask')
     app.register_blueprint(blueprint)
 
     init_logging(app)
