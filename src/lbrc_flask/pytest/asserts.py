@@ -196,9 +196,10 @@ def assert__requires_role(client, url, post=False):
     assert resp.status_code == http.HTTPStatus.FORBIDDEN
 
 
-def assert__search_html(soup):
+def assert__search_html(soup, has_clear=True):
     assert soup.find('input', id="search") is not None
-    assert soup.find('a', string="Clear Search", href='?') is not None
+    if has_clear:
+        assert soup.find('a', string="Clear Search", href='?') is not None
     assert soup.find('button', type="submit", string="Search") is not None
 
 

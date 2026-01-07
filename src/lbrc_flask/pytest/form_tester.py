@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from lbrc_flask.pytest.asserts import assert__input_date, assert__input_radio, assert__input_text, assert__input_textarea, assert_csrf_token
+from lbrc_flask.pytest.asserts import assert__input_checkbox, assert__input_date, assert__input_radio, assert__input_text, assert__input_textarea, assert__search_html, assert_csrf_token
 
 
 @dataclass(kw_only=True)
@@ -27,6 +27,17 @@ class FormTesterTextField(FormTesterField):
 
 
 @dataclass(kw_only=True)
+class FormTesterSearchField:
+    has_clear: bool = True
+
+    @property
+    def field_name(self):
+        return 'search'
+
+    def assert_input(self, soup):
+        assert__search_html(soup, has_clear=self.has_clear)
+
+@dataclass(kw_only=True)
 class FormTesterTextAreaField(FormTesterField):
     def assert_input(self, soup):
         assert__input_textarea(soup, self.field_name)
@@ -44,6 +55,16 @@ class FormTesterRadioField(FormTesterField):
 
     def assert_input(self, soup):
         assert__input_radio(soup, self.field_name, self.options)
+
+    @property
+    def is_mandatory_edit(self):
+        return False
+
+
+@dataclass(kw_only=True)
+class FormTesterCheckboxField(FormTesterField):
+    def assert_input(self, soup):
+        assert__input_checkbox(soup, self.field_name)
 
     @property
     def is_mandatory_edit(self):
