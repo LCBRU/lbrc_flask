@@ -139,8 +139,6 @@ def assert__redirect(response, endpoint=None, url=None, **kwargs):
     url_loc = urlparse(url)
     resp_loc = urlparse(response.location)
     
-    print(f'{resp_loc=} {url_loc=}')
-
     if url:
         print(f'{response.location=} {url=}')
         assert resp_loc.path == url_loc.path
@@ -196,12 +194,12 @@ def assert__requires_role(client, url, post=False):
     assert resp.status_code == http.HTTPStatus.FORBIDDEN
 
 
-def assert__search_html(soup, has_clear=True):
-    assert soup.find('input', id="search") is not None
+def assert__search_html(soup, id="search", has_clear=True, has_submit=True):
+    assert soup.find('input', id=id) is not None
     if has_clear:
         assert soup.find('a', string="Clear Search", href='?') is not None
-    assert soup.find('button', type="submit", string="Search") is not None
-
+    if has_submit:
+        assert soup.find('button', type="submit", string="Search") is not None
 
 def assert__search_modal_html(soup):
     assert soup.find('input', id="search_string") is not None
@@ -226,6 +224,12 @@ def assert__input_number(soup, id):
     control = soup.find('input', id=id)
     assert control is not None
     assert control.attrs['type'] == "number"
+
+
+def assert__input_email(soup, id):
+    control = soup.find('input', id=id)
+    assert control is not None
+    assert control.attrs['type'] == "email"
 
 
 def assert__input_text(soup, id):
@@ -258,6 +262,7 @@ def assert__select(soup, id: str, options: dict, multiselect: bool=False):
 
     options = [(str(id), value) for id, value in options.items()]
 
+    print(f"{found_options=}, {options=}")
     assert found_options == options
 
 
@@ -275,6 +280,7 @@ def assert__input_radio(soup, id: str, options: dict):
     expected = OrderedDict(sorted(options.items()))
     actual = OrderedDict(sorted(found_options.items()))
 
+    print(f"{actual=}, {expected=}")
     assert actual == expected
 
 
