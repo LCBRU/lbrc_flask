@@ -17,6 +17,8 @@ from faker import Faker
 
 
 class FakeCreator():
+    DEFAULT_VALUES = []
+
     @property
     def cls(self):
         raise NotImplementedError
@@ -28,6 +30,10 @@ class FakeCreator():
         # same generator.  Use singleton instead?
         self.faker = Faker("en_GB", generator=provider.generator)
 
+    def create_defaults(self):
+        for vals in self.DEFAULT_VALUES:
+            self.get_in_db(**vals)
+    
     def get(self, **kwargs):
         return None
 
@@ -73,6 +79,33 @@ class FakeCreator():
         else:
             return default
     
+    def get_from_source_or_id_or_new(self, source, object_key, id_key, in_db=False):
+        if object_key in source:
+            return source[object_key]
+        elif id_key in source:
+            return db.session.get(self.cls, source[id_key])
+        else:
+            if in_db:
+                return self.get_in_db()
+            else:
+                return self.get()
+
+    def get_list_from_source_or_ids_or_new(self, source, objects_key, ids_key, count, in_db=False):
+        result = []
+
+        if objects_key in source:
+            result = source[objects_key]
+        elif ids_key in source:
+            for id in source[ids_key]:
+                result.append(db.session.get(self.cls, id))
+        else:
+            for _ in range(count):
+                if in_db:
+                    result.append(self.get_in_db())
+                else:
+                    result.append(self.get())
+
+        return result    
 
 class LookupFakeCreator(FakeCreator):
     def __init__(self, provider, cls):
