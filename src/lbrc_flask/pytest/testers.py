@@ -193,6 +193,8 @@ class CsvDownloadContentAsserter(RowContentAsserter):
         return self.get_rows_including_headers(resp)[0]
     
     def assert_headers(self, resp):
+        print('A'*10, self.actual_headers(resp))
+        print('A'*10, self.expected_headings)
         assert self.actual_headers(resp) == self.expected_headings
 
     def get_rows_including_headers(self, resp) -> list:

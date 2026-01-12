@@ -1,5 +1,6 @@
 import datetime
 import io
+from typing import Optional
 from openpyxl import Workbook
 from dateutil.relativedelta import relativedelta
 from faker.providers import BaseProvider
@@ -14,6 +15,17 @@ from lbrc_flask.validators import (
 from lbrc_flask.string_functions import camel_case_split
 from sqlalchemy import select, func
 from faker import Faker
+
+
+class FakeCreatorArgs():
+    def __init__(self, arguments):
+        self.arguments = arguments
+    
+    def get(self, key, default=None):
+        if key in self.arguments:
+            return self.arguments[key]
+        else:
+            return default
 
 
 class FakeCreator():
@@ -34,16 +46,20 @@ class FakeCreator():
         for vals in self.DEFAULT_VALUES:
             self.get_in_db(**vals)
     
-    def get(self, **kwargs):
-        return None
+    def get(self, save: Optional[bool]=False, **kwargs):
+        result = self._create_item(args=FakeCreatorArgs(kwargs), save=save)
+
+        if save:
+            db.session.add(result)
+            db.session.commit()
+    
+        return result
+    
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
+        raise NotImplementedError
 
     def get_in_db(self, **kwargs):
-        x = self.get(**kwargs)
-
-        db.session.add(x)
-        db.session.commit()
-
-        return x
+        return self.get(**kwargs, save=True)
     
     def count_in_db(self):
         return db.session.execute(select(func.count(self.cls.id))).scalar()
@@ -52,10 +68,8 @@ class FakeCreator():
         results = []
 
         for _ in range(item_count):
-            result = self.get(**kwargs)
+            result = self.get(**kwargs, save=True)
             results.append(result)
-            db.session.add(result)
-            db.session.commit()
 
         return results
 
@@ -112,9 +126,9 @@ class LookupFakeCreator(FakeCreator):
         self.cls = cls
         super().__init__(provider)
 
-    def get(self, **kwargs):
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
         result = self.cls(
-            name=kwargs.get('name', self.faker.pystr(min_chars=1, max_chars=100))
+            name=args.get('name', self.faker.pystr(min_chars=1, max_chars=100))
         )
 
         return result
@@ -451,28 +465,13 @@ class LbrcFileProvider(BaseProvider):
 class UserCreator(FakeCreator):
     cls = User
 
-    def get(self, **kwargs):
-        if (first_name := kwargs.get('first_name')) is None:
-            first_name = self.faker.first_name()
-
-        if (last_name := kwargs.get('last_name')) is None:
-            last_name = self.faker.last_name()
-
-        if (username := kwargs.get('username')) is None:
-            username = self.faker.pystr(min_chars=5, max_chars=10).lower()
-
-        if (email := kwargs.get('email')) is None:
-            email = self.faker.unique.email()
-
-        if (active := kwargs.get('active')) is None:
-            active = True
-
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
         return self.cls(
-            first_name=first_name,
-            last_name=last_name,
-            username=username,
-            email=email,
-            active=active,
+            first_name=args.get('first_name', self.faker.first_name()),
+            last_name=args.get('last_name', self.faker.last_name()),
+            username=args.get('username', self.faker.pystr(min_chars=5, max_chars=10).lower()),
+            email=args.get('email', self.faker.unique.email()),
+            active=args.get('active', True),
         )
 
 
@@ -484,12 +483,9 @@ class UserProvider(BaseProvider):
 class RoleCreator(FakeCreator):
     cls = Role
 
-    def get(self, **kwargs):
-        if (name := kwargs.get('name')) is None:
-            name = self.faker.pystr(min_chars=5, max_chars=10).lower()
-
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
         return Role(
-            name=name,
+            name=args.get('name', self.faker.pystr(min_chars=5, max_chars=10).lower()),
         )
 
 
@@ -501,57 +497,28 @@ class RoleProvider(BaseProvider):
 class FieldGroupCreator(FakeCreator):
     cls = FieldGroup
 
-    def get(self, **kwargs):
-        if (name := kwargs.get('name')) is None:
-            name = self.faker.pystr(min_chars=5, max_chars=10).upper()
-
-        return FieldGroup(name=name.upper())
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
+        return FieldGroup(
+            name=args.get('name', self.faker.pystr(min_chars=5, max_chars=10).lower()),
+        )
 
 
 class FieldCreator(FakeCreator):
     cls = Field
 
-    def get(self, **kwargs):        
-        if (field_group := kwargs.get('field_group')) is None:
-            field_group = self.faker.field_group().get()
-
-        if (field_type := kwargs.get('field_type')) is None:
-            field_type = choice(FieldType.all_field_types())
-
-        if (field_name := kwargs.get('field_name')) is None:
-            field_name = self.faker.sentence(nb_words=randint(1, 5)).rstrip('.').title()
-
-        if (allowed_file_extensions := kwargs.get('allowed_file_extensions')) is None:
-            allowed_file_extensions = self.faker.file_extension()
-
-        if (required := kwargs.get('required')) is None:
-            required = False
-
-        if (reportable := kwargs.get('reportable')) is None:
-            reportable = choice([True, False, False, False, False, False])
-
+    def _create_item(self, save: bool, args: FakeCreatorArgs):
         f = Field(
-            field_group=field_group,
-            field_type=field_type,
-            field_name=field_name,
-            allowed_file_extensions=allowed_file_extensions,
-            required=required,
-            reportable=reportable,
+            field_group=args.get('field_group', self.faker.field_group().get()),
+            field_type=args.get('field_type', choice(FieldType.all_field_types())),
+            field_name=args.get('field_name', self.faker.sentence(nb_words=randint(1, 5)).rstrip('.').title()),
+            allowed_file_extensions=args.get('allowed_file_extensions', self.faker.file_extension()),
+            required=args.get('required', False),
+            reportable=args.get('reportable', choice([True, False, False, False, False, False])),
         )
 
-        if (order := kwargs.get('order')) is not None:
-            f.order = order
-        else:
-            f.order = 1
-
-        if (choices := kwargs.get('choices')) is not None:
-            f.choices = choices
-
-        if (max_length := kwargs.get('max_length')) is not None:
-            f.max_length = max_length
-
-        if (allowed_file_extensions := kwargs.get('allowed_file_extensions')) is not None:
-            f.allowed_file_extensions = allowed_file_extensions
+        f.order = args.get('order', 1)
+        f.choices = args.get('choices')
+        f.max_length = args.get('max_length')
 
         return f
 
