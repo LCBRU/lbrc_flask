@@ -9,6 +9,7 @@ from lbrc_flask.pytest.asserts import (
     assert_csrf_token,
     assert__select,
     assert__input_email,
+    assert__input_number,
 )
 
 
@@ -56,6 +57,12 @@ class FormTesterTextAreaField(FormTesterField):
 class FormTesterDateField(FormTesterField):
     def assert_input(self, soup):
         assert__input_date(soup, self.field_name)
+
+
+@dataclass(kw_only=True)
+class FormTesterNumberField(FormTesterField):
+    def assert_input(self, soup):
+        assert__input_number(soup, self.field_name)
 
 
 @dataclass(kw_only=True)

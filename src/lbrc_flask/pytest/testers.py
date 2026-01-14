@@ -10,6 +10,7 @@ from lbrc_flask.pytest.helpers import login
 from lbrc_flask.model import CommonMixin
 from urllib.parse import urlparse, parse_qs
 from dataclasses import dataclass
+from lbrc_flask.pytest.helpers import login
 
 
 class ResultSet(CommonMixin):
@@ -193,8 +194,6 @@ class CsvDownloadContentAsserter(RowContentAsserter):
         return self.get_rows_including_headers(resp)[0]
     
     def assert_headers(self, resp):
-        print('A'*10, self.actual_headers(resp))
-        print('A'*10, self.expected_headings)
         assert self.actual_headers(resp) == self.expected_headings
 
     def get_rows_including_headers(self, resp) -> list:
@@ -267,7 +266,9 @@ class FlaskViewTester:
         return url_for(self.endpoint, _external=external, **self.parameters)
 
     def get(self, expected_status_code=http.HTTPStatus.OK):
+        print(self.url())
         result = self.client.get(self.url())
+        print(result.soup)
         print(result.status_code, expected_status_code)
         assert result.status_code == expected_status_code
 
@@ -300,9 +301,13 @@ class FlaskViewTester:
 
 
 class FlaskViewLoggedInTester(FlaskViewTester):
+    def user_to_login(self, faker):
+        return faker.user().get_in_db()
+
     @pytest.fixture(autouse=True)
-    def set_flask_get_view_tester_fixtures(self, loggedin_user):
-        self.loggedin_user = loggedin_user
+    def set_flask_get_view_tester_fixtures(self, client, faker):
+        self.loggedin_user = self.user_to_login(faker)
+        login(client, faker, self.loggedin_user)
 
 
 class ReportsPageTester(FlaskViewLoggedInTester):

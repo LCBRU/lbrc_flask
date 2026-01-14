@@ -4,7 +4,7 @@ from typing import Optional
 from openpyxl import Workbook
 from dateutil.relativedelta import relativedelta
 from faker.providers import BaseProvider
-from lbrc_flask.security import Role, User
+from lbrc_flask.security import Role, User, add_user_to_role
 from lbrc_flask.forms.dynamic import FieldGroup, Field, FieldType
 from lbrc_flask.database import db
 from random import randint, choice, randrange, choices, sample
@@ -26,6 +26,15 @@ class FakeCreatorArgs():
             return self.arguments[key]
         else:
             return default
+
+    def get_or_get_from_creator(self, key, creator, from_db=False):
+        if from_db:
+            default = creator.choice_from_db()
+        else:
+            default = creator.get()
+
+        return self.get(key=key, default=default)
+
 
 
 class FakeCreator():
@@ -123,8 +132,12 @@ class FakeCreator():
 
 class LookupFakeCreator(FakeCreator):
     def __init__(self, provider, cls):
-        self.cls = cls
+        self._cls = cls
         super().__init__(provider)
+    
+    @property
+    def cls(self):
+        return self._cls
 
     def _create_item(self, save: bool, args: FakeCreatorArgs):
         result = self.cls(
@@ -466,13 +479,18 @@ class UserCreator(FakeCreator):
     cls = User
 
     def _create_item(self, save: bool, args: FakeCreatorArgs):
-        return self.cls(
+        result = self.cls(
             first_name=args.get('first_name', self.faker.first_name()),
             last_name=args.get('last_name', self.faker.last_name()),
             username=args.get('username', self.faker.pystr(min_chars=5, max_chars=10).lower()),
             email=args.get('email', self.faker.unique.email()),
             active=args.get('active', True),
         )
+
+        if (rolename := args.get('rolename')):
+            add_user_to_role(user=result, role_name=rolename)
+
+        return result
 
 
 class UserProvider(BaseProvider):
