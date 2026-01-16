@@ -305,7 +305,7 @@ class FlaskViewLoggedInTester(FlaskViewTester):
         return faker.user().get_in_db()
 
     @pytest.fixture(autouse=True)
-    def set_flask_get_view_tester_fixtures(self, client, faker):
+    def login_fixture(self, client, faker):
         self.loggedin_user = self.user_to_login(faker)
         login(client, faker, self.loggedin_user)
 
