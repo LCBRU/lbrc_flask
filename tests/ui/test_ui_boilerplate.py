@@ -21,7 +21,7 @@ def test__boilerplate__html_standards(client, faker):
 @pytest.mark.xfail
 def test__boilerplate__forms_csrf_token(client, faker, path, requires_login):
     if not requires_login:
-        user = faker.user().get()
+        user = faker.user().get(save=False)
     else:
         user = login(client, faker)
 

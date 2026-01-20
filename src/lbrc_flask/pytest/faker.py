@@ -20,6 +20,10 @@ from faker import Faker
 class FakeCreatorArgs():
     def __init__(self, arguments):
         self.arguments = arguments
+
+    @property
+    def save(self):
+        return self.arguments.get('save', False)
     
     def get(self, key, default=None):
         if key in self.arguments:
@@ -27,14 +31,17 @@ class FakeCreatorArgs():
         else:
             return default
 
-    def get_or_get_from_creator(self, key, creator, from_db=False):
-        if from_db:
-            default = creator.choice_from_db()
+    def get_or_create(self, key, creator):
+        if key in self.arguments:
+            return self.arguments[key]
         else:
-            default = creator.get()
+            return creator.get(save=self.save)
 
-        return self.get(key=key, default=default)
-
+    def get_or_choice_from_db(self, key, creator):
+        if key in self.arguments:
+            return self.arguments[key]
+        else:
+            return creator.choice_from_db()
 
 
 class FakeCreator():
