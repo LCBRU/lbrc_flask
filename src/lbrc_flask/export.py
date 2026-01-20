@@ -1,5 +1,4 @@
 import csv
-from fileinput import filename
 import subprocess
 import shlex
 from flask import send_file, render_template, current_app
@@ -8,8 +7,8 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font
 from tempfile import NamedTemporaryFile
 import datetime
-from flask_weasyprint import HTML, render_pdf
-
+from weasyprint import HTML
+from weasyprint.urls import URLFetcher
 
 def excel_download(title: str, headers: list[str], details: list[dict]):
     wb = Workbook()
@@ -69,7 +68,11 @@ def pdf_download(template, title="report", path=None, **kwargs):
 
             subprocess.run(args)
         else:
-            weasy_html = HTML(filename=tmp_html.name, base_url=path)
+            weasy_html = HTML(
+                filename=tmp_html.name,
+                base_url=path,
+                url_fetcher=URLFetcher(timeout=20),
+            )
             weasy_html.write_pdf(tmp_pdf.name)
 
         tmp_pdf.flush()
