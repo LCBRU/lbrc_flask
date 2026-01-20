@@ -62,7 +62,7 @@ class FakeCreator():
         for vals in self.DEFAULT_VALUES:
             self.get_in_db(**vals)
     
-    def get(self, save: Optional[bool]=False, **kwargs):
+    def get(self, save: bool, **kwargs):
         result = self._create_item(args=FakeCreatorArgs(kwargs), save=save)
 
         if save:
@@ -533,7 +533,7 @@ class FieldCreator(FakeCreator):
 
     def _create_item(self, save: bool, args: FakeCreatorArgs):
         f = Field(
-            field_group=args.get('field_group', self.faker.field_group().get()),
+            field_group=args.get('field_group', self.faker.field_group().get(save=save)),
             field_type=args.get('field_type', choice(FieldType.all_field_types())),
             field_name=args.get('field_name', self.faker.sentence(nb_words=randint(1, 5)).rstrip('.').title()),
             allowed_file_extensions=args.get('allowed_file_extensions', self.faker.file_extension()),
