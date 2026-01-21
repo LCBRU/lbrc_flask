@@ -12,9 +12,9 @@ from lbrc_flask.pytest.asserts import assert__select
 def test__dynamic_form__rendering(client, faker, field_type_name):
     user = login(client, faker)
 
-    fg = faker.field_group().get_in_db()
+    fg = faker.field_group().get(save=True)
     ft = FieldType._get_field_type(field_type_name)
-    f = faker.field().get_in_db(field_group=fg, field_type=ft)
+    f = faker.field().get(save=True, field_group=fg, field_type=ft)
 
     resp = client.get(url_for('form', field_group_id=fg.id))
     assert resp.status_code == http.HTTPStatus.OK
@@ -25,9 +25,9 @@ def test__dynamic_form__rendering(client, faker, field_type_name):
 def test__select__rendering(client, faker):
     user = login(client, faker)
 
-    fg = faker.field_group().get_in_db()
+    fg = faker.field_group().get(save=True)
     ft = FieldType.get_select()
-    f = faker.field().get_in_db(field_group=fg, field_type=ft, choices='Once|Twice')
+    f = faker.field().get(save=True, field_group=fg, field_type=ft, choices='Once|Twice')
 
     resp = client.get(url_for('form', field_group_id=fg.id))
     assert resp.status_code == http.HTTPStatus.OK
@@ -38,9 +38,9 @@ def test__select__rendering(client, faker):
 def test__multiselect__rendering(client, faker):
     user = login(client, faker)
 
-    fg = faker.field_group().get_in_db()
+    fg = faker.field_group().get(save=True)
     ft = FieldType.get_multiselect()
-    f = faker.field().get_in_db(field_group=fg, field_type=ft, choices='Once|Twice')
+    f = faker.field().get(save=True, field_group=fg, field_type=ft, choices='Once|Twice')
 
     resp = client.get(url_for('form', field_group_id=fg.id))
     assert resp.status_code == http.HTTPStatus.OK

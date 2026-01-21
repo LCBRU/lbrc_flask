@@ -44,6 +44,6 @@ def test__boilerplate__search(client, faker):
 def test__boilerplate__pages(client, faker, item_count):
     user = login(client, faker)
 
-    the_fields = [faker.field().get_in_db() for _ in range(item_count)]
+    the_fields = [faker.field().get(save=True) for _ in range(item_count)]
 
     assert__page_navigation(client, 'pages_of_fields', {}, item_count)

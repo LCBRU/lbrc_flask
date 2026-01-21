@@ -302,7 +302,7 @@ class FlaskViewTester:
 
 class FlaskViewLoggedInTester(FlaskViewTester):
     def user_to_login(self, faker):
-        return faker.user().get_in_db()
+        return faker.user().get(save=True)
 
     @pytest.fixture(autouse=True)
     def login_fixture(self, client, faker):

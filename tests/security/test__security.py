@@ -43,7 +43,7 @@ def test__security__admin_user_id(client, faker):
 
 def test__security__users_in_role__none(client, faker):
     user = login(client, faker)
-    role = faker.role().get_in_db()
+    role = faker.role().get(save=True)
 
     resp = client.get(url_for('users_for_role', rolename=role.name))
     assert resp.status_code == http.HTTPStatus.OK
@@ -53,8 +53,8 @@ def test__security__users_in_role__none(client, faker):
 
 def test__security__users_in_role__one(client, faker):
     user = login(client, faker)
-    role = faker.role().get_in_db()
-    u2 = faker.user().get_in_db()
+    role = faker.role().get(save=True)
+    u2 = faker.user().get(save=True)
 
     resp = client.get(url_for('add_username_to_rolename', username=u2.username, rolename=role.name))
     assert resp.status_code == http.HTTPStatus.OK
@@ -66,9 +66,9 @@ def test__security__users_in_role__one(client, faker):
 
 def test__security__users_in_role__two(client, faker):
     user = login(client, faker)
-    role = faker.role().get_in_db()
-    u2 = faker.user().get_in_db()
-    u3 = faker.user().get_in_db()
+    role = faker.role().get(save=True)
+    u2 = faker.user().get(save=True)
+    u3 = faker.user().get(save=True)
 
     resp = client.get(url_for('add_username_to_rolename', username=u2.username, rolename=role.name))
     assert resp.status_code == http.HTTPStatus.OK
@@ -88,7 +88,7 @@ def test__security__must_be_an_admin__isnt(client, faker):
 
 
 def test__security__must_be_an_admin__is(client, faker):
-    u = faker.user().get_in_db()
+    u = faker.user().get(save=True)
     add_user_to_role(user=u, role=Role.get_admin())
     user = login(client, faker, user=u)
 

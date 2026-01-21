@@ -6,7 +6,7 @@ from flask_security.utils import _datastore, url_for_security
 
 def login(client, faker, user=None):
     if user is None:
-        user = faker.user().get_in_db()
+        user = faker.user().get(save=True)
 
     db.session.add(user)
     db.session.commit()

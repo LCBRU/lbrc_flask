@@ -60,7 +60,7 @@ class FakeCreator():
 
     def create_defaults(self):
         for vals in self.DEFAULT_VALUES:
-            self.get_in_db(**vals)
+            self.get(save=True, **vals)
     
     def get(self, save: bool, **kwargs):
         result = self._create_item(args=FakeCreatorArgs(kwargs), save=save)
@@ -74,9 +74,6 @@ class FakeCreator():
     def _create_item(self, save: bool, args: FakeCreatorArgs):
         raise NotImplementedError
 
-    def get_in_db(self, **kwargs):
-        return self.get(**kwargs, save=True)
-    
     def count_in_db(self):
         return db.session.execute(select(func.count(self.cls.id))).scalar()
 
@@ -116,9 +113,9 @@ class FakeCreator():
             return db.session.get(self.cls, source[id_key])
         else:
             if in_db:
-                return self.get_in_db()
+                return self.get(save=True)
             else:
-                return self.get()
+                return self.get(save=False)
 
     def get_list_from_source_or_ids_or_new(self, source, objects_key, ids_key, count, in_db=False):
         result = []
@@ -131,9 +128,9 @@ class FakeCreator():
         else:
             for _ in range(count):
                 if in_db:
-                    result.append(self.get_in_db())
+                    result.append(self.get(save=True))
                 else:
-                    result.append(self.get())
+                    result.append(self.get(save=False))
 
         return result    
 
@@ -168,7 +165,7 @@ class LookupFakeCreator(FakeCreator):
         result = []
 
         for i in range(1, n+1):
-            result.append(self.get_in_db(name=self.lookup_name(i)))
+            result.append(self.get(save=True, name=self.lookup_name(i)))
 
         return result
 

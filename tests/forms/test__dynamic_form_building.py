@@ -28,7 +28,7 @@ def test__add_field__field_added(client, faker, x):
     out = FormBuilder()
 
     for i in range(x):
-        out.add_field(faker.field().get_in_db(order=i, name=str(i)))
+        out.add_field(faker.field().get(save=True, order=i, name=str(i)))
 
     actual = out.get_form()()
 
@@ -48,9 +48,9 @@ def test__add_field__field_added(client, faker, x):
 def test__add_field_group__field_added(client, faker, x):
     out = FormBuilder()
 
-    fg = faker.field_group().get_in_db()
+    fg = faker.field_group().get(save=True)
 
-    fg.fields = [faker.field().get_in_db() for _ in range(x)]
+    fg.fields = [faker.field().get(save=True) for _ in range(x)]
 
     out.add_field_group(fg)
 
@@ -63,7 +63,7 @@ def test__add_field_group__field_added(client, faker, x):
     "field_type_name", FieldType.all_field_type_name(),
 )
 def test__add_field__correct_field_type_added(client, faker, field_type_name):
-    field = faker.field().get_in_db(field_type=FieldType._get_field_type(field_type_name))
+    field = faker.field().get(save=True, field_type=FieldType._get_field_type(field_type_name))
 
     field_actual = build_form(field)
 
@@ -71,7 +71,7 @@ def test__add_field__correct_field_type_added(client, faker, field_type_name):
 
 
 def test__add_field__default_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_string())
+    field = faker.field().get(save=True, field_type=FieldType.get_string())
 
     field_actual = build_form(field)
 
@@ -79,7 +79,7 @@ def test__add_field__default_not_set(client, faker):
 
 
 def test__add_field__default_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_integer())
+    field = faker.field().get(save=True, field_type=FieldType.get_integer())
     field.default = 3
 
     field_actual = build_form(field)
@@ -88,7 +88,7 @@ def test__add_field__default_set(client, faker):
 
 
 def test__add_field__required_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_integer())
+    field = faker.field().get(save=True, field_type=FieldType.get_integer())
     field.required = True
 
     field_actual = build_form(field)
@@ -98,7 +98,7 @@ def test__add_field__required_set(client, faker):
 
 
 def test__add_field__required_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_integer())
+    field = faker.field().get(save=True, field_type=FieldType.get_integer())
     field.required = False
 
     field_actual = build_form(field)
@@ -108,7 +108,7 @@ def test__add_field__required_not_set(client, faker):
 
 
 def test__add_field__label_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_integer())
+    field = faker.field().get(save=True, field_type=FieldType.get_integer())
     field.label = 'Fred'
 
     field_actual = build_form(field)
@@ -117,7 +117,7 @@ def test__add_field__label_set(client, faker):
 
 
 def test__add_field__label_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_integer())
+    field = faker.field().get(save=True, field_type=FieldType.get_integer())
 
     field_actual = build_form(field)
 
@@ -125,7 +125,7 @@ def test__add_field__label_not_set(client, faker):
 
 
 def test__add_field__maxlength_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_string())
+    field = faker.field().get(save=True, field_type=FieldType.get_string())
     field.max_length = 30
 
     field_actual = build_form(field)
@@ -136,7 +136,7 @@ def test__add_field__maxlength_set(client, faker):
 
 
 def test__add_field__maxlength_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_string())
+    field = faker.field().get(save=True, field_type=FieldType.get_string())
 
     field_actual = build_form(field)
 
@@ -144,7 +144,7 @@ def test__add_field__maxlength_not_set(client, faker):
 
 
 def test__add_field__choices_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_radio())
+    field = faker.field().get(save=True, field_type=FieldType.get_radio())
     field.choices = 'a|b|c'
 
     field_actual = build_form(field)
@@ -153,7 +153,7 @@ def test__add_field__choices_set(client, faker):
 
 
 def test__add_field__choices_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_radio())
+    field = faker.field().get(save=True, field_type=FieldType.get_radio())
 
     field_actual = build_form(field)
 
@@ -161,7 +161,7 @@ def test__add_field__choices_not_set(client, faker):
 
 
 def test__add_field__allowed_file_extensions_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_file())
+    field = faker.field().get(save=True, field_type=FieldType.get_file())
     field.allowed_file_extensions = 'pdf|txt'
 
     field_actual = build_form(field)
@@ -172,7 +172,7 @@ def test__add_field__allowed_file_extensions_set(client, faker):
 
 
 def test__add_field__allowed_file_extensions_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_multifile(), allowed_file_extensions='')
+    field = faker.field().get(save=True, field_type=FieldType.get_multifile(), allowed_file_extensions='')
 
     field_actual = build_form(field)
 
@@ -182,7 +182,7 @@ def test__add_field__allowed_file_extensions_not_set(client, faker):
 
 
 def test__add_field__validation_regex_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_textarea())
+    field = faker.field().get(save=True, field_type=FieldType.get_textarea())
     field.validation_regex = '^.*$'
 
     field_actual = build_form(field)
@@ -193,7 +193,7 @@ def test__add_field__validation_regex_set(client, faker):
 
 
 def test__add_field__validation_regex_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_textarea())
+    field = faker.field().get(save=True, field_type=FieldType.get_textarea())
 
     field_actual = build_form(field)
 
@@ -201,7 +201,7 @@ def test__add_field__validation_regex_not_set(client, faker):
 
 
 def test__add_field__description_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_description())
+    field = faker.field().get(save=True, field_type=FieldType.get_description())
     field.description = 'Hello'
 
     field_actual = build_form(field)
@@ -210,7 +210,7 @@ def test__add_field__description_set(client, faker):
 
 
 def test__add_field__description_not_set(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_description())
+    field = faker.field().get(save=True, field_type=FieldType.get_description())
 
     field_actual = build_form(field)
 
@@ -218,7 +218,7 @@ def test__add_field__description_not_set(client, faker):
 
 
 def test__add_field__description_is_None(client, faker):
-    field = faker.field().get_in_db(field_type=FieldType.get_description())
+    field = faker.field().get(save=True, field_type=FieldType.get_description())
     field.description = None
 
     field_actual = build_form(field)
