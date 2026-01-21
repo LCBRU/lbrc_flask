@@ -102,11 +102,11 @@ class FakeCreator():
     def _create_item(self, save: bool, args: FakeCreatorArgs):
         raise NotImplementedError
 
-    def get_list_in_db(self, item_count, **kwargs):
+    def get_list(self, save: bool, item_count: int, **kwargs):
         results = []
 
         for _ in range(item_count):
-            result = self.get(**kwargs, save=True)
+            result = self.get(**kwargs, save=save)
             results.append(result)
 
         return results
