@@ -43,6 +43,31 @@ class FakeCreatorArgs():
         else:
             return creator.choice_from_db()
 
+    def get_or_by_id_or_create(self, object_key, creator, id_key=None):
+        id_key = id_key or f"{object_key}_id"
+
+        if object_key in source:
+            return source[object_key]
+        elif id_key in source:
+            return creator.get_by_id(source[id_key])
+        else:
+            return creator.get(save=self.save)
+
+    def get_list_or_by_ids_or_news(self, objects_key, count, creator, ids_key=None):
+        ids_key = ids_key or f"{objects_key}_ids"
+
+        result = []
+
+        if objects_key in source:
+            result = source[objects_key]
+        elif ids_key in source:
+            for id in source[ids_key]:
+                result.append(creator.get_by_id(source[id_key]))
+        else:
+            for _ in range(count):
+                result.append(creator.get(save=self.save))
+
+        return result    
 
 class FakeCreator():
     DEFAULT_VALUES = []
@@ -62,6 +87,9 @@ class FakeCreator():
         for vals in self.DEFAULT_VALUES:
             self.get(save=True, **vals)
     
+    def get_by_id(self, id) -> Optional[object]:
+        return db.session.get(self.cls, id)
+
     def get(self, save: bool, **kwargs):
         result = self._create_item(args=FakeCreatorArgs(kwargs), save=save)
 
@@ -73,9 +101,6 @@ class FakeCreator():
     
     def _create_item(self, save: bool, args: FakeCreatorArgs):
         raise NotImplementedError
-
-    def count_in_db(self):
-        return db.session.execute(select(func.count(self.cls.id))).scalar()
 
     def get_list_in_db(self, item_count, **kwargs):
         results = []
@@ -92,47 +117,6 @@ class FakeCreator():
     def choices_from_db(self, k=1, **kwargs):
         return sample(list(db.session.execute(select(self.cls)).scalars()), k)
 
-    def get_value_or_get(self, source, key, from_db=False):
-        if key in source:
-            return source[key]
-        elif from_db:
-            return self.choice_from_db()
-        else:
-            return self.get()
-
-    def get_value_or_default(self, source, key, default=None):
-        if key in source:
-            return source[key]
-        else:
-            return default
-    
-    def get_from_source_or_id_or_new(self, source, object_key, id_key, in_db=False):
-        if object_key in source:
-            return source[object_key]
-        elif id_key in source:
-            return db.session.get(self.cls, source[id_key])
-        else:
-            if in_db:
-                return self.get(save=True)
-            else:
-                return self.get(save=False)
-
-    def get_list_from_source_or_ids_or_new(self, source, objects_key, ids_key, count, in_db=False):
-        result = []
-
-        if objects_key in source:
-            result = source[objects_key]
-        elif ids_key in source:
-            for id in source[ids_key]:
-                result.append(db.session.get(self.cls, id))
-        else:
-            for _ in range(count):
-                if in_db:
-                    result.append(self.get(save=True))
-                else:
-                    result.append(self.get(save=False))
-
-        return result    
 
 class LookupFakeCreator(FakeCreator):
     def __init__(self, provider, cls):
