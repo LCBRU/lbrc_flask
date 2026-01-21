@@ -13,8 +13,9 @@ from lbrc_flask.validators import (
     calculate_nhs_number_checksum,
 )
 from lbrc_flask.string_functions import camel_case_split
-from sqlalchemy import select, func
+from sqlalchemy import select
 from faker import Faker
+
 
 
 class FakeCreatorArgs():
@@ -28,30 +29,36 @@ class FakeCreatorArgs():
     def get(self, key, default=None):
         if key in self.arguments:
             return self.arguments[key]
+        elif callable(default):
+            return default()
+        else:
+            return default
+
+    def get_by_id(self, id_key, creator, default=None):
+        if id_key in self.arguments:
+            return creator.get_by_id(self.arguments[id_key])
+        elif callable(default):
+            return default()
         else:
             return default
 
     def get_or_create(self, key, creator):
-        if key in self.arguments:
-            return self.arguments[key]
-        else:
-            return creator.get(save=self.save)
+        return self.get(key, default=lambda: creator.get(save=self.save))
 
     def get_or_choice_from_db(self, key, creator):
-        if key in self.arguments:
-            return self.arguments[key]
-        else:
-            return creator.choice_from_db()
+        return self.get(key, default=lambda: creator.choice_from_db())
 
     def get_or_by_id_or_create(self, object_key, creator, id_key=None):
         id_key = id_key or f"{object_key}_id"
 
-        if object_key in source:
-            return source[object_key]
-        elif id_key in source:
-            return creator.get_by_id(source[id_key])
-        else:
-            return creator.get(save=self.save)
+        return self.get(
+            object_key,
+            default=lambda: self.get_by_id(
+                id_key,
+                creator,
+                default=lambda: creator.get(save=self.save),
+            ),
+        )
 
     def get_list_or_by_ids_or_news(self, objects_key, count, creator, ids_key=None):
         ids_key = ids_key or f"{objects_key}_ids"
