@@ -17,7 +17,6 @@ from sqlalchemy import select
 from faker import Faker
 
 
-
 class FakeCreatorArgs():
     def __init__(self, arguments):
         self.arguments = arguments
@@ -31,7 +30,11 @@ class FakeCreatorArgs():
     
     def get(self, key, default=None):
         if key in self.arguments:
-            return self.arguments[key]
+            result = self.arguments[key]
+            if callable(result):
+                return result()
+            else:
+                return result
         elif callable(default):
             return default()
         else:
@@ -87,6 +90,9 @@ class FakeCreator():
 
     def choices_from_db(self, k=1, **kwargs):
         return sample(list(db.session.execute(select(self.cls)).scalars()), k)
+    
+    def all_from_db(self):
+        return list(db.session.execute(select(self.cls)).scalars())
 
 
 class LookupFakeCreator(FakeCreator):
