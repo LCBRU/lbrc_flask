@@ -45,9 +45,6 @@ class FakeCreatorArgs():
     def get_or_create(self, key, creator):
         return self.get(key, default=lambda: creator.get(save=self.save))
 
-    def get_or_choice_from_db(self, key, creator):
-        return self.get(key, default=lambda: creator.choice_from_db())
-
     def get_or_by_id_or_create(self, object_key, creator, id_key=None):
         id_key = id_key or f"{object_key}_id"
 
@@ -85,6 +82,7 @@ class FakeCreator():
 
     def __init__(self, provider):
         self.provider = provider
+        self.populated_with_defaults = False
         # The line below causes unique to fail because a
         # different faker is created each time, despite being for the
         # same generator.  Use singleton instead?
@@ -93,6 +91,7 @@ class FakeCreator():
     def create_defaults(self):
         for vals in self.DEFAULT_VALUES:
             self.get(save=True, **vals)
+        self.populated_with_defaults = True
     
     def get_by_id(self, id) -> Optional[object]:
         return db.session.get(self.cls, id)
