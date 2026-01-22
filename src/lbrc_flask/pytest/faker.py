@@ -22,6 +22,9 @@ class FakeCreatorArgs():
     def __init__(self, arguments):
         self.arguments = arguments
 
+    def __contains__(self, key):
+        return key in self.arguments
+
     @property
     def save(self):
         return self.arguments.get('save', False)
@@ -34,44 +37,6 @@ class FakeCreatorArgs():
         else:
             return default
 
-    def get_by_id(self, id_key, creator, default=None):
-        if id_key in self.arguments:
-            return creator.get_by_id(self.arguments[id_key])
-        elif callable(default):
-            return default()
-        else:
-            return default
-
-    def get_or_create(self, key, creator):
-        return self.get(key, default=lambda: creator.get(save=self.save))
-
-    def get_or_by_id_or_create(self, object_key, creator, id_key=None):
-        id_key = id_key or f"{object_key}_id"
-
-        return self.get(
-            object_key,
-            default=lambda: self.get_by_id(
-                id_key,
-                creator,
-                default=lambda: creator.get(save=self.save),
-            ),
-        )
-
-    def get_list_or_by_ids_or_news(self, objects_key, count, creator, ids_key=None):
-        ids_key = ids_key or f"{objects_key}_ids"
-
-        result = []
-
-        if objects_key in source:
-            result = source[objects_key]
-        elif ids_key in source:
-            for id in source[ids_key]:
-                result.append(creator.get_by_id(source[id_key]))
-        else:
-            for _ in range(count):
-                result.append(creator.get(save=self.save))
-
-        return result    
 
 class FakeCreator():
     DEFAULT_VALUES = []

@@ -40,22 +40,6 @@ class LookupRepository:
 
         return result
 
-    def get_or_create(self, name):
-        name = name.strip()
-
-        if not name:
-            return None
-
-        result = self.get(name)
-
-        if not result:
-            result = self.cls(name=name)
-        
-        return result
-    
-    def get_or_create_all(self, names):
-        return [self.get_or_create(n) for n in names]
-
     def get_datalist_choices(self):
         lookups = db.session.execute(
             select(self.cls).order_by(self.cls.name)
