@@ -1,6 +1,6 @@
 import pytest
 import re
-from lbrc_flask.forms.dynamic import FieldGroup, FieldType, FormBuilder
+from lbrc_flask.forms.dynamic import FieldType, FormBuilder
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from flask_wtf.file import FileAllowed
 

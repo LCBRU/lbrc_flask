@@ -1,4 +1,4 @@
-from lbrc_flask.admin import AdminCustomView, init_admin
+from lbrc_flask.admin import AdminCustomView
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.database import db
 from lbrc_flask.security import User, Role, add_user_to_role

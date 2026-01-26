@@ -13,8 +13,27 @@ from lbrc_flask.validators import (
     calculate_nhs_number_checksum,
 )
 from lbrc_flask.string_functions import camel_case_split
-from sqlalchemy import select
+from sqlalchemy import select, func
 from faker import Faker
+
+
+class FakeSaveContext():
+    def __init__(self, save, level: int = 0):
+        if isinstance(save, FakeSaveContext):
+            self.save = save.save
+            self.level = save.level + 1
+        else:
+            self.save = save
+            self.level = level
+    
+    def next_level(self):
+        return FakeSaveContext(save=self.save, level=self.level + 1)
+
+    def add_to_session(self):
+        return self.save
+    
+    def commit_session(self):
+        return self.save and self.level == 0
 
 
 class FakeCreatorArgs():
@@ -64,19 +83,23 @@ class FakeCreator():
     def get_by_id(self, id) -> Optional[object]:
         return db.session.get(self.cls, id)
 
-    def get(self, save: bool, **kwargs):
+    def get(self, save, **kwargs):
+        save = FakeSaveContext(save=save)
+
         result = self._create_item(args=FakeCreatorArgs(kwargs), save=save)
 
-        if save:
+        if save.add_to_session():
             db.session.add(result)
+
+        if save.commit_session():
             db.session.commit()
     
         return result
     
-    def _create_item(self, save: bool, args: FakeCreatorArgs):
+    def _create_item(self, save, args: FakeCreatorArgs):
         raise NotImplementedError
 
-    def get_list(self, save: bool, item_count: int, **kwargs):
+    def get_list(self, save, item_count: int, **kwargs):
         results = []
 
         for _ in range(item_count):
@@ -93,6 +116,9 @@ class FakeCreator():
     
     def all_from_db(self):
         return list(db.session.execute(select(self.cls)).scalars())
+
+    def count_in_db(self):
+        return db.session.execute(select(func.count(self.cls.id))).scalar()
 
 
 class LookupFakeCreator(FakeCreator):
