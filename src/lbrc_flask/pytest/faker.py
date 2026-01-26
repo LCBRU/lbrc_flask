@@ -99,6 +99,9 @@ class FakeCreator():
     def _create_item(self, save, args: FakeCreatorArgs):
         raise NotImplementedError
 
+    def assert_equal(self, expected, actual):
+        raise NotImplementedError
+
     def get_list(self, save, item_count: int, **kwargs):
         results = []
 
