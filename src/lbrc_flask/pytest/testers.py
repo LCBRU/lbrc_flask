@@ -91,6 +91,16 @@ class PagedResultSet(ResultSet):
         return self.expected_results[self.items_on_previous_pages:self.items_on_previous_pages + self.effective_result_count]
 
 
+class PagedSize10ResultSet(PagedResultSet):
+    # Redefine in instance classes for different page sizes
+    PAGE_SIZE = 10
+
+
+class PagedSize20ResultSet(PagedResultSet):
+    # Redefine in instance classes for different page sizes
+    PAGE_SIZE = 20
+
+
 class HtmlPageContentAsserter:
     def __init__(self, loggedin_user):
         self.loggedin_user = loggedin_user
@@ -163,6 +173,7 @@ class RowContentAsserter:
 
     def assert_all(self, resp):
         if self.result_set.page_in_range:
+            print(self.result_set.effective_result_count, self.row_count(resp))
             assert self.result_set.effective_result_count == self.row_count(resp)
             self.assert_rows_details(resp)
 
@@ -235,7 +246,7 @@ class PanelListContentAsserter(HtmlListContentAsserter):
 
     @property
     def row_selector(self):
-        return 'li'
+        return '& > li'
 
 
 class FlaskViewTester:
