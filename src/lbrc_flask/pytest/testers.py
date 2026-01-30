@@ -1,3 +1,4 @@
+from functools import cache
 import pytest
 import http
 import csv
@@ -259,6 +260,10 @@ class FlaskViewTester:
         self.client = client
         self.faker = faker
 
+    @cache
+    def user_to_login(self, faker):
+        return faker.user().get(save=True)
+
     @property
     def endpoint(self):
         # Test classes must implement an endpoint property that
@@ -276,11 +281,16 @@ class FlaskViewTester:
     def url(self, external=True):
         return url_for(self.endpoint, _external=external, **self.parameters)
 
-    def get(self, expected_status_code=http.HTTPStatus.OK):
-        print(self.url())
+    def get(self, expected_status_code=http.HTTPStatus.OK, debug=False):
         result = self.client.get(self.url())
-        print(result.soup)
-        print(result.status_code, expected_status_code)
+
+        if debug:
+            print(f"{self.url()=}")
+            print(result.soup)
+        
+        if result.status_code != expected_status_code:
+            print(f"Status code mismatch: {result.status_code=} != {expected_status_code=}")
+
         assert result.status_code == expected_status_code
 
         for a in self.request_aserters:
@@ -315,9 +325,6 @@ class FlaskViewTester:
 
 
 class FlaskViewLoggedInTester(FlaskViewTester):
-    def user_to_login(self, faker):
-        return faker.user().get(save=True)
-
     @pytest.fixture(autouse=True)
     def login_fixture(self, client, faker):
         self.loggedin_user = self.user_to_login(faker)
@@ -331,6 +338,9 @@ class ReportsPageTester(FlaskViewLoggedInTester):
 
 
 class IndexTester(FlaskViewLoggedInTester):
+    def assert_search_form(self, resp):
+        SearchContentAsserter().assert_all(resp)
+
     @property
     def content_asserter(self) -> RowContentAsserter:
         return TableContentAsserter
@@ -345,8 +355,9 @@ class IndexTester(FlaskViewLoggedInTester):
             result_set=page_count_helper,
         ).assert_all(resp)
 
-        SearchContentAsserter().assert_all(resp)
         HtmlPageContentAsserter(loggedin_user=self.loggedin_user).assert_all(resp)
+
+        self.assert_search_form(resp)
 
 
 class RequiresLoginTester(FlaskViewTester):

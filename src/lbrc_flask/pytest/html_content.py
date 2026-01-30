@@ -5,6 +5,8 @@ from lbrc_flask.validators import is_integer
 def get_records_found(soup):
     pagination_summary = soup.find(class_="pagination_summary")
 
+    print(f"{pagination_summary=}")
+
     count = re.findall(r"(\d+) found", pagination_summary.get_text())
     
     if count:

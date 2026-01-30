@@ -81,6 +81,7 @@ class FakeCreator():
         self.populated_with_defaults = True
     
     def get_by_id(self, id) -> Optional[object]:
+        assert id is not None
         return db.session.get(self.cls, id)
 
     def get(self, save, **kwargs):
@@ -472,7 +473,7 @@ class LbrcFileProvider(BaseProvider):
 class UserCreator(FakeCreator):
     cls = User
 
-    def _create_item(self, save: bool, args: FakeCreatorArgs):
+    def _create_item(self, save, args: FakeCreatorArgs):
         result = self.cls(
             first_name=args.get('first_name', self.faker.first_name()),
             last_name=args.get('last_name', self.faker.last_name()),
@@ -486,6 +487,9 @@ class UserCreator(FakeCreator):
 
         return result
 
+    def admin(self, save):
+        return self.get(rolename=Role.ADMIN_ROLENAME, save=save)
+
 
 class UserProvider(BaseProvider):
     def user(self):
@@ -495,7 +499,7 @@ class UserProvider(BaseProvider):
 class RoleCreator(FakeCreator):
     cls = Role
 
-    def _create_item(self, save: bool, args: FakeCreatorArgs):
+    def _create_item(self, save, args: FakeCreatorArgs):
         return Role(
             name=args.get('name', self.faker.pystr(min_chars=5, max_chars=10).lower()),
         )
