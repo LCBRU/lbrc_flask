@@ -304,7 +304,7 @@ class FlaskViewTester:
     def post_object(self, object, expected_status_code=http.HTTPStatus.OK):
         return self.post(data=self.get_data_from_object(object), expected_status_code=expected_status_code)
 
-    def post(self, data=None, expected_status_code=http.HTTPStatus.OK):
+    def post(self, data=None, expected_status_code=http.HTTPStatus.OK, debug=False):
         data = data or {}
 
         result = self.client.post(
@@ -312,7 +312,13 @@ class FlaskViewTester:
             data=data,
         )
 
-        print(result.status_code, expected_status_code)
+        if debug:
+            print(f"{self.url()=}")
+            print(result.soup)
+
+        if result.status_code != expected_status_code:
+            print(f"Status code mismatch: {result.status_code=} != {expected_status_code=}")
+
         assert result.status_code == expected_status_code
 
         for a in self.request_aserters:
