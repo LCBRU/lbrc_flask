@@ -248,7 +248,9 @@ class LbrcFlaskFakerProvider(BaseProvider):
             user.roles.append(Role.get_admin())
         
         if rolename:
-            user.roles.append(Role.query.filter(Role.name == rolename).one())
+            user.roles.append(
+                db.session.execute(select(Role).where(Role.name == rolename)).scalar_one()
+            )
 
         db.session.add(user)
         db.session.commit()

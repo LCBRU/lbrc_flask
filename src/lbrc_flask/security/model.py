@@ -82,7 +82,7 @@ class Role(db.Model, RoleMixin, CommonMixin):
 
     @staticmethod
     def get_admin():
-        return Role.query.filter(Role.name == Role.ADMIN_ROLENAME).one()
+        return db.session.execute(select(Role).where(Role.name == Role.ADMIN_ROLENAME)).scalar_one()
 
 
 roles_users = db.Table(

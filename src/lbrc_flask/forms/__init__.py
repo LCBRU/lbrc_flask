@@ -15,7 +15,8 @@ from wtforms.widgets import html_params
 from flask_wtf.file import FileField as _FileField
 from wtforms.widgets import FileInput as _FileInput, CheckboxInput, HiddenInput, ListWidget
 from markupsafe import Markup
-
+from lbrc_flask.database import db
+from sqlalchemy import select, func
 from lbrc_flask.data_conversions import ensure_list
 from lbrc_flask.requests import all_args
 from lbrc_flask.validators import is_integer
@@ -223,9 +224,9 @@ class Unique(object):
             message = u'this element already exists'
         self.message = message
 
-    def __call__(self, form, field):         
-        check = self.model.query.filter(self.field == field.data).first()
-        if check:
+    def __call__(self, form, field):
+        found_count = db.session.execute(select(func.count(1)).where(self.field == field.data)).scalar()
+        if found_count > 0:
             raise ValidationError(self.message)
 
 

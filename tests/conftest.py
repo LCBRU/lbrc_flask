@@ -15,6 +15,7 @@ from lbrc_flask.pytest.fixtures import *
 from lbrc_flask.export import excel_download, csv_download, pdf_download
 from lbrc_flask.json import validate_json
 from lbrc_flask.security import init_roles, init_users
+from sqlalchemy import select
 
 
 class TestForm(FlashingForm):
@@ -197,11 +198,7 @@ def app():
     def pages_of_fields():
         search_form = SearchForm(formdata=request.args)
 
-        items = Field.query.paginate(
-            page=search_form.page.data,
-            per_page=5,
-            error_out=False,
-        )
+        items = db.paginate(select(Field))
 
         return render_template_string('''
         

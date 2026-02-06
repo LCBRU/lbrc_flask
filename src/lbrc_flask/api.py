@@ -3,6 +3,7 @@ import uuid
 from lbrc_flask.database import db, GUID
 from flask import request, abort
 from flask_login import login_user
+from sqlalchemy import select
 from lbrc_flask.security import get_system_user
 
 
@@ -12,7 +13,7 @@ def get_api_key():
 
     api_key = request.args.get('api_key')
 
-    return ApiKey.query.filter_by(key=uuid.UUID(api_key)).one_or_none()
+    return db.session.execute(select(ApiKey).where(ApiKey.key==uuid.UUID(api_key))).scalar()
 
 
 class ApiKey(db.Model):
