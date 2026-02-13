@@ -82,7 +82,7 @@ class Role(db.Model, RoleMixin, CommonMixin):
 
     @staticmethod
     def get_admin():
-        return Role.query.filter(Role.name == Role.ADMIN_ROLENAME).one()
+        return db.session.execute(select(Role).where(Role.name == Role.ADMIN_ROLENAME)).scalar_one()
 
 
 roles_users = db.Table(
@@ -92,7 +92,7 @@ roles_users = db.Table(
 )
 
 
-class User(db.Model, CommonMixin, UserMixin):
+class User(CommonMixin, db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     username = db.Column(db.String(255), unique=True)

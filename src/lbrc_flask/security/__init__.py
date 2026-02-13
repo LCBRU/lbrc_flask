@@ -5,6 +5,7 @@ from flask import current_app, abort, render_template
 from flask_security.utils import _datastore
 from functools import wraps
 from ..database import db
+from sqlalchemy import select
 from .model import User, Role, AuditMixin, random_password
 
 
@@ -35,7 +36,7 @@ def get_user_from_username(username):
 
 
 def get_users_for_role(role_name):
-    return  _datastore.user_model.query.join(User.roles).filter(Role.name == role_name).all()
+    return db.session.execute(select(_datastore.user_model).join(User.roles).where(Role.name == role_name)).scalars().all()
 
 
 def get_admin_user():

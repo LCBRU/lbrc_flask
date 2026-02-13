@@ -49,15 +49,32 @@ class FakeCreatorArgs():
     
     def get(self, key, default=None):
         if key in self.arguments:
-            result = self.arguments[key]
-            if callable(result):
-                return result()
-            else:
-                return result
-        elif callable(default):
-            return default()
+            return self._value_or_call(self.arguments[key])
         else:
-            return default
+            return self._value_or_call(default)
+    
+    def set_params_with_object(self, params: dict, field_name: str, field_id_name: Optional[str]=None, creator: Optional[object]=None, default=None):
+        field_id_name = field_id_name or f"{field_name}_id"
+
+        if field_name in self:
+            value = self.get(field_name)
+
+            if value.id is not None:
+                params[field_id_name] = value.id
+            else:
+                params[field_name] = value
+        elif field_id_name in self:
+            params[field_id_name] = self.get(field_id_name)
+        elif creator is not None:
+            params[field_name] = creator.get(save=self.save)
+        else:
+            params[field_name] = self._value_or_call(default)
+
+    def _value_or_call(self, value):
+        if callable(value):
+            return value()
+        else:
+            return value
 
 
 class FakeCreator():
@@ -67,13 +84,13 @@ class FakeCreator():
     def cls(self):
         raise NotImplementedError
 
-    def __init__(self, provider):
-        self.provider = provider
-        self.populated_with_defaults = False
+    def __init__(self, provider: BaseProvider):
+        self.provider: BaseProvider = provider
+        self.populated_with_defaults: bool = False
         # The line below causes unique to fail because a
         # different faker is created each time, despite being for the
         # same generator.  Use singleton instead?
-        self.faker = Faker("en_GB", generator=provider.generator)
+        self.faker: Faker = Faker("en_GB", generator=provider.generator)
 
     def create_defaults(self):
         for vals in self.DEFAULT_VALUES:
@@ -81,6 +98,7 @@ class FakeCreator():
         self.populated_with_defaults = True
     
     def get_by_id(self, id) -> Optional[object]:
+        assert id is not None
         return db.session.get(self.cls, id)
 
     def get(self, save, **kwargs):
@@ -95,6 +113,7 @@ class FakeCreator():
             db.session.commit()
     
         return result
+
     
     def _create_item(self, save, args: FakeCreatorArgs):
         raise NotImplementedError
@@ -229,7 +248,9 @@ class LbrcFlaskFakerProvider(BaseProvider):
             user.roles.append(Role.get_admin())
         
         if rolename:
-            user.roles.append(Role.query.filter(Role.name == rolename).one())
+            user.roles.append(
+                db.session.execute(select(Role).where(Role.name == rolename)).scalar_one()
+            )
 
         db.session.add(user)
         db.session.commit()
@@ -472,7 +493,7 @@ class LbrcFileProvider(BaseProvider):
 class UserCreator(FakeCreator):
     cls = User
 
-    def _create_item(self, save: bool, args: FakeCreatorArgs):
+    def _create_item(self, save, args: FakeCreatorArgs):
         result = self.cls(
             first_name=args.get('first_name', self.faker.first_name()),
             last_name=args.get('last_name', self.faker.last_name()),
@@ -486,6 +507,9 @@ class UserCreator(FakeCreator):
 
         return result
 
+    def admin(self, save):
+        return self.get(rolename=Role.ADMIN_ROLENAME, save=save)
+
 
 class UserProvider(BaseProvider):
     def user(self):
@@ -495,7 +519,7 @@ class UserProvider(BaseProvider):
 class RoleCreator(FakeCreator):
     cls = Role
 
-    def _create_item(self, save: bool, args: FakeCreatorArgs):
+    def _create_item(self, save, args: FakeCreatorArgs):
         return Role(
             name=args.get('name', self.faker.pystr(min_chars=5, max_chars=10).lower()),
         )

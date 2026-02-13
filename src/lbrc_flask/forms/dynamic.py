@@ -1,13 +1,13 @@
-from wtforms.fields import IntegerField
 from lbrc_flask.admin import AdminCustomView
 from flask_admin.model.form import InlineFormAdmin
-from wtforms import fields, validators
+from wtforms import validators
 from wtforms.validators import Length, DataRequired, Optional, Regexp
 from lbrc_flask.validators import parse_date
 from flask_wtf.file import FileAllowed
 from lbrc_flask.database import db
 from . import DescriptionField, FlashingForm
 from ..formatters import format_boolean, format_number, format_yesno
+from sqlalchemy import select, func
 
 
 class FieldType(db.Model):
@@ -146,7 +146,7 @@ class FieldType(db.Model):
 
     @classmethod
     def _get_field_type(cls, name):
-        return FieldType.query.filter_by(name=name).one()
+        return db.session.execute(select(FieldType).where(FieldType.name == name)).scalar_one()
 
     @classmethod
     def get_boolean(cls):
@@ -211,7 +211,7 @@ class FieldTypeSetup():
         self._add_field_type(FieldType(name=FieldType.DATE))
 
     def _add_field_type(self, field_type):
-        if FieldType.query.filter_by(name=field_type.name).count() == 0:
+        if db.session.execute(select(func.count(1)).where(FieldType.name == field_type.name)).scalar_one() == 0:
             db.session.add(field_type)
 
 
@@ -365,10 +365,13 @@ def create_field_types():
 
 # Admin Forms
 class FieldlineView(InlineFormAdmin):
+    def types():
+        return db.session.execute(select(FieldType).order_by(FieldType.name))
+
     form_args = dict(
         field_name=dict(validators=[validators.DataRequired()]),
         order=dict(validators=[validators.DataRequired()]),
-        field_type=dict(query_factory=lambda: FieldType.query.order_by(FieldType.name)),
+        field_type=dict(query_factory=types),
     )
 
 
