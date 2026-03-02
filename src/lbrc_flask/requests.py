@@ -3,10 +3,16 @@ from flask import request
 
 
 def all_args():
-    result = {**request.view_args, **request.args, **request.form}
+    result = {
+        **{k: v for k, v in request.view_args.items() if v},
+        **{k: v for k, v in request.args.items() if v},
+        **{k: v for k, v in request.form.items() if v},
+    }
 
     if request.data and request.json:
-        result.update(request.json)
+        result.update(
+            {k: v for k, v in request.json.items() if v},
+        )
     
     return result
 
