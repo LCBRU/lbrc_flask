@@ -113,7 +113,6 @@ class FakeCreator():
             db.session.commit()
     
         return result
-
     
     def _create_item(self, save, args: FakeCreatorArgs):
         raise NotImplementedError
