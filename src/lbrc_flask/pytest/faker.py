@@ -130,7 +130,7 @@ class FakeCreator():
         return results
 
     def choice_from_db(self, **kwargs):
-        return choice(list(db.session.execute(select(self.cls)).scalars()))
+        return choice(list(db.session.execute(select(self.cls)).unique().scalars()))
 
     def choices_from_db(self, k=1, **kwargs):
         return sample(list(db.session.execute(select(self.cls)).scalars()), k)
