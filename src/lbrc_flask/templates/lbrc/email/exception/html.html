@@ -123,7 +123,7 @@
     <dl>
         {% for key, value in request.args.items() %}
             <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
+            <dd>{{ value | truncate(30) }}</dd>
         {% endfor%}
     </dl>
 
@@ -132,7 +132,7 @@
     <dl>
         {% for key, value in (request.view_args or {}).items() %}
             <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
+            <dd>{{ value | truncate(30) }}</dd>
         {% endfor%}
     </dl>
 
@@ -141,7 +141,11 @@
     <dl>
         {% for key, value in (request.form or {}).items() %}
             <dt>{{ key }}</dt>
-            <dd>{{ value }}</dd>
+            {% if 'password' in key.lower() %}
+                <dd>********</dd>
+            {% else %}
+                <dd>{{ value | truncate(30) }}</dd>
+            {% endif %}
         {% endfor%}
     </dl>
 
