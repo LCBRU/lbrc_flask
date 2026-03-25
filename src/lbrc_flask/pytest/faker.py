@@ -1,7 +1,5 @@
 import datetime
-import io
 from typing import Optional
-from openpyxl import Workbook
 from dateutil.relativedelta import relativedelta
 from faker.providers import BaseProvider
 from lbrc_flask.security import Role, User, add_user_to_role
@@ -93,9 +91,10 @@ class FakeCreator():
         self.faker: Faker = Faker("en_GB", generator=provider.generator)
 
     def create_defaults(self):
-        for vals in self.DEFAULT_VALUES:
-            self.get(save=True, **vals)
-        self.populated_with_defaults = True
+        if not self.populated_with_defaults:
+            for vals in self.DEFAULT_VALUES:
+                self.get(save=True, **vals)
+            self.populated_with_defaults = True
     
     def get_by_id(self, id) -> Optional[object]:
         assert id is not None
@@ -408,85 +407,6 @@ class LbrcDynaicFormFakerProvider(BaseProvider):
         db.session.commit()
 
         return result
-
-
-class FakeXlsxWorksheet:
-    def __init__(self, name, headers, data, headers_on_row=1):
-        self.name = name
-        self.headers = headers
-        self.data = data
-        self.headers_on_row = headers_on_row
-
-    def create_worksheet(self, workbook: Workbook):
-        if self.name is None:
-            ws1 = workbook.active
-        else:
-            ws1 = workbook.create_sheet(self.name)
-
-        for _ in range(1, self.headers_on_row):
-            ws1.append([])
-
-        ws1.append(list(self.headers))
-
-        for d in self.data:
-            row = []
-            for h in self.headers:
-                row.append(d.get(h.lower(), ''))
-            ws1.append(row)
-
-
-class FakeXlsxFile():
-    def __init__(self, filename: str, worksheets: list[FakeXlsxWorksheet]):
-        self.filename = filename
-        self.worksheets: list[FakeXlsxWorksheet] = worksheets
-
-    def get_iostream(self):
-        workbook= Workbook()
-
-        for ws in self.worksheets:
-            ws.create_worksheet(workbook)
-
-        result = io.BytesIO()
-        workbook.save(result)
-
-        return result.getvalue()
-
-
-class LbrcFileProvider(BaseProvider):
-    def xlsx(self, headers, data, filename=None, worksheet=None, headers_on_row=1):
-        headers = list(headers)
-        filename = filename or self.generator.file_name(extension='xlsx')
-
-        if worksheet is None:
-            worksheet = FakeXlsxWorksheet(
-                name=None,
-                headers=headers,
-                data=data,
-                headers_on_row=headers_on_row,
-            )
-
-        return FakeXlsxFile(
-            filename=filename,
-            worksheets=[worksheet],
-        )
-
-    def data_from_definition(self, columns_definition: dict, rows=10):
-        data = []
-        for _ in range(rows):
-            row = {}
-            for h, definition in columns_definition.items():
-                if definition['type'] == 'int':
-                    row[h] = self.generator.pyint()
-                elif definition['type'] == 'str':
-                    min_length = definition.get('min_length', 1)
-                    max_length = definition.get('max_length', 10)
-                    row[h] = self.generator.pystr(min_chars=min_length, max_chars=max_length)
-                elif definition['type'] == 'date':
-                    row[h] = self.generator.date()
-                        
-            data.append(row)
-
-        return data
 
 
 class UserCreator(FakeCreator):

@@ -329,6 +329,17 @@ class FlaskViewTester:
     def assert_redirect(self, resp, expected_endpoint, **kwargs):
         assert__redirect(resp, expected_endpoint, **kwargs)
 
+    def assert_requires_login_response(self, response):
+        # This should be a call to assert__redirect, but
+        # flask_login or flask_security is adding the
+        # endpoint parameters as querystring arguments as well
+        # as having them in the `next` parameter
+        login_loc = urlparse(url_for('security.login', next=self.url(external=False)))
+        resp_loc = urlparse(response.location)
+
+        assert resp_loc.path == login_loc.path
+        assert parse_qs(resp_loc.query).get('next') == parse_qs(login_loc.query).get('next')
+
 
 class FlaskViewLoggedInTester(FlaskViewTester):
     @pytest.fixture(autouse=True)
