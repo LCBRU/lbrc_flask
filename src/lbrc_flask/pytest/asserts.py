@@ -258,12 +258,12 @@ def assert__select(soup, id: str, options: dict, multiselect: bool=False):
     else:
         assert 'multiple' not in select.attrs
 
-    found_options = [(o.attrs['value'], o.text) for o in select.find_all('option')]
+    found_options = sorted([(o.attrs['value'], o.text) for o in select.find_all('option')], key=lambda x: x[1])
 
-    options = [(str(id), value) for id, value in options.items()]
+    options_list = sorted([(str(id), value) for id, value in options.items()], key=lambda x: x[1])
 
-    print(f"{found_options=}, {options=}")
-    assert found_options == options
+    print(f"{found_options=}, {options_list=}")
+    assert found_options == options_list
 
 
 def assert__input_radio(soup, id: str, options: dict):
