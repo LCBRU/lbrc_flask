@@ -63,7 +63,7 @@ class Ldap():
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
                 host=self.HOSTNAME,
-                port=self.PORT,
+                port=int(self.PORT),
                 # use_ssl=True,
                 # tls=tls,
                 # get_info=ALL,
