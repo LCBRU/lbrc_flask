@@ -12,6 +12,8 @@ class Ldap():
     def __init__(self):
         self.connection = None
         self.URI = (current_app.config.get('LDAP_URI', None) or '').strip()
+        self.HOSTNAME = (current_app.config.get('LDAP_HOSTNAME', None) or '').strip()
+        self.PORT = (current_app.config.get('LDAP_PORT', None) or '').strip()
         self.BIND_WHO_FORMAT = (current_app.config.get('LDAP_BIND_WHO_FORMAT', None) or '').strip()
         self.BASEDN = (current_app.config.get('LDAP_BASEDN', None) or '').strip()
         self.NOPRIV_USER = (current_app.config.get('LDAP_USER', None) or '').strip()
@@ -59,8 +61,8 @@ class Ldap():
         try:
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
-                host="ldap.rcs.le.ac.uk",
-                port=636,
+                host=self.HOSTNAME,
+                port=self.PORT,
                 use_ssl=True,
                 tls=tls,
                 get_info=ALL,
