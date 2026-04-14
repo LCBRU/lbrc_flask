@@ -58,15 +58,18 @@ class Ldap():
 
     def _login_bind_user(self, bind_user, password):
         try:
+            current_app.logger.warn(f"LDAP Server: {self.HOSTNAME}; Port: {self.PORT}")
+
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
                 host=self.HOSTNAME,
                 port=self.PORT,
-                use_ssl=True,
-                tls=tls,
-                get_info=ALL,
+                # use_ssl=True,
+                # tls=tls,
+                # get_info=ALL,
             )
 
+            current_app.logger.warn(f"Bind User: {bind_user}")
             self.connection = Connection(
                 server,
                 user=bind_user,
