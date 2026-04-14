@@ -11,7 +11,6 @@ from ldap3 import ALL, Connection, Server, Tls, SUBTREE
 class Ldap():
     def __init__(self):
         self.connection = None
-        self.URI = (current_app.config.get('LDAP_URI', None) or '').strip()
         self.HOSTNAME = (current_app.config.get('LDAP_HOSTNAME', None) or '').strip()
         self.PORT = (current_app.config.get('LDAP_PORT', None) or '').strip()
         self.BIND_WHO_FORMAT = (current_app.config.get('LDAP_BIND_WHO_FORMAT', None) or '').strip()
@@ -27,9 +26,9 @@ class Ldap():
         self.FIELDNAME_SURNAME = (current_app.config.get('LDAP_FIELDNAME_SURNAME', None) or '').strip()
 
     def is_enabled(self):
-        ldap_uri_set = len(self.URI) > 0
+        ldap_hostname_set = len(self.HOSTNAME) > 0 and len(self.PORT) > 0
         not_testing = not current_app.config.get('TESTING', False)
-        return ldap_uri_set and not_testing
+        return ldap_hostname_set and not_testing
 
     def login(self, username, password):
         username = (username or '').strip()

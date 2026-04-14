@@ -57,7 +57,8 @@ class BaseConfig:
 
     # LDAP
     LDAP_REQUIRE_EXISTING_USER = os.getenv("LDAP_REQUIRE_EXISTING_USER", "False") == 'True'
-    LDAP_URI = os.getenv("LDAP_URI", '')
+    LDAP_HOSTNAME = os.getenv("LDAP_HOSTNAME", '')
+    LDAP_PORT = os.getenv("LDAP_PORT", '')
     LDAP_USER = os.getenv("LDAP_USER", '')
     LDAP_PASSWORD = os.getenv("LDAP_PASSWORD", '')
     LDAP_BASEDN = os.getenv("LDAP_BASEDN", '')
@@ -90,7 +91,7 @@ class BaseTestConfig(BaseConfig):
 
     # Database
     SQLALCHEMY_DATABASE_URI = "sqlite://"
-    LDAP_URI = ''
+    LDAP_HOSTNAME = ''
 
     # Emails
     SMTP_SERVER = None
