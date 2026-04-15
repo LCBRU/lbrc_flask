@@ -3,15 +3,15 @@ from lbrc_flask.security.ldap import Ldap
 from flask import current_app
 
 
-def test__ldap__is_enable__nouri(client, faker):
-    current_app.config['LDAP_URI'] = ''
+def test__ldap__is_enable__no_hostname(client, faker):
+    current_app.config['LDAP_HOSTNAME'] = ''
 
     ldap = Ldap()
     assert ldap.is_enabled() == False
 
 
-def test__ldap__is_enable__withuri(client, faker):
-    current_app.config['LDAP_URI'] = faker.pystr(min_chars=5, max_chars=10)
+def test__ldap__is_enable__with_hostname(client, faker):
+    current_app.config['LDAP_HOSTNAME'] = faker.pystr(min_chars=5, max_chars=10)
     current_app.config['TESTING'] = False
 
     ldap = Ldap()
