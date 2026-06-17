@@ -58,7 +58,7 @@ def log_exception(e):
 
     try:
         email(
-            subject=f'ERROR: {g.get("lbrc_flask_title", "Application")}',
+            subject=f'ERROR: {g.get("lbrc_flask_title", current_app.config.get("APP_NAME", "Flask App"))}',
             message_template=message_template,
             html_template=html_template,
             recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
