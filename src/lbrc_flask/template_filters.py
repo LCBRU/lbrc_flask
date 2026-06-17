@@ -114,6 +114,8 @@ def init_template_filters(app):
     def inject_studd():
         if 'lbrc_flask_title' in g:
             app_name = g.lbrc_flask_title
+        elif 'APP_NAME' in current_app.config:
+            app_name = current_app.config['APP_NAME']
         else:
             app_name = 'Application'
 

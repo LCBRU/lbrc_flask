@@ -1,3 +1,5 @@
+from email.mime import application
+
 from flask import Blueprint, g
 from .database import db
 from .emailing import init_mail
@@ -16,6 +18,8 @@ blueprint = Blueprint("lbrc_flask", __name__, template_folder="templates", stati
 
 def init_lbrc_flask(app, title):
     setproctitle(f'{title}-Flask')
+    app.config['APP_NAME'] = title
+    
     app.register_blueprint(blueprint)
 
     init_logging(app)
