@@ -53,7 +53,7 @@ def log_exception(e):
         message_template = 'lbrc/email/exception/txt.txt'
         html_template = 'lbrc/email/exception/html.html'
     else:
-        message_template = 'lbrc/email/exception/txt_norequest.html'
+        message_template = 'lbrc/email/exception/txt_norequest.txt'
         html_template = 'lbrc/email/exception/html_norequest.html'
 
     try:
