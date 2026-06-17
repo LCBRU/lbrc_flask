@@ -26,9 +26,13 @@ class Ldap():
         self.FIELDNAME_SURNAME = (current_app.config.get('LDAP_FIELDNAME_SURNAME', None) or '').strip()
 
     def is_enabled(self):
-        ldap_hostname_set = len(self.HOSTNAME) > 0 and len(self.PORT) > 0
+        ldap_hostname_set = len(self.HOSTNAME) > 0
+        ldap_port_set = len(self.PORT) > 0
         not_testing = not current_app.config.get('TESTING', False)
-        return ldap_hostname_set and not_testing
+
+        current_app.logger.info(f"LDAP Enabled Check: Hostname set: {ldap_hostname_set}, Port set: {ldap_port_set}, Not testing: {not_testing}")
+        
+        return ldap_hostname_set and ldap_port_set and not_testing
 
     def login(self, username, password):
         username = (username or '').strip()

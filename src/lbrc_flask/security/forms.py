@@ -153,10 +153,13 @@ class LbrcLoginForm(LoginForm):
                             )
                         )
                         return False
+                else:
+                    current_app.logger.info(f"LDAP user '{username}' not found")
             else:
-                current_app.logger.info(f"LDAP is not enabled")
+                current_app.logger.info("LDAP is not enabled")
 
-            current_app.logger.info(f"'{self.email.data}' is not found for LDAP, so falling back on table based login!")
+            current_app.logger.info("Falling back on table based login!")
+
             return super().validate()
         except MissingBackendError as e:
             current_app.logger.error(f"Password hashing backend error during login for '{self.email.data}': {e}")
