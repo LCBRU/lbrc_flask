@@ -153,6 +153,8 @@ class LbrcLoginForm(LoginForm):
                             )
                         )
                         return False
+            else:
+                current_app.logger.info(f"LDAP is not enabled")
 
             current_app.logger.info(f"'{self.email.data}' is not found for LDAP, so falling back on table based login!")
             return super().validate()
