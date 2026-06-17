@@ -127,10 +127,13 @@ class LbrcLoginForm(LoginForm):
             ldap = Ldap()
 
             if ldap.is_enabled():
+                current_app.logger.info(f"LDAP Is enabled, so attempting to login via LDAP for user '{self.email.data}'")
                 username = standardize_username(self.email.data)
 
+                current_app.logger.info(f"Standardized username for '{self.email.data}' is '{username}'")
                 ldap.login_nonpriv()
 
+                current_app.logger.info(f"Non-privileged LDAP login successful for user '{username}'")
                 ldap_user = get_or_create_ldap_user(username)
 
                 current_app.logger.info(f"User '{ldap_user}' found for '{username}'")
