@@ -1,7 +1,7 @@
 import traceback
 import logging
 from logging import FileHandler
-from flask import current_app, g, render_template, request
+from flask import current_app, g, request, has_request_context
 from lbrc_flask.emailing import email
 from pathlib import Path
 from rich.logging import RichHandler
@@ -49,11 +49,18 @@ def log_exception(e):
     print(tb)
     current_app.logger.error(tb)
 
+    if has_request_context():
+        message_template = 'lbrc/email/exception/txt.txt'
+        html_template = 'lbrc/email/exception/html.html'
+    else:
+        message_template = 'lbrc/email/exception/txt_norequest.html'
+        html_template = 'lbrc/email/exception/html_norequest.html'
+
     try:
         email(
             subject=f'ERROR: {g.get("lbrc_flask_title", "Application")}',
-            message=render_template('lbrc/email/exception/txt.txt', traceback=tb),
-            html_template='lbrc/email/exception/html.html',
+            message_template=message_template,
+            html_template=html_template,
             recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
             traceback=tb,
             request=request,
