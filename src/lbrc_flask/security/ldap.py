@@ -62,7 +62,7 @@ class Ldap():
 
     def _login_bind_user(self, bind_user, password):
         try:
-            current_app.logger.warn(f"LDAP Server: {self.HOSTNAME}; Port: {self.PORT}")
+            current_app.logger.info(f"LDAP Server: {self.HOSTNAME}; Port: {self.PORT}")
 
             tls = Tls(version=ssl.PROTOCOL_TLS, ciphers='ALL')
             server = Server(
@@ -73,7 +73,7 @@ class Ldap():
                 # get_info=ALL,
             )
 
-            current_app.logger.warn(f"Bind User: {bind_user}")
+            current_app.logger.info(f"Bind User: {bind_user}")
             self.connection = Connection(
                 server,
                 user=bind_user,
@@ -82,6 +82,7 @@ class Ldap():
                 auto_referrals=False,
             )
 
+            current_app.logger.info("LDAP Connection established successfully")
             return True
 
         except LDAPException as e:
