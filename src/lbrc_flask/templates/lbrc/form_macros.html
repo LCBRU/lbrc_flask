@@ -18,7 +18,10 @@
     {% else %}
       <div class="field {% if field.errors %}error{%endif%} {{field.type}}">
         {% if field.type not in ["DescriptionField", "ElementDisplayField", "DataListField", "SearchField"] %}
-          {{ render_label(field) }}
+          {% if 'suppress_label' not in kwargs %}
+            {{ render_label(field) }}
+          {% endif %}
+          {{ render_field_errors(field) }}
         {% endif %}
 
         {% if field.type == "SelectMultipleField" %}
@@ -45,7 +48,9 @@
   {% if field.description %}
     <a href="#"><span class="fas fa-question-circle"></span></a>
   {% endif %}
+{% endmacro %}
 
+{% macro render_field_errors(field) %}
   {% if field.errors %}
     <ul class="errors">
     {% for error in field.errors %}

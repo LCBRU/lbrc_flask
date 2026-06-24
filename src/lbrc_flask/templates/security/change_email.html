@@ -1,0 +1,35 @@
+{% extends "lbrc/page_modal.html" %}
+{% from "lbrc/errors.html" import render_errors %}
+{% from "lbrc/form_macros.html" import render_field %}
+
+{% block content %}
+<section class="container">
+    <header>
+        <h2>Change Email</h2>
+    </header>
+
+	<form action="{{ url_for_security('change_email') }}" method="POST">
+		<fieldset>
+			<div>
+				<aside class="message">
+					<p>
+						Please enter the your new email address.
+						Once entered, an email will be sent to validate
+						your new email address
+					</p>
+				</aside>
+
+				{{ render_errors(get_flashed_messages(with_categories=true)) }}
+			</div>
+
+			{{ change_email_form.hidden_tag() }}
+			{{ render_field(change_email_form.email, placeholder="New Email Address", suppress_label=True) }}
+
+			<div class="button_bar">
+				<button type="submit">Change Email</button>
+				<a href="/" role="button">Cancel</a>
+			</div>
+		</fieldset>
+	</form>    		
+</section>
+{% endblock %}

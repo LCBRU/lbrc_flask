@@ -1,4 +1,5 @@
 {% from "lbrc/form_macros.html" import render_field %}
+{% from "lbrc/errors.html" import render_errors %}
 
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
     <fieldset>
@@ -7,19 +8,30 @@
                 <img src="{{ url_for('lbrc_flask.static', filename='img/uhl.png', ver=1) }}" alt="University of Leicester Login" style="height: 80px;">
             </div>
 
-            <p>Log in using a University of Leicester email address and password.</p>
+            <aside class="message">
+                <p>Log in using the same details you use to log into your University Hospitals of Leicester computer</p>
+
+                <ul>
+                    <li>Your username will be your UHL username or your email address</li>
+                    <li>The password is the same as your University Hospitals of Leicester computer password</li>
+                    <li>If you have changed your password for your UHL computer, this password will have changed as well</li>
+                </ul>
+            </aside>
+
 			{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
                 <p>If you do not have a University Hospitals of Leicester account <a href="javascript:;" title="Login using non University Hospitals of Leicester username and password" hx-get="{{ url_for('table_based_login') }}">Login Here</a></p>
             {% endif %}
+
+           {{ render_errors(get_flashed_messages(with_categories=true)) }}
         </div>
 
         {{ login_user_form.hidden_tag() }}
         <div class="field icon email">
-            {{ login_user_form.email(placeholder="Email Address") }}
+            <input type="text" autocomplete="off" id="email" name="email" placeholder="UHL Username or Email Address">
         </div>
 
         <div class="field icon lock">
-            {{ login_user_form.password(placeholder="Password") }}
+            {{ login_user_form.password(placeholder="UHL Password") }}
         </div>
 
         {{ render_field(login_user_form.remember) }}

@@ -1,14 +1,26 @@
 {% from "lbrc/form_macros.html" import render_field %}
+{% from "lbrc/errors.html" import render_errors %}
 
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form">
     <fieldset>
         <div>
             <img src="{{ url_for('lbrc_flask.static', filename='img/UoL-Logo-Full-Colour.png', ver=1) }}" alt="University of Leicester Login" style="height: 80px;">
 
-            <p>Log in using a University of Leicester email address and password.</p>
+            <aside class="message">
+                <p>Log in using the same details you use to log into your University of Leicester computer</p>
+
+                <ul>
+                    <li>Your username will be your University of Leicester email address</li>
+                    <li>The password is the same as your University of Leicester computer password</li>
+                    <li>If you have changed your password for your UoL computer, this password will have changed as well</li>
+                </ul>
+            </aside>
+
 			{% if config['LBRC_FLASK_TABLE_BASED_SECURITY'] %}
                 <p>If you do not have a University of Leicester account <a href="javascript:;" title="Login using non University of Leicester username and password" hx-get="{{ url_for('table_based_login') }}">Login Here</a></p>
             {% endif %}
+
+           {{ render_errors(get_flashed_messages(with_categories=true)) }}
         </div>
 
         {{ login_user_form.hidden_tag() }}

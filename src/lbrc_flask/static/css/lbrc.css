@@ -270,17 +270,6 @@ nav.main_menu > div {
 }
 /* Main Menu End */
 
-/* Side Menu Start */
-
-aside {
-    background-color: var(--color-light-grey);
-    padding: var(--body-paragraph-spacing);
-    border-radius: var(--border-radius);
-    margin-bottom: var(--body-paragraph-spacing);
-}
-
-/* Side Menu End */
-
 /* Modal Start */
 body:has(.modal) {
     overflow: hidden;
@@ -418,24 +407,6 @@ select,
 .select2-selection__choice__remove {
     border-bottom: 1px solid #aaa !important;
 }
-
-/*
-    Taken out to fix  problem where:
-    - form is in a modal dialog
-    - form has another element, say paragraph or pill, that is greater than 1 column
-      width, but not yet 2 columns wide.
-    - Paragraph stretches width of modal dialog
-    - But inputs remain fixed width and are squeezed to the left.
-*/
-/* input:not([type="search"]),
-textarea,
-select,
-.select2-selection.select2-selection--multiple,
-.select2-container--default.select2-container--focus .select2-selection--multiple,
-.select2-container--default
- {
-    max-width: min(100%, var(--column-min-width));
-} */
 
 input[type="checkbox"], input[type="radio"] {
     display: block;
@@ -951,7 +922,7 @@ ul.errors {
 
     & li {
         list-style: none;
-        color: var(--color-red);    
+        color: var(--color-red);
     }
 }
 /* Error end */
@@ -1184,55 +1155,54 @@ button[type="submit"]
 
 /* Icon Button End */
 
-/* Flash Message Start */
 
-.flash {
+/* Messages Start */
+
+.flash, aside {
     margin: var(--body-paragraph-spacing);
     border-radius: var(--border-radius);
     padding: var(--body-paragraph-spacing);
     padding-left: var(--body-paragraph-double-spacing);
     background-color: var(--color-light-grey);
+    --_flash_icon: "\f075";
+    position: relative;
 }
 
 .flash::before {
     font-family: 'Font Awesome 5 Free';
-    content: "\f075";
+    content: var(--_flash_icon);
     font-weight: 900;
     margin-left: -1.5em;
-    margin-right: 0.5em;
+    margin-top: 0em;
+    position: absolute;
 }
 
-.flash.warning {
+.flash:has(*)::before {
+    margin-top: 0.5em;
+}
+
+.flash.warning, aside.warning {
     background-color: var(--color-light-orange);
-
-    &::before {
-        content: "\f12a";
-    }    
+    color: var(--color-orange);
+    --_flash_icon: "\f12a";
 }
-.flash.error {
+.flash.error, aside.error {
     background-color: var(--color-light-red);
-
-    &::before {
-        content: "\f071";
-    }    
+    color: var(--color-red);
+    --_flash_icon: "\f071";
 }
-.flash.success {
+.flash.success, aside.success {
     background-color: var(--color-light-green);
-
-    &::before {
-        content: "\f00c";
-    }    
+    color: var(--color-green);
+    --_flash_icon: "\f00c";
 }
-.flash.message {
+.flash.message, aside.message {
     background-color: var(--color-blue-green);
     color: var(--color-white);
-
-    &::before {
-        content: "\f277";
-    }    
+    --_flash_icon: "\f277";
 }
 
-/* Flash Message End */
+/* Message End */
 
 /* Chart Start */
 

@@ -121,6 +121,11 @@ class LbrcChangePasswordForm(Form, PasswordFormMixin):
 class LbrcLoginForm(LoginForm):
     def validate(self, **kwargs):
         try:
+            user = _datastore.find_user(username=self.email.data) or _datastore.find_user(email=self.email.data)
+
+            if user:
+                self.email.data = user.email
+
             if not super(LoginForm, self).validate(**fix_kwargs(kwargs)):
                 return False
 
