@@ -5,6 +5,8 @@ from flask import current_app, g, request, has_request_context
 from lbrc_flask.emailing import email
 from pathlib import Path
 from rich.logging import RichHandler
+from flask_login import current_user
+from werkzeug.exceptions import MethodNotAllowed
 
 
 def init_logging(app):
@@ -49,22 +51,29 @@ def log_exception(e):
     print(tb)
     current_app.logger.error(tb)
 
+    is_anon_user = False 
+    is_405 = isinstance(e, MethodNotAllowed)
+
     if has_request_context():
         message_template = 'lbrc/email/exception/txt.txt'
         html_template = 'lbrc/email/exception/html.html'
+        is_anon_user = current_user.is_anonymous 
     else:
         message_template = 'lbrc/email/exception/txt_norequest.txt'
         html_template = 'lbrc/email/exception/html_norequest.html'
+    
+    suppress_email = is_anon_user and is_405
 
     try:
-        email(
-            subject=f'ERROR: {g.get("lbrc_flask_title", current_app.config.get("APP_NAME", "Flask App"))}',
-            message_template=message_template,
-            html_template=html_template,
-            recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
-            traceback=tb,
-            request=request,
-        )
+        if not suppress_email:
+            email(
+                subject=f'ERROR: {g.get("lbrc_flask_title", current_app.config.get("APP_NAME", "Flask App"))}',
+                message_template=message_template,
+                html_template=html_template,
+                recipients=[current_app.config["ADMIN_EMAIL_ADDRESS"]],
+                traceback=tb,
+                request=request,
+            )
     except Exception as e:
         print('*-'*40)
         print("Error emailing in Exception processing")
