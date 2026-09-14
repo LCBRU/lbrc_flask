@@ -16,6 +16,8 @@ def init_logging(app):
 
     log_directory = Path(app.config["LOG_DIRECTORY"])
 
+    log_directory.mkdir(parents=True, exist_ok=True)
+
     info_handler = FileHandler(str(log_directory / 'info.log'))
     info_handler.setLevel(logging.INFO)
     info_handler.setFormatter(logging.Formatter(
