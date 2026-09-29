@@ -51,7 +51,14 @@
 
     <div id="spinner"></div>
 
-    <script>htmx.logAll();</script>
+    <script>
+      htmx.logAll();
+
+      htmx.on('htmx:responseError', (event) => {
+        console.log("HTMX error: " + event.detail.xhr.status + " " + event.detail.xhr.statusText);
+        alert("An error occurred while processing your request. Please try again and contact support if the error persists");
+      });
+    </script>
 
     <script type="text/javascript">
 
@@ -81,7 +88,7 @@
 
       $(document).ready(select2_init());
       htmx.on('htmx:afterSettle', select2_init);
-
+      
     </script>
 
     {% block base_js %}{% endblock %}

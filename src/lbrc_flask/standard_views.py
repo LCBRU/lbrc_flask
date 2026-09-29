@@ -1,8 +1,10 @@
 import os
-import traceback
-from flask import render_template, send_from_directory, current_app, g
+
+from flask import render_template, send_from_directory
+
 from lbrc_flask.logging import log_exception
-from .emailing import email
+
+from .database import db
 
 
 def init_standard_views(app):
@@ -15,43 +17,26 @@ def init_standard_views(app):
         )
 
     @app.errorhandler(400)
-    def missing_page(exception):
-        """Catch internal 404 errors, display
-            a nice error page and log the error.
-        """
+    def bad_request(exception):
         return render_template("lbrc_flask/404.html"), 400
 
     @app.errorhandler(401)
-    def missing_page(exception):
-        """Catch internal 404 errors, display
-            a nice error page and log the error.
-        """
+    def unauthorized(exception):
         return render_template("lbrc_flask/404.html"), 401
 
     @app.errorhandler(403)
-    def forbidden_page(exception):
-        """Catch internal 404 errors, display
-            a nice error page and log the error.
-        """
+    def forbidden(exception):
         return render_template("lbrc_flask/404.html"), 403
 
     @app.errorhandler(404)
-    def missing_page(exception):
-        """Catch internal 404 errors, display
-            a nice error page and log the error.
-        """
+    def not_found(exception):
         return render_template("lbrc_flask/404.html"), 404
 
     @app.errorhandler(500)
     @app.errorhandler(Exception)
     def internal_error(exception):
-        """Catch internal exceptions and 500 errors, display
-            a nice error page and log the error.
-        """
-        if 'lbrc_flask_title' in g:
-            app_name = g.lbrc_flask_title
-        else:
-            app_name = 'Application'
+
+        db.session.rollback()
 
         log_exception(exception)
 
