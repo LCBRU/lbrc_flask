@@ -481,6 +481,10 @@ button[type="submit"] {
     &.error {
         --_button_background_color: var(--color-red);
     }
+    &[disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
     & .pill {
         color: var(--_button_background_color);
         background-color: var(--_button_forground_color);
@@ -925,6 +929,13 @@ ul.errors {
         color: var(--color-red);
     }
 }
+
+.errors {
+    color: var(--color-red);
+    font-weight: var(--body-font-weight-bold);
+    margin-block: var(--body-spacing);
+}
+
 /* Error end */
 
 /* Link List Start */
