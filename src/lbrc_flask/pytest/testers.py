@@ -5,7 +5,7 @@ import csv
 from io import StringIO
 from itertools import zip_longest
 from flask import url_for
-from lbrc_flask.pytest.asserts import assert__redirect, assert__search_html, assert__search_modal_html, assert_html_page_standards, assert_modal_boilerplate, assert__error__required_field, assert__page_navigation__page, assert__error__string_too_long__modal, assert__modal_cancel, assert__modal_save
+from lbrc_flask.pytest.asserts import assert__redirect, assert__search_html, assert__search_modal_html, assert_html_page_standards, assert_modal_boilerplate, assert__error__required_field, assert__page_navigation__page, assert__error__string_too_long, assert__modal_cancel, assert__modal_save
 from lbrc_flask.pytest.html_content import get_records_found
 from lbrc_flask.pytest.helpers import login
 from lbrc_flask.model import CommonMixin
@@ -131,7 +131,7 @@ class ModalFormErrorContentAsserter:
         assert__error__required_field(resp.soup, field_title)
 
     def assert__error__string_too_long(self, resp, field_title):
-        assert__error__string_too_long__modal(resp.soup, field_title)
+        assert__error__string_too_long(resp.soup, field_title)
 
 
 class SearchContentAsserter:
