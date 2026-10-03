@@ -19,7 +19,7 @@ from lbrc_flask.logging import log_exception
 
 
 def get_form_field_label(key: str) -> str:
-    return _(" ".join(word.capitalize() for word in key.split("_")))
+    return (" ".join(word.capitalize() for word in key.split("_")))
 
 
 def fix_kwargs(kwargs):
