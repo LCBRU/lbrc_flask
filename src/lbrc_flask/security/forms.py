@@ -4,7 +4,6 @@ from flask import current_app, flash
 from flask_security.forms import (
     EqualTo,
     password_required,
-    get_form_field_label,
     ValidatorMixin,
     Form,
     PasswordFormMixin,
@@ -17,6 +16,10 @@ from wtforms.validators import ValidationError
 from wtforms import PasswordField, SubmitField
 from passlib.exc import MissingBackendError
 from lbrc_flask.logging import log_exception
+
+
+def get_form_field_label(key: str) -> str:
+    return _(" ".join(word.capitalize() for word in key.split("_")))
 
 
 def fix_kwargs(kwargs):
