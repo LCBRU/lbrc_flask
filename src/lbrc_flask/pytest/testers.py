@@ -113,15 +113,17 @@ class HtmlPageContentAsserter:
 @dataclass
 class ModalContentAsserter:
     has_save_button: bool = False
+    save_button_text: str = 'Save'
     has_cancel_button: bool = True
+    cancel_button_text: str = 'Cancel'
 
     def assert_all(self, resp):
         assert_modal_boilerplate(resp.soup)
 
         if self.has_save_button:
-            assert__modal_save(resp.soup)
+            assert__modal_save(resp.soup, text=self.save_button_text)
         if self.has_cancel_button:
-            assert__modal_cancel(resp.soup)
+            assert__modal_cancel(resp.soup, text=self.cancel_button_text)
 
 
 class ModalFormErrorContentAsserter:

@@ -107,14 +107,14 @@ def assert__htmx_post_button(soup, text, url, has_confirm=True):
     assert button.attrs['href'] == "javascript:;"
 
 
-def assert__modal_cancel(soup):
-    button = soup.find('a', string='Cancel')
+def assert__modal_cancel(soup, text='Cancel'):
+    button = soup.find('a', string=text)
     assert button is not None
     assert button.attrs['href'] == "javascript:;"
 
 
-def assert__modal_save(soup):
-    button = soup.find('button', string='Save', type='submit')
+def assert__modal_save(soup, text='Save'):
+    button = soup.find('button', string=text, type='submit')
     assert button is not None
 
 
