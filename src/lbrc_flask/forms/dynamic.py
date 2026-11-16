@@ -1,13 +1,17 @@
-from lbrc_flask.admin import AdminCustomView
+from typing import ClassVar
+
 from flask_admin.model.form import InlineFormAdmin
-from wtforms import validators
-from wtforms.validators import Length, DataRequired, Optional, Regexp
-from lbrc_flask.validators import parse_date
 from flask_wtf.file import FileAllowed
+from sqlalchemy import func, select
+from wtforms import validators
+from wtforms.validators import DataRequired, Length, Optional, Regexp
+
+from lbrc_flask.admin import AdminCustomView
 from lbrc_flask.database import db
-from . import DescriptionField, FlashingForm
+from lbrc_flask.validators import parse_date
+
 from ..formatters import format_boolean, format_number, format_yesno
-from sqlalchemy import select, func
+from . import DescriptionField, FlashingForm
 
 
 class FieldType(db.Model):
@@ -71,9 +75,7 @@ class FieldType(db.Model):
             return 'number'
         elif self.name == FieldType.STRING:
             return 'text'
-        elif self.name == FieldType.FILE:
-            return 'file'
-        elif self.name == FieldType.MULTIPLE_FILE:
+        elif self.name == FieldType.FILE or self.name == FieldType.MULTIPLE_FILE:
             return 'file'
 
     @property
@@ -281,9 +283,7 @@ class Field(db.Model):
             return self.field_name
 
     def __repr__(self):
-        return 'Field(field_name="{}", order="{}", field_type="{}")'.format(
-            self.field_name, self.order, self.field_type.name
-        )
+        return f'Field(field_name="{self.field_name}", order="{self.order}", field_type="{self.field_type.name}")'
 
 
 class FormBuilder:
@@ -365,25 +365,34 @@ def create_field_types():
 
 # Admin Forms
 class FieldlineView(InlineFormAdmin):
+    @staticmethod
     def types():
-        return db.session.execute(select(FieldType).order_by(FieldType.name))
+        return db.session.scalars(
+            select(FieldType).order_by(FieldType.name)
+        )
 
-    form_args = dict(
-        field_name=dict(validators=[validators.DataRequired()]),
-        order=dict(validators=[validators.DataRequired()]),
-        field_type=dict(query_factory=types),
-    )
+    form_args: ClassVar[dict] = {
+        "field_name": {
+            "validators": [validators.DataRequired()],
+        },
+        "order": {
+            "validators": [validators.DataRequired()],
+        },
+        "field_type": {
+            "query_factory": types,
+        },
+    }
 
 
 class FieldGroupView(AdminCustomView):
-    form_args = dict(
-        name=dict(validators=[validators.DataRequired()]),
-    )
-    form_columns = [
+    form_args: ClassVar[dict] = {
+        'name': {'validators': [validators.DataRequired()]},
+    }
+    form_columns: ClassVar[list] = [
         FieldGroup.name,
     ]
-    column_searchable_list = [FieldGroup.name]
-    inline_models = (FieldlineView(Field),)
+    column_searchable_list: ClassVar[list] = [FieldGroup.name]
+    inline_models: ClassVar[tuple] = (FieldlineView(Field),)
 
 
 def get_dynamic_forms_admin_forms():
