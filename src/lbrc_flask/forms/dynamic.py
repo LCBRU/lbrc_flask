@@ -5,6 +5,7 @@ from flask_wtf.file import FileAllowed
 from sqlalchemy import func, select
 from wtforms import validators
 from wtforms.validators import DataRequired, Length, Optional, Regexp
+from wtforms.fields import SelectChoice
 
 from lbrc_flask.admin import AdminCustomView
 from lbrc_flask.database import db
@@ -271,7 +272,7 @@ class Field(db.Model):
         elif not self.choices:
             return []
         else:
-            return [(c, c) for c in self.choices.split("|")]
+            return [SelectChoice(c, c) for c in self.choices.split("|")]
 
     def get_allowed_file_extensions(self):
         return self.allowed_file_extensions.split("|")
